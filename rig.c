@@ -79,3 +79,9 @@ int get_passband_wide(int mode)
 	int res = rig_passband_wide(myrig, mode);
 	return res;
 }
+
+int get_freq(int vfo, double *freq)
+{
+	int res = rig_get_freq(myrig, vfo, freq);
+	return res;
+}

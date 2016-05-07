@@ -61,6 +61,9 @@ func TestDummyRig(t *testing.T){
 		log.Println(err)
 	}
 
+	// get Frequency
+	freq, _ := rig.GetFreq(goHamlib.RIG_VFO_CURR)
+	log.Println("Current Frequency is: %08v Hz", freq)
 
 	log.Println("finished testing")
 }

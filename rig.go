@@ -17,6 +17,7 @@ extern int set_mode(int vfo, int mode, int pb_width);
 extern int get_passband_narrow(int mode);
 extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
+extern int get_freq(int vfo, double *freq);
 */
 import "C"
 
@@ -82,6 +83,16 @@ func (rig *Rig) GetPbWide(mode int) (int, error){
 	pb_width := int(pb)
 
 	return pb_width, err
+}
+
+// Get Frequency from a VFO
+func (rig *Rig) GetFreq(vfo int) (freq float64, err error){
+	var f C.double
+	var res C.int
+	res, err = C.get_freq(C.int(vfo), &f)
+	freq = float64(f)
+	res = res
+	return freq, err
 }
 
 
