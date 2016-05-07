@@ -18,6 +18,10 @@ extern int get_passband_narrow(int mode);
 extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
 extern int get_freq(int vfo, double *freq);
+
+extern int close_rig();
+extern int cleanup_rig();
+
 */
 import "C"
 
@@ -95,6 +99,15 @@ func (rig *Rig) GetFreq(vfo int) (freq float64, err error){
 	return freq, err
 }
 
+func (rig *Rig) Close() error{
+	res, err := C.close_rig()
+	return checkError(res, err, "close_rig")
+}
+
+func (rig *Rig) Cleanup() error{
+	res, err := C.cleanup_rig()
+	return checkError(res, err, "cleanup_rig")
+} 
 
 // Check Errors from Hamlib C calls. C Errors have a higher priority.
 // Additional Information is provided for better debugging

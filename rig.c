@@ -85,3 +85,15 @@ int get_freq(int vfo, double *freq)
 	int res = rig_get_freq(myrig, vfo, freq);
 	return res;
 }
+
+int close_rig()
+{
+	int res = rig_close(myrig);
+	return res;
+}
+
+int cleanup_rig()
+{
+	int res = rig_cleanup(myrig);
+	return res;
+}
