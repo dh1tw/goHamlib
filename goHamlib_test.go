@@ -23,11 +23,13 @@ func TestDummyRig(t *testing.T){
 	rig.SetPort(p)
 	rig.Open()
 	//rig.SetVfo(1)
-	rig.SetFreq(1<<29, 7005000)
+	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, 7005000); err != nil{
+		log.Println(err)
+	}
 
-	goHamlib.ReadVar()
-	goHamlib.SetVar(20)
-	goHamlib.ReadVar()
+	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -7005000); err != nil{
+		log.Println(err)
+	}
 
 	log.Println("finished testing")
 }

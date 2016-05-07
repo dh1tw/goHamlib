@@ -55,14 +55,3 @@ int set_freq(int vfo, double freq)
 	int res = rig_set_freq(myrig, vfo, freq);
 	return res;
 }
-
-int myvar = 5;
-
-int test1(int var){
-	myvar = var;
-	return myvar;
-}
-
-int test2(){
-	return myvar;
-}

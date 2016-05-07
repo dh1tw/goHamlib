@@ -13,72 +13,53 @@ extern int init_rig(int rig_model);
 extern int open_rig();
 extern int set_vfo(int vfo);
 extern int set_freq(int vfo, double freq);
-extern int test1(int var);
-extern int test2();
 */
 import "C"
 
 import (
-	"log"
+	//"log"
 )
 
-func (rig *Rig) SetPort(p Port_t) error{
-
-	_, err := C.set_port(C.int(p.RigPortType), C.CString(p.Portname) , C.int(p.Baudrate), C.int(p.Databits), C.int(p.Stopbits), C.int(p.Parity), C.int(p.Handshake))
-
-	if err != nil{
-		return err
-	}
-
-	return nil
-}
-
+// Initialize Rig
 func (rig *Rig) Init(rigModel int) error{
-	myRig, err := C.init_rig(C.int(rigModel))
-	if err != nil{
-		log.Println("could not initialize rig")
-		log.Println(err)
-		return err
-	}
-	log.Println(myRig)
-	return nil
+	res, err := C.init_rig(C.int(rigModel))
+	return checkError(res, err, "open_rig")
 }
 
+// Set Port of Rig
+func (rig *Rig) SetPort(p Port_t) error{
+	res, err := C.set_port(C.int(p.RigPortType), C.CString(p.Portname) , C.int(p.Baudrate), C.int(p.Databits), C.int(p.Stopbits), C.int(p.Parity), C.int(p.Handshake))
+	return checkError(res, err, "set_port")
+}
+
+// Open Radio / Port
 func (rig *Rig) Open() error{
 	res, err := C.open_rig()
-	if  err != nil{
-		log.Println("could not open port")
-		log.Println(err)
-		return err
-	}
-	log.Println("open res: ", res)
-	return nil
+	return checkError(res, err, "open_rig")
 }
 
+// Set default VFO
 func (rig *Rig) SetVfo(vfo int) error{
-	if _, err := C.set_vfo(C.int(vfo)); err != nil{
-		log.Println("Could not set VFO")
-		return err
-	}
-	return nil
+	res, err := C.set_vfo(C.int(vfo))
+	return checkError(res, err, "set_vfo")
 }
 
+// Set Frequency for a VFO
 func (rig *Rig) SetFreq(vfo int, freq float64) error{
 	res, err := C.set_freq(C.int(vfo), C.double(freq))
-	if err != nil{
-		log.Println("Could not set freq")
-		return err
-	}
-	log.Println(res)
-	return nil
+	return checkError(res, err, "set_freq")
 }
 
-func SetVar(num int){
-	res, _ := C.test1(C.int(num))
-	log.Println("Res setvar: ", res)
-}
+// Check Errors from Hamlib C calls. C Errors have a higher priority.
+// Additional Information is provided for better debugging
+func checkError(res C.int, e error, operation string) error{
 
-func ReadVar(){
-	res, _ := C.test2()
-	log.Println("Res readvar: ", res)
+        if e != nil {
+                return &Error{operation, e}
+        }
+        if int(res) != RIG_OK{
+                return &HamlibError{operation, int(res), ""}
+        }
+
+        return nil
 }
