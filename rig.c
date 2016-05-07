@@ -55,3 +55,27 @@ int set_freq(int vfo, double freq)
 	int res = rig_set_freq(myrig, vfo, freq);
 	return res;
 }
+
+int set_mode(int vfo, int mode, int pb_width)
+{
+	int res = rig_set_mode(myrig, vfo, mode, pb_width);
+	return res;
+}
+
+int get_passband_narrow(int mode)
+{
+	int res = rig_passband_narrow(myrig, mode);
+	return res;
+}
+
+int get_passband_normal(int mode)
+{
+	int res = rig_passband_normal(myrig, mode);
+	return res;
+}
+
+int get_passband_wide(int mode)
+{
+	int res = rig_passband_wide(myrig, mode);
+	return res;
+}

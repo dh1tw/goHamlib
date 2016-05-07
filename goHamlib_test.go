@@ -2,7 +2,8 @@ package goHamlib_test
 
 import (
 	"log"
- 	"testing"
+	"testing"
+	"time"
 
 	"github.com/dh1tw/goHamlib"
 )
@@ -23,13 +24,43 @@ func TestDummyRig(t *testing.T){
 	rig.SetPort(p)
 	rig.Open()
 	//rig.SetVfo(1)
+
+	//Set Frequency
 	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, 7005000); err != nil{
 		log.Println(err)
 	}
 
-	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -7005000); err != nil{
+	//set invalid frequency
+//	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -7005000); err != nil{
+//		log.Println(err)
+//	}
+
+	//set mode Narrow Filter
+	mode, err := rig.GetPbNarrow(goHamlib.RIG_MODE_CW)
+	if err != nil{
+		log.Println("Couldn't get Narrow Pb")
+	}
+	if mode == 0{
+		log.Println("can not determin narrow Passband")
+	}
+	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
 		log.Println(err)
 	}
+
+	// set mode with Normal Filter
+	time.Sleep(time.Second*3)
+	mode, _ = rig.GetPbNormal(goHamlib.RIG_MODE_CW)
+	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
+		log.Println(err)
+	}
+
+	// set mode with Wide Filter
+	time.Sleep(time.Second*3)
+	mode, _ = rig.GetPbWide(goHamlib.RIG_MODE_CW)
+	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
+		log.Println(err)
+	}
+
 
 	log.Println("finished testing")
 }
