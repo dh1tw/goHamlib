@@ -37,6 +37,15 @@ const (
 	RIG_EDOM	= -17
 )
 
+const (
+	RIG_DEBUG_NONE = 0
+	RIG_DEBUG_BUG = 1
+	RIG_DEBUG_ERR = 2
+	RIG_DEBUG_WARN = 3
+	RIG_DEBUG_VERBOSE = 4
+	RIG_DEBUG_TRACE = 5
+)
+
 //Hamlib VFOs
 const (
 	RIG_VFO_NONE = 0

@@ -20,6 +20,8 @@ func TestDummyRig(t *testing.T){
 	p.Handshake = goHamlib.NO_HANDSHAKE
 
 	var rig goHamlib.Rig
+
+	rig.SetDebugLevel(goHamlib.RIG_DEBUG_NONE)
 	rig.Init(128)
 	rig.SetPort(p)
 	rig.Open()

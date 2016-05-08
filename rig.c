@@ -86,6 +86,18 @@ int get_freq(int vfo, double *freq)
 	return res;
 }
 
+int get_mode(int vfo, int *mode, int *pb_width)
+{
+	int res = rig_get_mode(myrig, vfo, mode, pb_width);
+	return res;
+}
+
+void set_debug_level(int debug_level)
+{
+	rig_set_debug (debug_level);
+}
+
+
 int close_rig()
 {
 	int res = rig_close(myrig);
@@ -98,8 +110,3 @@ int cleanup_rig()
 	return res;
 }
 
-int get_mode(int vfo, int *mode, int *pb_width)
-{
-	int res = rig_get_mode(myrig, vfo, mode, pb_width);
-	return res;
-}

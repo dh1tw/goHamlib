@@ -19,6 +19,7 @@ extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
 extern int get_freq(int vfo, double *freq);
 extern int get_mode(int vfo, int *mode, int *pb_width);
+extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
 
@@ -107,6 +108,11 @@ func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error){
 	pb_width = int(pb)
 	mode = int(m)
 	return mode, pb_width, checkError(res, err, "get_mode")
+}
+
+// Set Debug level
+func (rig *Rig) SetDebugLevel(dbgLevel int){
+	C.set_debug_level(C.int(dbgLevel))
 }
 
 //Close the Communication with the Radio
