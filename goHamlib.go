@@ -97,6 +97,12 @@ const (
 	RIG_PTT_ON_DATA = 3
 )
 
+// Hamlib Split 
+const (
+	RIG_SPLIT_OFF = 0
+	RIG_SPLIT_ON = 1
+)
+
 type Port_t struct{
 	RigPortType	int
 	Portname	string
@@ -159,7 +165,7 @@ func (e *HamlibError) Error() string{
 		default:
 			e.Description = "unkown Error"
 	}
-	return fmt.Sprintf("%s: (%v) %s", e.Operation, e.Errorcode, e.Description)
+	return fmt.Sprintf("%s: %s (%v)", e.Operation, e.Description, e.Errorcode)
 }
 
 type Error struct{

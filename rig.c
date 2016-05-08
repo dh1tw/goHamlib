@@ -128,6 +128,42 @@ int get_xit(int vfo, int *offset)
 	return res;
 }
 
+int set_split_freq(int vfo, double tx_freq)
+{
+	int res = rig_set_split_freq(myrig, vfo, tx_freq);
+	return res;
+}
+
+int get_split_freq(int vfo, double *tx_freq)
+{
+	int res = rig_get_split_freq(myrig, vfo, tx_freq);
+	return res;
+}
+
+int set_split_mode(int vfo, int tx_mode, int tx_width)
+{
+	int res = rig_set_split_mode(myrig, vfo, tx_mode, tx_width);
+	return res;
+}
+
+int get_split_mode(int vfo, int *tx_mode, int *tx_width)
+{
+	int res = rig_get_split_mode(myrig, vfo, tx_mode, tx_width);
+	return res;
+}
+
+int set_split_vfo(int vfo, int split, int tx_vfo)
+{
+	int res = rig_set_split_vfo(myrig, vfo, split, tx_vfo);
+	return res;
+}
+
+int get_split_vfo(int vfo, int *split, int *tx_vfo)
+{
+	int res = rig_get_split_vfo(myrig, vfo, split, tx_vfo);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);

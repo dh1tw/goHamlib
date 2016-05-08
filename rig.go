@@ -22,9 +22,15 @@ extern int get_mode(int vfo, int *mode, int *pb_width);
 extern int set_ptt(int vfo, int ptt);
 extern int get_ptt(int vfo, int *ptt);
 extern int set_rit(int vfo, int offset);
-extern int get_xit(int vfo, int *offset);
-extern int set_xit(int vfo, int offset);
 extern int get_rit(int vfo, int *offset);
+extern int set_xit(int vfo, int offset);
+extern int get_xit(int vfo, int *offset);
+int set_split_freq(int vfo, double tx_freq);
+int get_split_freq(int vfo, double *tx_freq);
+int set_split_mode(int vfo, int tx_mode, int tx_width);
+int get_split_mode(int vfo, int *tx_mode, int *tx_width);
+int set_split_vfo(int vfo, int split, int tx_vfo);
+int get_split_vfo(int vfo, int *split, int *tx_vfo);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -156,6 +162,68 @@ func (rig *Rig) GetXit(vfo int) (offset int, err error){
 	res, err := C.get_xit(C.int(vfo), &o)
 	offset = int(o)
 	return offset, checkError(res, err, "get_xit")
+}
+
+// Set Split Frequency
+func (rig *Rig) SetSplitFreq(vfo int, txFreq float64) error{
+	res, err := C.set_split_freq(C.int(vfo), C.double(txFreq))
+	return checkError(res, err, "set_split_freq")
+}
+
+// Get Split Frequency
+func (rig *Rig) GetSplitFreq(vfo int) (txFreq float64, err error){
+        var f C.double
+        res, err := C.get_split_freq(C.int(vfo), &f)
+        txFreq = float64(f)
+        return txFreq, checkError(res, err, "get_split_freq")
+}
+
+// Set Split Mode
+func (rig *Rig) SetSplitMode(vfo int, txMode int, txWidth int) error{
+        res, err := C.set_split_mode(C.int(vfo), C.int(txMode), C.int(txWidth))
+        return checkError(res, err, "set_split_mode")
+}
+
+// Get Split Mode
+func (rig *Rig) GetSplitMode(vfo int) (txMode int, txWidth int, err error){
+        var m C.int
+	var w C.int
+        res, err := C.get_split_mode(C.int(vfo), &m, &w)
+        txMode = int(m)
+	txWidth = int(w)
+        return txMode, txWidth, checkError(res, err, "get_split_mode")
+}
+
+// Set Split Vfo
+func (rig *Rig) SetSplitVfo(vfo int, split int, txVfo int) error{
+        res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(txVfo))
+        return checkError(res, err, "set_split_vfo")
+}
+
+// Get Split Vfo
+func (rig *Rig) GetSplitVfo(vfo int) (split int, txVfo int, err error){
+        var s C.int
+        var v C.int
+        res, err := C.get_split_mode(C.int(vfo), &s, &v)
+        split = int(s)
+        txVfo = int(v)
+        return split, txVfo, checkError(res, err, "get_split_vfo")
+}
+
+// Set Split (shortcut for SetSplitVfo)
+func (rig *Rig) SetSplit(vfo int, split int) error{
+	res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(RIG_VFO_CURR))
+	return checkError(res, err, "set_split")
+}
+
+// Get Split (shortcut for GetSplitVfo)
+func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error){
+	var s C.int
+	var t C.int
+	res, err := C.get_split_vfo(C.int(vfo), &s, &t)
+	split = int(s)
+	txVfo = int(t)
+	return split, txVfo, checkError(res, err, "get_split")
 }
 
 // Set Debug level

@@ -25,7 +25,6 @@ func TestDummyRig(t *testing.T){
 	rig.Init(128)
 	rig.SetPort(p)
 	rig.Open()
-	//rig.SetVfo(1)
 
 	//Set Frequency
 	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, 7005000); err != nil{
@@ -88,7 +87,7 @@ func TestDummyRig(t *testing.T){
 	if err := rig.SetPtt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_PTT_OFF); err != nil{
 		log.Println(err)
 	}
-	time.Sleep(time.Millisecond * 200)
+	time.Sleep(time.Second)
 
 	// get Ptt state
 	if ptt, err:= rig.GetPtt(goHamlib.RIG_VFO_CURR); err != nil{
@@ -109,13 +108,13 @@ func TestDummyRig(t *testing.T){
 		log.Printf("Rit offset: %v Hz", rit)
 	}
 
-	// set invalid Rit (will be set to maximum)
-	if err := rig.SetRit(goHamlib.RIG_VFO_CURR, 20000); err != nil{
+	// set Rit on invalid VFO
+	if err := rig.SetRit(goHamlib.RIG_VFO_C, 20000); err != nil{
 		log.Println(err)
 	}
 
-	// get Rit(should be at 9.999kHz)
-	if rit, err := rig.GetRit(goHamlib.RIG_VFO_CURR); err != nil{
+	// get Rit from invalid VFO
+	if rit, err := rig.GetRit(goHamlib.RIG_VFO_C); err != nil{
 		log.Println(err)
 	} else {
 		log.Printf("Rit offset: %v Hz", rit)
@@ -133,7 +132,32 @@ func TestDummyRig(t *testing.T){
 		log.Printf("Xit offset: %v Hz", xit)
 	}
 
+	time.Sleep(time.Second)
 
+	// rig.SetVfo(goHamlib.RIG_VFO_MAIN)
+
+	// set split on VFOB - same mode and pb as VFO A
+	if mode, pb, err := rig.GetMode(goHamlib.RIG_VFO_MAIN); err != nil{
+		log.Println(err)
+	} else {
+		if err := rig.SetSplitVfo(goHamlib.RIG_VFO_MAIN, goHamlib.RIG_SPLIT_ON, goHamlib.RIG_VFO_SUB); err != nil{
+			log.Println(err)
+		}
+		if err := rig.SetSplitFreq(goHamlib.RIG_VFO_SUB, 7020000); err != nil{
+			log.Println(err)
+		}
+		mode = mode
+		pb = pb
+		if err = rig.SetSplitMode(goHamlib.RIG_VFO_SUB, mode, pb); err != nil{
+			log.Println(err)
+		}
+	}
+
+	if split, txVfo, err := rig.GetSplit(goHamlib.RIG_VFO_A); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Split is: %v on VFO: %v", split, txVfo)
+	}
 
 	//Shutdown & Cleanup
 	rig.Close()
