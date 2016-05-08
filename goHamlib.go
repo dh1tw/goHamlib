@@ -89,6 +89,13 @@ const (
 	RIG_MODE_TESTS_MAX = 21
 )
 
+// Hamlib Powerstats
+const (
+	RIG_POWER_OFF = 0
+	RIG_POWER_ON = 1
+	RIG_POWER_STANDBY = 2
+)
+
 // Hamlib PTT
 const (
 	RIG_PTT_OFF = 0

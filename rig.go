@@ -31,6 +31,8 @@ int set_split_mode(int vfo, int tx_mode, int tx_width);
 int get_split_mode(int vfo, int *tx_mode, int *tx_width);
 int set_split_vfo(int vfo, int split, int tx_vfo);
 int get_split_vfo(int vfo, int *split, int *tx_vfo);
+int set_powerstat(int status);
+int get_powerstat(int *status);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -224,6 +226,19 @@ func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error){
 	split = int(s)
 	txVfo = int(t)
 	return split, txVfo, checkError(res, err, "get_split")
+}
+
+func (rig *Rig) SetPowerStat(status int) error{
+	res, err := C.set_powerstat(C.int(status))
+	return checkError(res, err, "set_powerstat")
+}
+
+func (rig *Rig) GetPowerStat() (status int, err error){
+	var s C.int
+	var res C.int
+	res, err = C.get_powerstat(&s)
+	status = int(s)
+	return status, checkError(res, err, "get_powerstat")
 }
 
 // Set Debug level

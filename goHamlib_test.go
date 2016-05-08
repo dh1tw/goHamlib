@@ -26,13 +26,25 @@ func TestDummyRig(t *testing.T){
 	rig.SetPort(p)
 	rig.Open()
 
+	if stat, err := rig.GetPowerStat(); err != nil {
+		log.Println(err)
+	} else {
+		if stat == goHamlib.RIG_POWER_OFF{
+			if err = rig.SetPowerStat(goHamlib.RIG_POWER_ON); err != nil{
+				log.Println(err)
+				// HERE WE SHOULD PANIC!!!
+			}
+			time.Sleep(time.Second * 5)
+		}
+	}
+
 	//Set Frequency
-	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, 7005000); err != nil{
+	if err:= rig.SetFreq(goHamlib.RIG_VFO_MAIN, 7005000); err != nil{
 		log.Println(err)
 	}
 
 	//set invalid frequency
-	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -3580000); err != nil{
+	if err:= rig.SetFreq(goHamlib.RIG_VFO_MAIN, -3580000); err != nil{
 		log.Println(err)
 	}
 
@@ -158,6 +170,10 @@ func TestDummyRig(t *testing.T){
 	} else {
 		log.Printf("Split is: %v on VFO: %v", split, txVfo)
 	}
+
+	time.Sleep(time.Second*2)
+
+	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
 
 	//Shutdown & Cleanup
 	rig.Close()

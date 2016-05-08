@@ -164,6 +164,18 @@ int get_split_vfo(int vfo, int *split, int *tx_vfo)
 	return res;
 }
 
+int set_powerstat(int status)
+{
+	int res = rig_set_powerstat(myrig, status);
+	return res;
+}
+
+int get_powerstat(int *status)
+{
+	int res = rig_get_powerstat(myrig, status);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);
