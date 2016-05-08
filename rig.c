@@ -97,3 +97,9 @@ int cleanup_rig()
 	int res = rig_cleanup(myrig);
 	return res;
 }
+
+int get_mode(int vfo, int *mode, int *pb_width)
+{
+	int res = rig_get_mode(myrig, vfo, mode, pb_width);
+	return res;
+}

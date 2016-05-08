@@ -63,7 +63,10 @@ func TestDummyRig(t *testing.T){
 
 	// get Frequency
 	freq, _ := rig.GetFreq(goHamlib.RIG_VFO_CURR)
-	log.Println("Current Frequency is: %08v Hz", freq)
+	log.Printf("Current Frequency is: %08v Hz", freq)
+
+	mode, pb_width, err := rig.GetMode(goHamlib.RIG_VFO_CURR)
+	log.Printf("Current Mode: %v, Passband: %v", mode, pb_width)
 
 	rig.Close()
 	rig.Cleanup()

@@ -18,7 +18,7 @@ extern int get_passband_narrow(int mode);
 extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
 extern int get_freq(int vfo, double *freq);
-
+extern int get_mode(int vfo, int *mode, int *pb_width);
 extern int close_rig();
 extern int cleanup_rig();
 
@@ -95,15 +95,27 @@ func (rig *Rig) GetFreq(vfo int) (freq float64, err error){
 	var res C.int
 	res, err = C.get_freq(C.int(vfo), &f)
 	freq = float64(f)
-	res = res
-	return freq, err
+	return freq, checkError(res, err, "get_freq")
 }
 
+// Get Mode and Passband width for a VFO
+func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error){
+	var m C.int
+	var pb C.int
+	var res C.int
+	res, err = C.get_mode(C.int(vfo), &m, &pb)
+	pb_width = int(pb)
+	mode = int(m)
+	return mode, pb_width, checkError(res, err, "get_mode")
+}
+
+//Close the Communication with the Radio
 func (rig *Rig) Close() error{
 	res, err := C.close_rig()
 	return checkError(res, err, "close_rig")
 }
 
+//Grabage collect Radio and free up memory
 func (rig *Rig) Cleanup() error{
 	res, err := C.cleanup_rig()
 	return checkError(res, err, "cleanup_rig")
