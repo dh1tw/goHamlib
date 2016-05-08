@@ -97,7 +97,44 @@ func TestDummyRig(t *testing.T){
 		log.Printf("Ptt state: %v", ptt)
 	}
 
-	
+	// set Rit
+	if err := rig.SetRit(goHamlib.RIG_VFO_CURR, -500); err != nil{
+		log.Println(err)
+	}
+
+	// get Rit
+	if rit, err := rig.GetRit(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Rit offset: %v Hz", rit)
+	}
+
+	// set invalid Rit (will be set to maximum)
+	if err := rig.SetRit(goHamlib.RIG_VFO_CURR, 20000); err != nil{
+		log.Println(err)
+	}
+
+	// get Rit(should be at 9.999kHz)
+	if rit, err := rig.GetRit(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Rit offset: %v Hz", rit)
+	}
+
+	// set Xit
+	if err := rig.SetXit(goHamlib.RIG_VFO_CURR, 5555); err != nil{
+		log.Println(err)
+	}
+
+	// get Rit
+	if xit, err := rig.GetXit(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Xit offset: %v Hz", xit)
+	}
+
+
+
 	//Shutdown & Cleanup
 	rig.Close()
 	rig.Cleanup()

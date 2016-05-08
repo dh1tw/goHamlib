@@ -21,6 +21,10 @@ extern int get_freq(int vfo, double *freq);
 extern int get_mode(int vfo, int *mode, int *pb_width);
 extern int set_ptt(int vfo, int ptt);
 extern int get_ptt(int vfo, int *ptt);
+extern int set_rit(int vfo, int offset);
+extern int get_xit(int vfo, int *offset);
+extern int set_xit(int vfo, int offset);
+extern int get_rit(int vfo, int *offset);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -126,6 +130,34 @@ func (rig *Rig) GetPtt(vfo int) (ptt int, err error){
 	return ptt, checkError(res, err, "get_ptt")
 }
 
+// Set Rit offset value
+func (rig *Rig) SetRit(vfo int, offset int) error{
+	res, err := C.set_rit(C.int(vfo), C.int(offset))
+	return checkError(res, err, "set_rit")
+}
+
+// Get Rit offset value
+func (rig *Rig) GetRit(vfo int) (offset int, err error){
+	var o C.int
+	res, err := C.get_rit(C.int(vfo), &o)
+	offset = int(o)
+	return offset, checkError(res, err, "get_rit")
+}
+
+// Set Xit offset value
+func (rig *Rig) SetXit(vfo int, offset int) error{
+	res, err := C.set_xit(C.int(vfo), C.int(offset))
+	return checkError(res, err, "set_xit")
+}
+
+// Get Xit offset value
+func (rig *Rig) GetXit(vfo int) (offset int, err error){
+	var o C.int
+	res, err := C.get_xit(C.int(vfo), &o)
+	offset = int(o)
+	return offset, checkError(res, err, "get_xit")
+}
+
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){
 	C.set_debug_level(C.int(dbgLevel))
@@ -156,3 +188,5 @@ func checkError(res C.int, e error, operation string) error{
 
         return nil
 }
+
+

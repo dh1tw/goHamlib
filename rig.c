@@ -104,6 +104,30 @@ int get_ptt(int vfo, int *ptt)
 	return res;
 }
 
+int set_rit(int vfo, int offset)
+{
+	int res = rig_set_rit(myrig, vfo, offset);
+	return res;
+}
+
+int get_rit(int vfo, int *offset)
+{
+	int res = rig_get_rit(myrig, vfo, offset);
+	return res;
+}
+
+int set_xit(int vfo, int offset)
+{
+	int res = rig_set_xit(myrig, vfo, offset);
+	return res;
+}
+
+int get_xit(int vfo, int *offset)
+{
+	int res = rig_get_xit(myrig, vfo, offset);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);
