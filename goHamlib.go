@@ -104,6 +104,17 @@ const (
 	RIG_PTT_ON_DATA = 3
 )
 
+// Hamlib Antennas
+const (
+	RIG_ANT_NONE = 0
+	RIG_ANT_1 = 1
+	RIG_ANT_2 = 2
+	RIG_ANT_3 = 3
+	RIG_ANT_4 = 4
+	RIG_ANT_5 = 5
+)
+
+
 // Hamlib Split 
 const (
 	RIG_SPLIT_OFF = 0

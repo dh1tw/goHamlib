@@ -176,11 +176,29 @@ int get_powerstat(int *status)
 	return res;
 }
 
+const char* get_info()
+{
+	char *info;
+	info = rig_get_info(myrig);
+	return info;
+}
+
+int set_ant(int vfo, int ant)
+{
+	int res = rig_set_ant(myrig, vfo, ant);
+	return res;
+}
+
+int get_ant(int vfo, int *ant)
+{
+	int res = rig_get_ant(myrig, vfo, ant);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);
 }
-
 
 int close_rig()
 {

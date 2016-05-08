@@ -6,6 +6,8 @@ package goHamlib
 #cgo CFLAGS: -I /usr/local/lib
 #cgo LDFLAGS: -L /usr/local/lib -lhamlib 
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <hamlib/rig.h>
 
 extern int set_port(int rig_port_type, char* portname, int baudrate, int databits, int stopbits, int parity, int handshake);
@@ -33,6 +35,9 @@ int set_split_vfo(int vfo, int split, int tx_vfo);
 int get_split_vfo(int vfo, int *split, int *tx_vfo);
 int set_powerstat(int status);
 int get_powerstat(int *status);
+const char* get_info();
+int set_ant(int vfo, int ant);
+int get_ant(int vfo, int *ant);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -228,17 +233,38 @@ func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error){
 	return split, txVfo, checkError(res, err, "get_split")
 }
 
+// Set Rig Power On/Off/Standby
 func (rig *Rig) SetPowerStat(status int) error{
 	res, err := C.set_powerstat(C.int(status))
 	return checkError(res, err, "set_powerstat")
 }
 
+// Get Rig Power On/Off/Standby
 func (rig *Rig) GetPowerStat() (status int, err error){
 	var s C.int
 	var res C.int
 	res, err = C.get_powerstat(&s)
 	status = int(s)
 	return status, checkError(res, err, "get_powerstat")
+}
+
+// Get Rig info
+func (rig *Rig) GetInfo() (info string, err error){
+	i, err := C.get_info()
+	info = C.GoString(i)
+	return info, checkError(C.int(0), err, "get_info")
+}
+
+func (rig *Rig) SetAnt(vfo int, ant int) error{
+	res, err := C.set_ant(C.int(vfo), C.int(ant))
+	return checkError(res, err, "set_ant") 
+}
+
+func (rig *Rig) GetAnt(vfo int) (ant int, err error){
+	var a C.int
+	res, err := C.get_ant(C.int(vfo), &a)
+	ant = int(a)
+	return ant, checkError(res, err, "get_ant")
 }
 
 // Set Debug level

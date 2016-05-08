@@ -8,7 +8,8 @@ import (
 	"github.com/dh1tw/goHamlib"
 )
 
-func TestDummyRig(t *testing.T){
+//Tests against an FT950
+func TestFT950(t *testing.T){
 
 	var p goHamlib.Port_t
 	p.RigPortType = 1 
@@ -165,15 +166,36 @@ func TestDummyRig(t *testing.T){
 		}
 	}
 
-	if split, txVfo, err := rig.GetSplit(goHamlib.RIG_VFO_A); err != nil{
+	// check status on Split
+	if split, txVfo, err := rig.GetSplit(goHamlib.RIG_VFO_MAIN); err != nil{
 		log.Println(err)
 	} else {
 		log.Printf("Split is: %v on VFO: %v", split, txVfo)
 	}
 
-	time.Sleep(time.Second*2)
+	time.Sleep(time.Second)
 
-	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
+	// get Rig Info
+	if info, err := rig.GetInfo(); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Rig Info: %s", info)
+	}
+
+	// Set and check Antenna
+	if err := rig.SetAnt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_ANT_1); err != nil{
+		log.Println(err)
+	}
+
+	if ant, err := rig.GetAnt(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Selected antenna: %v", ant)
+	}
+
+ 	time.Sleep(time.Second*2)
+
+//	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
 
 	//Shutdown & Cleanup
 	rig.Close()
