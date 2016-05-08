@@ -92,6 +92,18 @@ int get_mode(int vfo, int *mode, int *pb_width)
 	return res;
 }
 
+int set_ptt(int vfo, int ptt)
+{
+	int res = rig_set_ptt(myrig, vfo, ptt);
+	return res;
+}
+
+int get_ptt(int vfo, int *ptt)
+{
+	int res = rig_get_ptt(myrig, vfo, ptt);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);

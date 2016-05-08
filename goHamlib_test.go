@@ -33,9 +33,9 @@ func TestDummyRig(t *testing.T){
 	}
 
 	//set invalid frequency
-//	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -7005000); err != nil{
-//		log.Println(err)
-//	}
+	if err:= rig.SetFreq(goHamlib.RIG_VFO_CURR, -3580000); err != nil{
+		log.Println(err)
+	}
 
 	//set mode Narrow Filter
 	mode, err := rig.GetPbNarrow(goHamlib.RIG_MODE_CW)
@@ -67,9 +67,38 @@ func TestDummyRig(t *testing.T){
 	freq, _ := rig.GetFreq(goHamlib.RIG_VFO_CURR)
 	log.Printf("Current Frequency is: %08v Hz", freq)
 
+	// get mode
 	mode, pb_width, err := rig.GetMode(goHamlib.RIG_VFO_CURR)
 	log.Printf("Current Mode: %v, Passband: %v", mode, pb_width)
 
+	// set Ptt true
+	if err := rig.SetPtt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_PTT_ON); err != nil{
+		log.Println(err)
+	}
+	time.Sleep(time.Second)
+
+	// get Ptt state
+	if ptt, err:= rig.GetPtt(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Ptt state: %v", ptt)
+	}
+
+	// set Ptt false
+	if err := rig.SetPtt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_PTT_OFF); err != nil{
+		log.Println(err)
+	}
+	time.Sleep(time.Millisecond * 200)
+
+	// get Ptt state
+	if ptt, err:= rig.GetPtt(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Ptt state: %v", ptt)
+	}
+
+	
+	//Shutdown & Cleanup
 	rig.Close()
 	rig.Cleanup()
 

@@ -19,6 +19,8 @@ extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
 extern int get_freq(int vfo, double *freq);
 extern int get_mode(int vfo, int *mode, int *pb_width);
+extern int set_ptt(int vfo, int ptt);
+extern int get_ptt(int vfo, int *ptt);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -108,6 +110,20 @@ func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error){
 	pb_width = int(pb)
 	mode = int(m)
 	return mode, pb_width, checkError(res, err, "get_mode")
+}
+
+// Set Ptt
+func (rig *Rig) SetPtt(vfo int, ptt int) error{
+	res, err := C.set_ptt(C.int(vfo), C.int(ptt))
+	return checkError(res, err, "set_ptt")
+}
+
+// Get Ptt state
+func (rig *Rig) GetPtt(vfo int) (ptt int, err error){
+	var p C.int
+	res, err := C.get_ptt(C.int(vfo), &p)
+	ptt = int(p)
+	return ptt, checkError(res, err, "get_ptt")
 }
 
 // Set Debug level

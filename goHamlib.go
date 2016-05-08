@@ -37,6 +37,7 @@ const (
 	RIG_EDOM	= -17
 )
 
+//Hamlib Debug levels
 const (
 	RIG_DEBUG_NONE = 0
 	RIG_DEBUG_BUG = 1
@@ -61,6 +62,7 @@ const (
 	RIG_VFO_C = 1<<3
 )
 
+// Hamlib modes
 const (
 	RIG_MODE_NONE = 0
 	RIG_MODE_AM = 1
@@ -87,6 +89,13 @@ const (
 	RIG_MODE_TESTS_MAX = 21
 )
 
+// Hamlib PTT
+const (
+	RIG_PTT_OFF = 0
+	RIG_PTT_ON = 1
+	RIG_PTT_ON_MIC = 2
+	RIG_PTT_ON_DATA = 3
+)
 
 type Port_t struct{
 	RigPortType	int
