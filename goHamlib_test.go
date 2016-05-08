@@ -193,6 +193,25 @@ func TestFT950(t *testing.T){
 		log.Printf("Selected antenna: %v", ant)
 	}
 
+	// Get current tuning step
+	if ts, err := rig.GetTs(goHamlib.RIG_VFO_CURR); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Tuning step: %vHz", ts)
+	}
+
+	// Set tuning step to 100Hz
+	if err := rig.SetTs(goHamlib.RIG_VFO_CURR, 100); err != nil{
+		log.Println(err)
+	}
+
+        // Verify that tuning step was set accordingly
+        if ts, err := rig.GetTs(goHamlib.RIG_VFO_CURR); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("Tuning step: %vHz", ts)
+        }
+
  	time.Sleep(time.Second*2)
 
 //	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);

@@ -38,6 +38,8 @@ int get_powerstat(int *status);
 const char* get_info();
 int set_ant(int vfo, int ant);
 int get_ant(int vfo, int *ant);
+int set_ts(int vfo, int ts);
+int get_ts(int vfo, int *ts);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -255,16 +257,32 @@ func (rig *Rig) GetInfo() (info string, err error){
 	return info, checkError(C.int(0), err, "get_info")
 }
 
+// Set Antenna
 func (rig *Rig) SetAnt(vfo int, ant int) error{
 	res, err := C.set_ant(C.int(vfo), C.int(ant))
 	return checkError(res, err, "set_ant") 
 }
 
+// Get Antenna
 func (rig *Rig) GetAnt(vfo int) (ant int, err error){
 	var a C.int
 	res, err := C.get_ant(C.int(vfo), &a)
 	ant = int(a)
 	return ant, checkError(res, err, "get_ant")
+}
+
+// Set Tuning step
+func (rig *Rig) SetTs(vfo int, ts int) error{
+	res, err := C.set_ts(C.int(vfo), C.int(ts))
+	return checkError(res, err, "set_ts")
+}
+
+// Get Tuning step
+func (rig *Rig) GetTs(vfo int) (ts int, err error){
+	var t C.int
+	res, err := C.get_ts(C.int(vfo), &t)
+	ts = int(t)
+	return ts, checkError(res, err, "get_ts")
 }
 
 // Set Debug level

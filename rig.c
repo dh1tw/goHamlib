@@ -195,6 +195,18 @@ int get_ant(int vfo, int *ant)
 	return res;
 }
 
+int set_ts(int vfo, int ts)
+{
+	int res = rig_set_ts(myrig, vfo, ts);
+	return res;
+}
+
+int get_ts(int vfo, int *ts)
+{
+	int res = rig_get_ts(myrig, vfo, ts);
+	return res;
+}
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);
