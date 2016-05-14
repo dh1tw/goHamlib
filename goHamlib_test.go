@@ -4,12 +4,17 @@ import (
 	"log"
 	"testing"
 	"time"
+	"math/rand"
 
 	"github.com/dh1tw/goHamlib"
 )
 
 //Tests against an FT950
 func TestFT950(t *testing.T){
+
+	//setup random number generator
+	seed := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(seed)
 
 	var p goHamlib.Port_t
 	p.RigPortType = 1 
@@ -218,14 +223,12 @@ func TestFT950(t *testing.T){
 	} else {
 		log.Printf("can get Level ATT: %t", level==goHamlib.RIG_LEVEL_ATT)
 	}
- 	time.Sleep(time.Second*2)
 
 	if res, err := rig.HasSetLevel(goHamlib.RIG_LEVEL_IF); err != nil{
 		log.Println(err)
 	} else {
 		log.Printf("can set Level IF: %t", res==goHamlib.RIG_LEVEL_IF)
 	}
- 	time.Sleep(time.Second*2)
 
 	// Has set / get Functions
         if res, err := rig.HasGetFunc(goHamlib.RIG_FUNC_LOCK); err != nil{
@@ -233,14 +236,12 @@ func TestFT950(t *testing.T){
         } else {
                 log.Printf("can get Function LOCK: %t", res==goHamlib.RIG_FUNC_LOCK)
         }
-        time.Sleep(time.Second*2)
 
         if res, err := rig.HasSetFunc(goHamlib.RIG_FUNC_ABM); err != nil{
                 log.Println(err)
         } else {
                 log.Printf("can set Function ABM: %t", res==goHamlib.RIG_FUNC_ABM)
         }
-        time.Sleep(time.Second*2)
 
         // Has set / get Parameters
         if res, err := rig.HasGetParm(goHamlib.RIG_PARM_APO); err != nil{
@@ -248,16 +249,60 @@ func TestFT950(t *testing.T){
         } else {
                 log.Printf("can get Parameter APO: %t", res==goHamlib.RIG_PARM_APO)
         }
-        time.Sleep(time.Second*2)
 
         if res, err := rig.HasSetParm(goHamlib.RIG_PARM_TIME); err != nil{
                 log.Println(err)
         } else {
                 log.Printf("can set Parameter TIME: %t", res==goHamlib.RIG_PARM_TIME)
         }
-        time.Sleep(time.Second*2)
+
+	// Get Level (converted Float)
+	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("RF Power: %v", value)
+	}
+
+	// Get Level (Integer)
+	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Key Speed: %v", value)
+	}
+
+	// Set Level (with conversion to float)
+	pwr := random.Intn(100)
+	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER, int32(pwr)); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Trying to set Power to: %v%%", pwr)
+	}
+
+ 	// Set Level (integer)
+	speed := random.Intn(40)
+	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD, int32(speed)); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Trying to set Key Speed to: %v WPM", speed)
+	}
+
+	// Get Level (converted Float)
+	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("RF Power: %v", value)
+	}
+
+	// Get Level (Integer)
+	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Key Speed: %v", value)
+	}
 
 
+
+	time.Sleep(time.Second*2)
 
 //	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
 

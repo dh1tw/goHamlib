@@ -243,6 +243,92 @@ unsigned long has_set_parm(unsigned long parm)
 	return res;
 }
 
+int get_level(int vfo, unsigned long level, int *value)
+{	
+	value_t v;
+	int res = rig_get_level(myrig, vfo, level, &v);
+
+	switch(level) {
+		case RIG_LEVEL_AF:
+		case RIG_LEVEL_RF:
+		case RIG_LEVEL_NR:
+		case RIG_LEVEL_RFPOWER:
+		case RIG_LEVEL_MICGAIN:
+		case RIG_LEVEL_SQL:
+		case RIG_LEVEL_COMP:
+		case RIG_LEVEL_VOXGAIN:
+		case RIG_LEVEL_ANTIVOX:
+		case RIG_LEVEL_SWR:
+		case RIG_LEVEL_ALC:
+			*value = (int) (v.f*100);
+			break;
+		case RIG_LEVEL_NONE:
+		case RIG_LEVEL_PREAMP:
+		case RIG_LEVEL_ATT:
+		case RIG_LEVEL_AGC:
+		case RIG_LEVEL_IF:
+		case RIG_LEVEL_CWPITCH:
+		case RIG_LEVEL_KEYSPD:
+		case RIG_LEVEL_NOTCHF:
+		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_BKINDL:
+		case RIG_LEVEL_METER:
+		case RIG_LEVEL_STRENGTH:
+		case RIG_LEVEL_RAWSTR:
+			*value = (int)v.i;
+			break;
+		default: 
+			*value = 0;
+			printf("Unknown Level in 'get_level_'; Conversion not possible");
+			return RIG_EINVAL;
+	}
+
+	return res;
+} 
+
+int set_level(int vfo, unsigned long level, int value)
+{	
+	value_t v;
+
+	switch(level) {
+		case RIG_LEVEL_AF:
+		case RIG_LEVEL_RF:
+		case RIG_LEVEL_NR:
+		case RIG_LEVEL_RFPOWER:
+		case RIG_LEVEL_MICGAIN:
+		case RIG_LEVEL_SQL:
+		case RIG_LEVEL_COMP:
+		case RIG_LEVEL_VOXGAIN:
+		case RIG_LEVEL_ANTIVOX:
+		case RIG_LEVEL_SWR:
+		case RIG_LEVEL_ALC:
+			v.f = ((float)value/100);
+			printf ("power: %f", v.f);
+			break;
+		case RIG_LEVEL_NONE:
+		case RIG_LEVEL_PREAMP:
+		case RIG_LEVEL_ATT:
+		case RIG_LEVEL_AGC:
+		case RIG_LEVEL_IF:
+		case RIG_LEVEL_CWPITCH:
+		case RIG_LEVEL_KEYSPD:
+		case RIG_LEVEL_NOTCHF:
+		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_BKINDL:
+		case RIG_LEVEL_METER:
+		case RIG_LEVEL_STRENGTH:
+		case RIG_LEVEL_RAWSTR:
+			v.i = (int) value;
+			break;
+		default: 
+			printf("Unknown Level in 'set_level'; Conversion not possible");
+			return RIG_EINVAL;
+	}
+	
+	int res = rig_set_level(myrig, vfo, level, v);
+	return res;
+} 
+
 
 void set_debug_level(int debug_level)
 {

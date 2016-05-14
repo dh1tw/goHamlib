@@ -62,6 +62,24 @@ const (
 	RIG_VFO_C = 1<<3
 )
 
+//Hamlib Rig Operations
+const (
+	RIG_OP_NONE = 0
+	RIG_OP_CPY = 1<<0
+	RIG_OP_XCHG = 1<<1
+	RIG_OP_FROM_VFO = 1<<2
+	RIG_OP_TO_VFO = 1<<3
+	RIG_OP_MCL = 1<<4
+	RIG_OP_UP = 1<<5
+	RIG_OP_DOWN = 1<<6
+	RIG_OP_BAND_IP = 1<<7
+	RIG_OP_BAND_DOWN = 1<<8
+	RIG_OP_LEFT = 1<<9
+	RIG_OP_RIGHT = 1<<10
+	RIG_OP_TUNE = 1<<11
+	RIG_OP_TOGGLE = 1<<12
+)
+
 // Hamlib modes
 const (
 	RIG_MODE_NONE = 0
@@ -204,6 +222,18 @@ const (
 	RIG_FUNC_TBURST = 1<<29
 	RIG_FUNC_TUNER = 1<<30
 	RIG_FUNC_XIT = 1<<31
+)
+
+//Rig Meter
+const (
+	RIG_METER_NONE = 0
+	RIG_METER_SWR = 1<<0
+	RIG_METER_COMP = 1<<1
+	RIG_METER_ALC = 1<<2
+	RIG_METER_IC = 1<<3
+	RIG_METER_DB = 1<<4
+	RIG_METER_PO = 1<<5
+	RIG_METER_VDD = 1<<6
 )
 
 type Port_t struct{

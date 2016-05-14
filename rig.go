@@ -46,6 +46,8 @@ extern unsigned long has_get_func(unsigned long function);
 extern unsigned long has_set_func(unsigned long function);
 extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
+extern int get_level(int vfo, unsigned long level, int *value);
+extern int set_level(int vfo, unsigned long level, int value);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -340,6 +342,25 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
 	return res, checkError(0, err, "has_set_parm")
 }
 
+//returning int: IF, CWPITCH, KEYSPD, NOTCHF, AGC, BKINDL, METER, STRENGTH
+//returning float: AF, RF, NR, RFPOWER, MICGAIN, COMP, VOXGAIN, ANTIVOX, SWR, ALC       
+//returning char: 
+//unclear: RAWSTR
+
+//get Level
+func (rig *Rig) GetLevel(vfo int32, level uint32) (value int32, err error){
+	var l C.int
+	var res C.int
+	res, err = C.get_level(C.int(vfo), C.ulong(level), &l)
+	value = int32(l)
+	return value, checkError(res, err, "get_level")
+}
+
+//set Level
+func (rig *Rig) SetLevel(vfo int32, level uint32, value int32) error{
+	res, err := C.set_level(C.int(vfo), C.ulong(level), C.int(value))
+	return checkError(res, err, "set_level")
+}
 
 
 // Set Debug level
