@@ -27,19 +27,25 @@ extern int set_rit(int vfo, int offset);
 extern int get_rit(int vfo, int *offset);
 extern int set_xit(int vfo, int offset);
 extern int get_xit(int vfo, int *offset);
-int set_split_freq(int vfo, double tx_freq);
-int get_split_freq(int vfo, double *tx_freq);
-int set_split_mode(int vfo, int tx_mode, int tx_width);
-int get_split_mode(int vfo, int *tx_mode, int *tx_width);
-int set_split_vfo(int vfo, int split, int tx_vfo);
-int get_split_vfo(int vfo, int *split, int *tx_vfo);
-int set_powerstat(int status);
-int get_powerstat(int *status);
-const char* get_info();
-int set_ant(int vfo, int ant);
-int get_ant(int vfo, int *ant);
-int set_ts(int vfo, int ts);
-int get_ts(int vfo, int *ts);
+extern int set_split_freq(int vfo, double tx_freq);
+extern int get_split_freq(int vfo, double *tx_freq);
+extern int set_split_mode(int vfo, int tx_mode, int tx_width);
+extern int get_split_mode(int vfo, int *tx_mode, int *tx_width);
+extern int set_split_vfo(int vfo, int split, int tx_vfo);
+extern int get_split_vfo(int vfo, int *split, int *tx_vfo);
+extern int set_powerstat(int status);
+extern int get_powerstat(int *status);
+extern const char* get_info();
+extern int set_ant(int vfo, int ant);
+extern int get_ant(int vfo, int *ant);
+extern int set_ts(int vfo, int ts);
+extern int get_ts(int vfo, int *ts);
+extern unsigned long has_get_level(unsigned long level);
+extern unsigned long has_set_level(unsigned long level);
+extern unsigned long has_get_func(unsigned long function);
+extern unsigned long has_set_func(unsigned long function);
+extern unsigned long has_get_parm(unsigned long parm);
+extern unsigned long has_set_parm(unsigned long parm);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -284,6 +290,57 @@ func (rig *Rig) GetTs(vfo int) (ts int, err error){
 	ts = int(t)
 	return ts, checkError(res, err, "get_ts")
 }
+
+// has supports getting a specific level
+func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_get_level(C.ulong(level))
+	res = uint32(c)
+	return res, checkError(0, err, "has_get_level")
+}
+
+// has supports setting a specific level
+func (rig *Rig) HasSetLevel(level uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_set_level(C.ulong(level))
+	res = uint32(c)
+	return res, checkError(0, err, "has_set_level")
+}
+
+// has supports getting a specific function
+func (rig *Rig) HasGetFunc(function uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_get_func(C.ulong(function))
+	res = uint32(c)
+	return res, checkError(0, err, "has_get_func")
+}
+
+// has supports setting a specific function
+func (rig *Rig) HasSetFunc(function uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_set_func(C.ulong(function))
+	res = uint32(c)
+	return res, checkError(0, err, "has_set_func")
+}
+
+
+// has supports getting a specific parameter
+func (rig *Rig) HasGetParm(parm uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_get_parm(C.ulong(parm))
+	res = uint32(c)
+	return res, checkError(0, err, "has_get_parm")
+}
+
+// has supports setting a specific parameter
+func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
+	var c C.ulong
+	c, err = C.has_set_parm(C.ulong(parm))
+	res = uint32(c)
+	return res, checkError(0, err, "has_set_parm")
+}
+
+
 
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){

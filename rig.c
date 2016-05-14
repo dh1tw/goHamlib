@@ -207,6 +207,43 @@ int get_ts(int vfo, int *ts)
 	return res;
 }
 
+unsigned long has_get_level(unsigned long level)
+{
+	unsigned long res = rig_has_get_level(myrig, level);
+	return res;
+}
+
+unsigned long has_set_level(unsigned long level)
+{
+	unsigned long res = rig_has_set_level(myrig, level);
+	return res;
+}
+
+unsigned long has_get_func(unsigned long func)
+{
+	unsigned long res = rig_has_get_func(myrig, func);
+	return res;
+}
+
+unsigned long has_set_func(unsigned long func)
+{
+	unsigned long res = rig_has_set_func(myrig, func);
+	return res;
+}
+
+unsigned long has_get_parm(unsigned long parm)
+{
+	unsigned long res = rig_has_get_parm(myrig, parm);
+	return res;
+}
+
+unsigned long has_set_parm(unsigned long parm)
+{
+	unsigned long res = rig_has_set_parm(myrig, parm);
+	return res;
+}
+
+
 void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);

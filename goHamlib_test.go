@@ -212,7 +212,52 @@ func TestFT950(t *testing.T){
                 log.Printf("Tuning step: %vHz", ts)
         }
 
+	// Has Set / Get Levels
+	if level, err := rig.HasGetLevel(goHamlib.RIG_LEVEL_ATT); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("can get Level ATT: %t", level==goHamlib.RIG_LEVEL_ATT)
+	}
  	time.Sleep(time.Second*2)
+
+	if res, err := rig.HasSetLevel(goHamlib.RIG_LEVEL_IF); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("can set Level IF: %t", res==goHamlib.RIG_LEVEL_IF)
+	}
+ 	time.Sleep(time.Second*2)
+
+	// Has set / get Functions
+        if res, err := rig.HasGetFunc(goHamlib.RIG_FUNC_LOCK); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("can get Function LOCK: %t", res==goHamlib.RIG_FUNC_LOCK)
+        }
+        time.Sleep(time.Second*2)
+
+        if res, err := rig.HasSetFunc(goHamlib.RIG_FUNC_ABM); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("can set Function ABM: %t", res==goHamlib.RIG_FUNC_ABM)
+        }
+        time.Sleep(time.Second*2)
+
+        // Has set / get Parameters
+        if res, err := rig.HasGetParm(goHamlib.RIG_PARM_APO); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("can get Parameter APO: %t", res==goHamlib.RIG_PARM_APO)
+        }
+        time.Sleep(time.Second*2)
+
+        if res, err := rig.HasSetParm(goHamlib.RIG_PARM_TIME); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("can set Parameter TIME: %t", res==goHamlib.RIG_PARM_TIME)
+        }
+        time.Sleep(time.Second*2)
+
+
 
 //	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
 
