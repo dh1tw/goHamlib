@@ -2,6 +2,9 @@ package goHamlib
 
 import (
 		"fmt"
+		"C"
+		"errors"
+//		"log"
 )
 
 const (
@@ -256,6 +259,26 @@ type HamlibError struct{
 	Errorcode	int
 	Description	string
 }
+
+func CIntToBool(myInt C.int) (bool, error){
+	i := int(myInt)
+	if i == 0 {
+		return false, nil
+	} else if i == 1 {
+		return true, nil
+	}
+	return false, errors.New("Unable to convert C.int to bool")
+}
+
+func BoolToCint(myBool bool) (C.int, error){
+	if myBool == true {
+		return C.int(1), nil
+	} else if myBool == false {
+		return C.int(0), nil
+	}
+	return C.int(0), errors.New("Unable to convert bool into C.int32")
+}
+
 
 func (e *HamlibError) Error() string{
 	switch e.Errorcode{

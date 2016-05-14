@@ -151,7 +151,7 @@ func TestFT950(t *testing.T){
 	}
 
 	time.Sleep(time.Second)
-
+/*
 	// rig.SetVfo(goHamlib.RIG_VFO_MAIN)
 
 	// set split on VFOB - same mode and pb as VFO A
@@ -177,7 +177,7 @@ func TestFT950(t *testing.T){
 	} else {
 		log.Printf("Split is: %v on VFO: %v", split, txVfo)
 	}
-
+*/
 	time.Sleep(time.Second)
 
 	// get Rig Info
@@ -299,6 +299,28 @@ func TestFT950(t *testing.T){
 	} else {
 		log.Printf("Key Speed: %v", value)
 	}
+
+
+	// Get Function - check if Monitor is on 
+	if value, err := rig.GetFunc(goHamlib.RIG_VFO_A, goHamlib.RIG_FUNC_LOCK); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Monitor on: %t", value)
+	}
+
+	// Turn Monitor on
+	if err := rig.SetFunc(goHamlib.RIG_VFO_CURR, goHamlib.RIG_FUNC_LOCK, true); err != nil{
+		log.Println(err)
+	} else {
+		log.Printf("Set monitor on");
+	}
+
+        // Get Function - verify that monitor has been turned on
+        if value, err := rig.GetFunc(goHamlib.RIG_VFO_CURR, goHamlib.RIG_FUNC_LOCK); err != nil{
+                log.Println(err)
+        } else {
+                log.Printf("Monitor on: %t", value)
+        }
 
 
 

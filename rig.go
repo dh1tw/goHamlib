@@ -48,6 +48,8 @@ extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
 extern int get_level(int vfo, unsigned long level, int *value);
 extern int set_level(int vfo, unsigned long level, int value);
+extern int get_func(int vfo, unsigned long function, int *value);
+extern int set_func(int vfo, unsigned long function, int value);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -56,7 +58,7 @@ extern int cleanup_rig();
 import "C"
 
 import (
-	//"log"
+	"log"
 )
 
 // Initialize Rig
@@ -342,11 +344,6 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
 	return res, checkError(0, err, "has_set_parm")
 }
 
-//returning int: IF, CWPITCH, KEYSPD, NOTCHF, AGC, BKINDL, METER, STRENGTH
-//returning float: AF, RF, NR, RFPOWER, MICGAIN, COMP, VOXGAIN, ANTIVOX, SWR, ALC       
-//returning char: 
-//unclear: RAWSTR
-
 //get Level
 func (rig *Rig) GetLevel(vfo int32, level uint32) (value int32, err error){
 	var l C.int
@@ -362,6 +359,29 @@ func (rig *Rig) SetLevel(vfo int32, level uint32, value int32) error{
 	return checkError(res, err, "set_level")
 }
 
+//get Function
+func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error){
+	var v C.int
+	var res C.int
+	res, err = C.get_func(C.int(vfo), C.ulong(function), &v)
+	log.Println("returned: ", v)
+	value, err2 := CIntToBool(v)
+	if err2 != nil{
+		return value, checkError(0, err2, "get_func")
+	}
+	return value, checkError(res, err, "get_func")
+}
+
+//set Function
+func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
+	var v C.int
+	v, err := BoolToCint(value)
+	if err != nil{
+		return checkError(0, err, "set_func")
+	}
+	res, err := C.set_func(C.int(vfo), C.ulong(function), v)
+	return checkError(res, err, "set_func")
+}
 
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){

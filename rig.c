@@ -327,8 +327,19 @@ int set_level(int vfo, unsigned long level, int value)
 	
 	int res = rig_set_level(myrig, vfo, level, v);
 	return res;
+}
+ 
+int get_func(int vfo, unsigned long function, int *value)
+{
+	int res = rig_get_func(myrig, vfo, function, value);
+	return res;
 } 
 
+int set_func(int vfo, unsigned long function, int value)
+{
+	int res = rig_set_func(myrig, vfo, function, value);
+	return res;
+}
 
 void set_debug_level(int debug_level)
 {
