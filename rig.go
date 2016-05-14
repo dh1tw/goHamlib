@@ -50,6 +50,8 @@ extern int get_level(int vfo, unsigned long level, int *value);
 extern int set_level(int vfo, unsigned long level, int value);
 extern int get_func(int vfo, unsigned long function, int *value);
 extern int set_func(int vfo, unsigned long function, int value);
+extern int get_parm(unsigned long parm, int *value);
+extern int set_parm(unsigned long parm, int value);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -58,7 +60,7 @@ extern int cleanup_rig();
 import "C"
 
 import (
-	"log"
+//	"log"
 )
 
 // Initialize Rig
@@ -364,9 +366,8 @@ func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error){
 	var v C.int
 	var res C.int
 	res, err = C.get_func(C.int(vfo), C.ulong(function), &v)
-	log.Println("returned: ", v)
 	value, err2 := CIntToBool(v)
-	if err2 != nil{
+	if err2 != nil{ //not so nice...
 		return value, checkError(0, err2, "get_func")
 	}
 	return value, checkError(res, err, "get_func")
@@ -382,6 +383,23 @@ func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
 	res, err := C.set_func(C.int(vfo), C.ulong(function), v)
 	return checkError(res, err, "set_func")
 }
+
+//get Paramter
+func (rig *Rig) GetParm(vfo int32, parm uint32) (value int32, err error){
+	var p C.int
+	var res C.int
+	res, err = C.get_parm(C.ulong(parm), &p)
+	value = int32(p)
+	return value, checkError(res, err, "get_parm")
+}
+
+//set Parameter
+func (rig *Rig) SetParm(vfo int32, parm uint32, value int32) error{
+	res, err := C.set_parm(C.ulong(parm), C.int(value))
+	return checkError(res, err, "set_parm")
+}
+
+
 
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){

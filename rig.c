@@ -279,7 +279,7 @@ int get_level(int vfo, unsigned long level, int *value)
 			break;
 		default: 
 			*value = 0;
-			printf("Unknown Level in 'get_level_'; Conversion not possible");
+			printf("Unknown Level in 'get_level'; Conversion not possible");
 			return RIG_EINVAL;
 	}
 
@@ -340,6 +340,61 @@ int set_func(int vfo, unsigned long function, int value)
 	int res = rig_set_func(myrig, vfo, function, value);
 	return res;
 }
+
+//couldn't find an example to check this function properly
+//it might be necessary to cast return values to float or char*
+int get_parm(unsigned long parm, int *value)
+{	
+	value_t v;
+	int res = rig_get_parm(myrig, parm, &v);
+
+	switch(parm) {
+		case RIG_PARM_NONE:
+		case RIG_PARM_ANN:
+		case RIG_PARM_APO:
+		case RIG_PARM_BACKLIGHT:
+		case RIG_PARM_BEEP:
+		case RIG_PARM_TIME:
+		case RIG_PARM_BAT:
+		case RIG_PARM_KEYLIGHT:
+			*value = (int)v.i;
+			break;
+		default: 
+			*value = 0;
+			printf("Unknown Parameter in 'get_param'; Conversion not possible");
+			return RIG_EINVAL;
+	}
+
+	return res;
+} 
+
+//couldn't find an example to check this function properly
+//it might be necessary to cast return values to float or char*
+int set_parm(unsigned long parm, int value)
+{	
+	value_t v;
+
+	switch(parm) {
+		case RIG_PARM_NONE:
+		case RIG_PARM_ANN:
+		case RIG_PARM_APO:
+		case RIG_PARM_BACKLIGHT:
+		case RIG_PARM_BEEP:
+		case RIG_PARM_TIME:
+		case RIG_PARM_BAT:
+		case RIG_PARM_KEYLIGHT:
+			v.i = (int) value;
+			break;
+		default: 
+			printf("Unknown Parameter in 'set_param'; Conversion not possible");
+			return RIG_EINVAL;
+	}
+	
+	int res = rig_set_parm(myrig, parm, v);
+	return res;
+}
+
+
 
 void set_debug_level(int debug_level)
 {
