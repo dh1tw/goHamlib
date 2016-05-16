@@ -322,7 +322,12 @@ func TestFT950(t *testing.T){
                 log.Printf("Monitor on: %t", value)
         }
 
-
+	if err := rig.GetCaps(); err != nil{
+		log.Println("Couldn't load all caps; Check log")
+	}
+	log.Printf("Max RIT: %vHz", rig.Caps.MaxRit)
+	log.Printf("Max XIT: %vHz", rig.Caps.MaxXit)
+	log.Printf("Max IF Shift: %vHz", rig.Caps.MaxIfShift)
 
 	time.Sleep(time.Second*2)
 

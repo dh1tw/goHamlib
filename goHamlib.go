@@ -249,8 +249,20 @@ type Port_t struct{
 	Handshake	int
 }
 
+type Caps_t struct{
+	PreampLevels		[]int32
+	AttenuatorLevels	[]int32
+	MaxRit			int
+	MaxXit			int
+	MaxIfShift		int
+	VfoOps			[]int32
+	TargetableVfos		[]int32
+	Filters			map[int][]int //mode + List of supported filter bandwidths
+}
+
 type Rig struct{
 	port	Port_t
+	Caps	Caps_t
 }
 
 

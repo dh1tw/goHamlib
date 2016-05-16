@@ -394,6 +394,23 @@ int set_parm(unsigned long parm, int value)
 	return res;
 }
 
+int get_caps_max_rit(int *rit)
+{
+	*rit = myrig->caps->max_rit;
+	return RIG_OK;
+}
+
+int get_caps_max_xit(int *xit)
+{
+	*xit = myrig->caps->max_xit;
+	return RIG_OK;
+}
+
+int get_caps_max_if_shift(int *if_shift)
+{
+	*if_shift = myrig->caps->max_ifshift;
+	return RIG_OK;
+}
 
 
 void set_debug_level(int debug_level)

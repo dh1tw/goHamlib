@@ -52,6 +52,9 @@ extern int get_func(int vfo, unsigned long function, int *value);
 extern int set_func(int vfo, unsigned long function, int value);
 extern int get_parm(unsigned long parm, int *value);
 extern int set_parm(unsigned long parm, int value);
+extern int get_caps_max_rit(int *rit);
+extern int get_caps_max_xit(int *xit);
+extern int get_caps_max_if_shift(int *if_shift);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -60,7 +63,8 @@ extern int cleanup_rig();
 import "C"
 
 import (
-//	"log"
+//	"unsafe"
+	"log"
 )
 
 // Initialize Rig
@@ -384,7 +388,7 @@ func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
 	return checkError(res, err, "set_func")
 }
 
-//get Paramter
+//get Parameter
 func (rig *Rig) GetParm(vfo int32, parm uint32) (value int32, err error){
 	var p C.int
 	var res C.int
@@ -399,7 +403,54 @@ func (rig *Rig) SetParm(vfo int32, parm uint32, value int32) error{
 	return checkError(res, err, "set_parm")
 }
 
+//Copy capabilities into Rig->Caps struct
+func (rig *Rig) GetCaps() error{
+	if err := rig.getMaxRit(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getMaxXit(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getMaxIfShift(); err != nil{
+		log.Println(err)
+	}
 
+	return nil
+
+}
+
+//get Capabilities > Max Rit
+func (rig *Rig) getMaxRit() error{
+	var rit C.int
+	res, err := C.get_caps_max_rit(&rit)
+	if checkError(res, err, "get_caps_max_rit") != nil{
+		return checkError(res, err, "get_caps_max_rit")
+	}
+	rig.Caps.MaxRit = int(rit)
+	return nil
+}
+
+//get Capabilities > Max Xit
+func (rig *Rig) getMaxXit() error{
+	var xit C.int
+	res, err := C.get_caps_max_xit(&xit)
+	if checkError(res, err, "get_caps_max_xit") != nil{
+		return checkError(res, err, "get_caps_max_xit")
+	}
+	rig.Caps.MaxXit = int(xit)
+	return nil
+}
+
+//get Capabilities > Max IF Shift
+func (rig *Rig) getMaxIfShift() error{
+	var ifShift C.int
+	res, err := C.get_caps_max_if_shift(&ifShift)
+	if checkError(res, err, "get_caps_max_if_shift") != nil{
+		return checkError(res, err, "get_caps_max_if_shift")
+	}
+	rig.Caps.MaxIfShift = int(ifShift)
+	return nil
+}
 
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){
