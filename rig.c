@@ -243,7 +243,7 @@ unsigned long has_set_parm(unsigned long parm)
 	return res;
 }
 
-int get_level(int vfo, unsigned long level, int *value)
+int get_level(int vfo, unsigned long level, float *value)
 {	
 	value_t v;
 	int res = rig_get_level(myrig, vfo, level, &v);
@@ -260,7 +260,7 @@ int get_level(int vfo, unsigned long level, int *value)
 		case RIG_LEVEL_ANTIVOX:
 		case RIG_LEVEL_SWR:
 		case RIG_LEVEL_ALC:
-			*value = (int) (v.f*100);
+			*value = v.f;
 			break;
 		case RIG_LEVEL_NONE:
 		case RIG_LEVEL_PREAMP:
@@ -275,7 +275,7 @@ int get_level(int vfo, unsigned long level, int *value)
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_STRENGTH:
 		case RIG_LEVEL_RAWSTR:
-			*value = (int)v.i;
+			*value = (float)v.i;
 			break;
 		default: 
 			*value = 0;
@@ -286,7 +286,73 @@ int get_level(int vfo, unsigned long level, int *value)
 	return res;
 } 
 
-int set_level(int vfo, unsigned long level, int value)
+int get_level_gran(unsigned long level, float *step, float *min, float *max)
+{
+	gran_t gran;
+	int found = 0;
+	int i;
+
+	for (i = 0; i < RIG_SETTING_MAX; i++) {
+
+		if (level & rig_idx2setting(i))
+		{
+			gran = myrig->caps->level_gran[i];	
+			found = 1;
+			break;
+		}
+	}
+
+	//return if no gran was found for this level
+	if (found != 1)
+	{
+		return RIG_EINVAL;
+	}
+
+	switch(level) {
+		case RIG_LEVEL_AF:
+		case RIG_LEVEL_RF:
+		case RIG_LEVEL_NR:
+		case RIG_LEVEL_RFPOWER:
+		case RIG_LEVEL_MICGAIN:
+		case RIG_LEVEL_SQL:
+		case RIG_LEVEL_COMP:
+		case RIG_LEVEL_VOXGAIN:
+		case RIG_LEVEL_ANTIVOX:
+		case RIG_LEVEL_SWR:
+		case RIG_LEVEL_ALC:
+			*min = gran.min.f;
+			*max = gran.max.f;
+			*step = gran.step.f;
+			break;
+		case RIG_LEVEL_NONE:
+		case RIG_LEVEL_PREAMP:
+		case RIG_LEVEL_ATT:
+		case RIG_LEVEL_AGC:
+		case RIG_LEVEL_IF:
+		case RIG_LEVEL_CWPITCH:
+		case RIG_LEVEL_KEYSPD:
+		case RIG_LEVEL_NOTCHF:
+		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_BKINDL:
+		case RIG_LEVEL_METER:
+		case RIG_LEVEL_STRENGTH:
+		case RIG_LEVEL_RAWSTR:
+			*min = (float)gran.min.i;
+			*max = (float)gran.max.i;
+			*step = (float)gran.step.i;
+			break;
+		default: 
+			*min = 0;
+			*max = 0;
+			*step = 0;
+			printf("Unknown Level in 'get_level_gran'; Conversion not possible\n");
+			return RIG_EINVAL;
+	}
+	return RIG_OK;
+}
+
+
+int set_level(int vfo, unsigned long level, float value)
 {	
 	value_t v;
 
@@ -302,7 +368,7 @@ int set_level(int vfo, unsigned long level, int value)
 		case RIG_LEVEL_ANTIVOX:
 		case RIG_LEVEL_SWR:
 		case RIG_LEVEL_ALC:
-			v.f = ((float)value/100);
+			v.f = value;
 			break;
 		case RIG_LEVEL_NONE:
 		case RIG_LEVEL_PREAMP:
@@ -342,7 +408,7 @@ int set_func(int vfo, unsigned long function, int value)
 
 //couldn't find an example to check this function properly
 //it might be necessary to cast return values to float or char*
-int get_parm(unsigned long parm, int *value)
+int get_parm(unsigned long parm, float *value)
 {	
 	value_t v;
 	int res = rig_get_parm(myrig, parm, &v);
@@ -356,7 +422,7 @@ int get_parm(unsigned long parm, int *value)
 		case RIG_PARM_TIME:
 		case RIG_PARM_BAT:
 		case RIG_PARM_KEYLIGHT:
-			*value = (int)v.i;
+			*value = (float)v.i;
 			break;
 		default: 
 			*value = 0;
@@ -367,9 +433,54 @@ int get_parm(unsigned long parm, int *value)
 	return res;
 } 
 
+int get_parm_gran(unsigned long parm, float *step, float *min, float *max)
+{
+	gran_t gran;
+	int found = 0;
+	int i;
+
+	for (i = 0; i < RIG_SETTING_MAX; i++) {
+
+		if (parm & rig_idx2setting(i))
+		{
+			gran = myrig->caps->parm_gran[i];	
+			found = 1;
+			break;
+		}
+	}
+
+	//return if no gran was found for this level
+	if (found != 1)
+	{
+		return RIG_EINVAL;
+	}
+
+	switch(parm) {
+		case RIG_PARM_NONE:
+		case RIG_PARM_ANN:
+		case RIG_PARM_APO:
+		case RIG_PARM_BACKLIGHT:
+		case RIG_PARM_BEEP:
+		case RIG_PARM_TIME:
+		case RIG_PARM_BAT:
+		case RIG_PARM_KEYLIGHT:
+			*min = (float)gran.min.i;
+			*max = (float)gran.max.i;
+			*step = (float)gran.step.i;
+			break;
+		default: 
+			*min = 0;
+			*max = 0;
+			*step = 0;
+			printf("Unknown Parameter in 'get_parm_gran'; Conversion not possible\n");
+			return RIG_EINVAL;
+	}
+	return RIG_OK;
+}
+
 //couldn't find an example to check this function properly
 //it might be necessary to cast return values to float or char*
-int set_parm(unsigned long parm, int value)
+int set_parm(unsigned long parm, float value)
 {	
 	value_t v;
 

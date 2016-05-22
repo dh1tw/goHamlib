@@ -46,12 +46,14 @@ extern unsigned long has_get_func(unsigned long function);
 extern unsigned long has_set_func(unsigned long function);
 extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
-extern int get_level(int vfo, unsigned long level, int *value);
-extern int set_level(int vfo, unsigned long level, int value);
+extern int get_level(int vfo, unsigned long level, float *value);
+extern int set_level(int vfo, unsigned long level, float value);
+extern int get_level_gran(unsigned long level, float *step, float *min, float *max);
 extern int get_func(int vfo, unsigned long function, int *value);
 extern int set_func(int vfo, unsigned long function, int value);
-extern int get_parm(unsigned long parm, int *value);
-extern int set_parm(unsigned long parm, int value);
+extern int get_parm(unsigned long parm, float *value);
+extern int set_parm(unsigned long parm, float value);
+extern int get_parm_gran(unsigned long parm, float *step, float *min, float *max);
 extern int get_caps_max_rit(int *rit);
 extern int get_caps_max_xit(int *xit);
 extern int get_caps_max_if_shift(int *if_shift);
@@ -359,18 +361,32 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
 }
 
 //get Level
-func (rig *Rig) GetLevel(vfo int32, level uint32) (value int32, err error){
-	var l C.int
+func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error){
+	var v C.float
 	var res C.int
-	res, err = C.get_level(C.int(vfo), C.ulong(level), &l)
-	value = int32(l)
+	res, err = C.get_level(C.int(vfo), C.ulong(level), &v)
+	value = float32(v)
 	return value, checkError(res, err, "get_level")
 }
 
 //set Level
-func (rig *Rig) SetLevel(vfo int32, level uint32, value int32) error{
-	res, err := C.set_level(C.int(vfo), C.ulong(level), C.int(value))
+func (rig *Rig) SetLevel(vfo int32, level uint32, value float32) error{
+	res, err := C.set_level(C.int(vfo), C.ulong(level), C.float(value))
 	return checkError(res, err, "set_level")
+}
+
+//Get granularity (stepsize, minimum, maximum) for a Level
+func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float32, err error){
+	var cStep C.float
+	var cMin C.float
+	var cMax C.float
+
+	res, err := C.get_level_gran(C.ulong(level), &cStep, &cMin, &cMax)
+	if checkError(res, err, "get_level_gran") != nil{
+		return 0, 0, 0, err
+	}
+
+	return float32(cStep), float32(cMin), float32(cMax), nil
 }
 
 //get Function
@@ -397,19 +413,34 @@ func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
 }
 
 //get Parameter
-func (rig *Rig) GetParm(vfo int32, parm uint32) (value int32, err error){
-	var p C.int
+func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error){
+	var v C.float
 	var res C.int
-	res, err = C.get_parm(C.ulong(parm), &p)
-	value = int32(p)
+	res, err = C.get_parm(C.ulong(parm), &v)
+	value = float32(v)
 	return value, checkError(res, err, "get_parm")
 }
 
 //set Parameter
-func (rig *Rig) SetParm(vfo int32, parm uint32, value int32) error{
-	res, err := C.set_parm(C.ulong(parm), C.int(value))
+func (rig *Rig) SetParm(vfo int32, parm uint32, value float32) error{
+	res, err := C.set_parm(C.ulong(parm), C.float(value))
 	return checkError(res, err, "set_parm")
 }
+
+//Get granularity (stepsize, minimum, maximum) for a Parameter
+func (rig *Rig) GetParmGran(parm uint32) (step float32, min float32, max float32, err error){
+	var cStep C.float
+	var cMin C.float
+	var cMax C.float
+
+	res, err := C.get_parm_gran(C.ulong(parm), &cStep, &cMin, &cMax)
+	if checkError(res, err, "get_parm_gran") != nil{
+		return 0, 0, 0, err
+	}
+
+	return float32(cStep), float32(cMin), float32(cMax), nil
+}
+
 
 //Copy capabilities into Rig->Caps struct
 func (rig *Rig) GetCaps() error{
@@ -654,73 +685,97 @@ func (rig *Rig) getSetFunctions() error{
 
 //get Capabilities > List of supported Levels that can be read
 func (rig *Rig) getGetLevels() error{
-	var levelList []string
+	var levelList Values
 
 	for l, lStr := range LevelStrMap {
 		if res, err := rig.HasGetLevel(l); err != nil{
 			return err
 		} else {
 			if res > 0{
-				levelList = append(levelList, lStr)
+				var level Value_t
+				level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
+				if err != nil {
+					return err
+				}
+				level.Name = lStr
+				levelList = append(levelList, level)
 			}
 		}
 	}
-	sort.Strings(levelList)
+	sort.Sort(levelList)
 	rig.Caps.GetLevels = levelList
 	return nil
 }
 
 //get Capabilities > List of supported Levels that can be set
 func (rig *Rig) getSetLevels() error{
-	var levelList []string
+	var levelList Values
 
 	for l, lStr := range LevelStrMap {
-		if res, err := rig.HasSetLevel(l); err != nil{
+		if res, err := rig.HasGetLevel(l); err != nil{
 			return err
 		} else {
 			if res > 0{
-				levelList = append(levelList, lStr)
+				var level Value_t
+				level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
+				if err != nil {
+					return err
+				}
+				level.Name = lStr
+				levelList = append(levelList, level)
 			}
 		}
 	}
-	sort.Strings(levelList)
+	sort.Sort(levelList)
 	rig.Caps.SetLevels = levelList
 	return nil
 }
 
 //get Capabilities > List of supported Parameters that can be read
 func (rig *Rig) getGetParameter() error{
-	var paramList []string
+	var parmList Values
 
-	for p, pStr := range ParamStrMap {
+	for p, pStr := range ParmStrMap {
 		if res, err := rig.HasGetParm(p); err != nil{
 			return err
 		} else {
 			if res > 0{
-				paramList = append(paramList, pStr)
+				var parm Value_t
+				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
+				if err != nil {
+					return err
+				}
+				parm.Name = pStr
+				parmList = append(parmList, parm)
 			}
 		}
 	}
-	sort.Strings(paramList)
-	rig.Caps.GetParameter = paramList
+	sort.Sort(parmList)
+	rig.Caps.GetParameter = parmList
 	return nil
 }
 
 //get Capabilities > List of supported Parameters that can be set
 func (rig *Rig) getSetParameter() error{
-	var paramList []string
+	var parmList Values
 
-	for p, pStr := range ParamStrMap {
-		if res, err := rig.HasGetParm(p); err != nil{
+	for p, pStr := range ParmStrMap {
+		if res, err := rig.HasSetParm(p); err != nil{
 			return err
 		} else {
 			if res > 0{
-				paramList = append(paramList, pStr)
+				var parm Value_t
+				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
+				if err != nil {
+					return err
+				}
+				parm.Name = pStr
+				parmList = append(parmList, parm)
 			}
 		}
 	}
-	sort.Strings(paramList)
-	rig.Caps.SetParameter = paramList
+	sort.Sort(parmList)
+	rig.Caps.SetParameter = parmList
 	return nil
 }
 

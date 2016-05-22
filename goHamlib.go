@@ -290,7 +290,7 @@ const (
 	RIG_PARM_KEYLIGHT = 1<<7
 )
 
-var ParamStrMap = map[uint32]string{
+var ParmStrMap = map[uint32]string{
         RIG_PARM_NONE: "",
         RIG_PARM_ANN: "ANN",
         RIG_PARM_APO: "APO",
@@ -396,6 +396,15 @@ type Port_t struct{
 	Handshake	int
 }
 
+type Value_t struct{
+	Name		string
+	Step		float32
+	Min		float32
+	Max		float32
+}
+
+type Values []Value_t
+
 type Caps_t struct{
 	Preamps			[]int
 	Attenuators		[]int
@@ -407,10 +416,10 @@ type Caps_t struct{
 	Modes			[]string
 	GetFunctions		[]string
 	SetFunctions		[]string
-	GetLevels		[]string
-	SetLevels		[]string
-	GetParameter		[]string
-	SetParameter		[]string
+	GetLevels		Values
+	SetLevels		Values
+	GetParameter		Values
+	SetParameter		Values
 	TargetableVfos		[]int
 	Filters			map[int][]int //mode + List of supported filter bandwidths
 }
@@ -425,6 +434,21 @@ type HamlibError struct{
 	Operation	string
 	Errorcode	int
 	Description	string
+}
+
+//implement interface for Sorting Levels
+func (slice Values) Len() int {
+	return len(slice)
+}
+
+//implement interface for Sorting Levels
+func (slice Values) Less(i, j int) bool{
+	return slice[i].Name < slice[j].Name
+}
+
+//implement interface for Sorting Levels
+func (slice Values) Swap (i, j int){
+	slice[i], slice[j] = slice[j], slice[i]
 }
 
 func CIntToBool(myInt C.int) (bool, error){

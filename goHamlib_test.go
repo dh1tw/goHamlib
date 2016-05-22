@@ -272,7 +272,7 @@ func TestFT950(t *testing.T){
 
 	// Set Level (with conversion to float)
 	pwr := random.Intn(100)
-	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER, int32(pwr)); err != nil{
+	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER, float32(pwr)); err != nil{
 		log.Println(err)
 	} else {
 		log.Printf("Trying to set Power to: %v%%", pwr)
@@ -280,7 +280,7 @@ func TestFT950(t *testing.T){
 
  	// Set Level (integer)
 	speed := random.Intn(40)
-	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD, int32(speed)); err != nil{
+	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD, float32(speed)); err != nil{
 		log.Println(err)
 	} else {
 		log.Printf("Trying to set Key Speed to: %v WPM", speed)
