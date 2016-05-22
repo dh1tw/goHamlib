@@ -55,6 +55,12 @@ extern int set_parm(unsigned long parm, int value);
 extern int get_caps_max_rit(int *rit);
 extern int get_caps_max_xit(int *xit);
 extern int get_caps_max_if_shift(int *if_shift);
+extern int* get_caps_attenuator_list_pointer_and_length(int *length);
+extern int* get_caps_preamp_list_pointer_and_length(int *length);
+extern int get_supported_vfos(int *vfo_list);
+extern int get_supported_vfo_operations(int *vfo_ops);
+extern int get_supported_modes(int *modes);
+extern int get_int_from_array(int *array, int *el, int index);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
@@ -65,6 +71,8 @@ import "C"
 import (
 //	"unsafe"
 	"log"
+	"sort"
+	//"encoding/hex"
 )
 
 // Initialize Rig
@@ -414,6 +422,39 @@ func (rig *Rig) GetCaps() error{
 	if err := rig.getMaxIfShift(); err != nil{
 		log.Println(err)
 	}
+	if err := rig.getAttenuators(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getPreamps(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getVfos(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getVfoOperations(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getModes(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getGetFunctions(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getSetFunctions(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getGetLevels(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getSetLevels(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getGetParameter(); err != nil{
+		log.Println(err)
+	}
+	if err := rig.getSetParameter(); err != nil{
+		log.Println(err)
+	}
 
 	return nil
 
@@ -449,6 +490,237 @@ func (rig *Rig) getMaxIfShift() error{
 		return checkError(res, err, "get_caps_max_if_shift")
 	}
 	rig.Caps.MaxIfShift = int(ifShift)
+	return nil
+}
+
+//get Capabilities > List of supported Attenuators
+func (rig *Rig) getAttenuators() error{
+
+	var att_array *C.int
+	var length C.int
+	var el C.int
+
+	att_array ,err := C.get_caps_attenuator_list_pointer_and_length(&length)
+	if att_array == nil{
+                return &HamlibError{"getAttenuators", int(RIG_EINTERNAL), "invalid pointer"}
+	}
+	if err != nil{
+		return &Error{"getAttenuators", err}
+	}
+
+	var att []int
+	for i := 0; i< int(length); i++ {
+		C.get_int_from_array(att_array, &el, C.int(i)); 
+
+		if int(el) == 0{
+			break
+		}
+
+		att = append(att, int(el))
+	}
+
+	rig.Caps.Attenuators = att
+	return nil
+}
+
+//get Capabilities > List of supported Preamp Levels
+func (rig *Rig) getPreamps() error{
+
+	var preamp_array *C.int
+	var length C.int
+	var el C.int
+
+	preamp_array ,err := C.get_caps_preamp_list_pointer_and_length(&length)
+	if preamp_array == nil{
+                return &HamlibError{"getPreamp", int(RIG_EINTERNAL), "invalid pointer"}
+	}
+	if err != nil{
+		return &Error{"getPreamp", err}
+	}
+
+	var preamps []int
+	for i := 0; i< int(length); i++ {
+		C.get_int_from_array(preamp_array, &el, C.int(i)); 
+
+		if int(el) == 0{
+			break
+		}
+
+		preamps = append(preamps, int(el))
+	}
+
+	rig.Caps.Preamps = preamps
+	return nil
+}
+
+
+//get Capabilities > List of supported VFOs
+func (rig *Rig) getVfos() error{
+	var vfoClist C.int
+ 	var vfoList []string
+
+	res, err := C.get_supported_vfos(&vfoClist)
+	if checkError(res, err, "get_supported_vfos") != nil {
+		return checkError(res, err, "get_supported_vfos")
+	}
+
+	for vfo, vfoStr := range VfoStrMap {
+		if int(vfoClist) & vfo > 0 {
+			vfoList = append(vfoList, vfoStr)
+		}
+	}
+	sort.Strings(vfoList)
+	rig.Caps.Vfos = vfoList
+	return nil
+}
+
+
+//get Capabilities > List of supported VFO Operations
+func (rig *Rig) getVfoOperations() error{
+	var vfoOpClist C.int
+	var vfoOpList []string
+
+        res, err := C.get_supported_vfo_operations(&vfoOpClist)
+        if checkError(res, err, "get_supported_vfo_operations") != nil {
+                return checkError(res, err, "get_supported_vfo_operations")
+        }
+
+        for op, opStr := range VfoOpStrMap {
+                if int(vfoOpClist) & op > 0 {
+                        vfoOpList = append(vfoOpList, opStr)
+                }
+        }
+        sort.Strings(vfoOpList)
+        rig.Caps.VfoOperations = vfoOpList
+	return nil
+}
+
+//get Capabilities > List of supported Modes
+func (rig *Rig) getModes() error{
+	var modesClist C.int
+	var modesList []string
+
+        res, err := C.get_supported_modes(&modesClist)
+        if checkError(res, err, "get_supported_modes") != nil {
+                return checkError(res, err, "get_supported_modes")
+        }
+
+        for mode, modeStr := range ModeStrMap {
+                if int(modesClist) & mode > 0 {
+                        modesList = append(modesList, modeStr)
+                }
+        }
+        sort.Strings(modesList)
+        rig.Caps.Modes = modesList
+	return nil
+}
+
+//get Capabilities > List of supported Functions that can be read
+func (rig *Rig) getGetFunctions() error{
+	var funcList []string
+
+	for f, fStr := range FuncStrMap {
+		if res, err := rig.HasGetFunc(f); err != nil{
+			return err
+		} else {
+			if res > 0{
+				funcList = append(funcList, fStr)
+			}
+		}
+	}
+	sort.Strings(funcList)
+	rig.Caps.GetFunctions = funcList
+	return nil
+}
+
+//get Capabilities > List of supported Functions that can be set
+func (rig *Rig) getSetFunctions() error{
+        var funcList []string
+
+        for f, fStr := range FuncStrMap {
+                if res, err := rig.HasSetFunc(f); err != nil{
+                        return err
+                } else {
+                        if res > 0{
+                                funcList = append(funcList, fStr)
+                        }
+                }
+        }
+	sort.Strings(funcList)
+        rig.Caps.SetFunctions = funcList
+        return nil
+}
+
+
+//get Capabilities > List of supported Levels that can be read
+func (rig *Rig) getGetLevels() error{
+	var levelList []string
+
+	for l, lStr := range LevelStrMap {
+		if res, err := rig.HasGetLevel(l); err != nil{
+			return err
+		} else {
+			if res > 0{
+				levelList = append(levelList, lStr)
+			}
+		}
+	}
+	sort.Strings(levelList)
+	rig.Caps.GetLevels = levelList
+	return nil
+}
+
+//get Capabilities > List of supported Levels that can be set
+func (rig *Rig) getSetLevels() error{
+	var levelList []string
+
+	for l, lStr := range LevelStrMap {
+		if res, err := rig.HasSetLevel(l); err != nil{
+			return err
+		} else {
+			if res > 0{
+				levelList = append(levelList, lStr)
+			}
+		}
+	}
+	sort.Strings(levelList)
+	rig.Caps.SetLevels = levelList
+	return nil
+}
+
+//get Capabilities > List of supported Parameters that can be read
+func (rig *Rig) getGetParameter() error{
+	var paramList []string
+
+	for p, pStr := range ParamStrMap {
+		if res, err := rig.HasGetParm(p); err != nil{
+			return err
+		} else {
+			if res > 0{
+				paramList = append(paramList, pStr)
+			}
+		}
+	}
+	sort.Strings(paramList)
+	rig.Caps.GetParameter = paramList
+	return nil
+}
+
+//get Capabilities > List of supported Parameters that can be set
+func (rig *Rig) getSetParameter() error{
+	var paramList []string
+
+	for p, pStr := range ParamStrMap {
+		if res, err := rig.HasGetParm(p); err != nil{
+			return err
+		} else {
+			if res > 0{
+				paramList = append(paramList, pStr)
+			}
+		}
+	}
+	sort.Strings(paramList)
+	rig.Caps.SetParameter = paramList
 	return nil
 }
 

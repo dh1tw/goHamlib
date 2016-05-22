@@ -279,7 +279,7 @@ int get_level(int vfo, unsigned long level, int *value)
 			break;
 		default: 
 			*value = 0;
-			printf("Unknown Level in 'get_level'; Conversion not possible");
+			printf("Unknown Level in 'get_level'; Conversion not possible\n");
 			return RIG_EINVAL;
 	}
 
@@ -303,7 +303,6 @@ int set_level(int vfo, unsigned long level, int value)
 		case RIG_LEVEL_SWR:
 		case RIG_LEVEL_ALC:
 			v.f = ((float)value/100);
-			printf ("power: %f", v.f);
 			break;
 		case RIG_LEVEL_NONE:
 		case RIG_LEVEL_PREAMP:
@@ -321,7 +320,7 @@ int set_level(int vfo, unsigned long level, int value)
 			v.i = (int) value;
 			break;
 		default: 
-			printf("Unknown Level in 'set_level'; Conversion not possible");
+			printf("Unknown Level in 'set_level'; Conversion not possible\n");
 			return RIG_EINVAL;
 	}
 	
@@ -361,7 +360,7 @@ int get_parm(unsigned long parm, int *value)
 			break;
 		default: 
 			*value = 0;
-			printf("Unknown Parameter in 'get_param'; Conversion not possible");
+			printf("Unknown Parameter in 'get_param'; Conversion not possible\n");
 			return RIG_EINVAL;
 	}
 
@@ -386,7 +385,7 @@ int set_parm(unsigned long parm, int value)
 			v.i = (int) value;
 			break;
 		default: 
-			printf("Unknown Parameter in 'set_param'; Conversion not possible");
+			printf("Unknown Parameter in 'set_param'; Conversion not possible\n");
 			return RIG_EINVAL;
 	}
 	
@@ -412,6 +411,41 @@ int get_caps_max_if_shift(int *if_shift)
 	return RIG_OK;
 }
 
+int* get_caps_attenuator_list_pointer_and_length(int *length)
+{
+	*length = sizeof(myrig->caps->attenuator)/sizeof(int);
+	return myrig->caps->attenuator;
+}
+
+int* get_caps_preamp_list_pointer_and_length(int *length)
+{
+	*length = sizeof(myrig->caps->preamp)/sizeof(int);
+	return myrig->caps->preamp;
+}
+
+int get_supported_vfos(int *vfo_list)
+{
+	*vfo_list = (int)myrig->state.vfo_list;
+	return RIG_OK;
+}
+
+int get_supported_vfo_operations(int *vfo_ops)
+{
+	*vfo_ops = (int)myrig->caps->vfo_op;
+	return RIG_OK;
+}
+
+int get_supported_modes(int *modes)
+{
+	*modes = (int)myrig->state.mode_list;
+	return RIG_OK;
+}
+
+int get_int_from_array(int *array, int *el, int index)
+{
+	*el = array[index];
+	return RIG_OK;
+}
 
 void set_debug_level(int debug_level)
 {

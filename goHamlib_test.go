@@ -325,10 +325,21 @@ func TestFT950(t *testing.T){
 	if err := rig.GetCaps(); err != nil{
 		log.Println("Couldn't load all caps; Check log")
 	}
+	log.Printf("------ Print Capabilities -------")
 	log.Printf("Max RIT: %vHz", rig.Caps.MaxRit)
 	log.Printf("Max XIT: %vHz", rig.Caps.MaxXit)
 	log.Printf("Max IF Shift: %vHz", rig.Caps.MaxIfShift)
-
+	log.Printf("VFO Preamp Levels: %v", rig.Caps.Preamps)
+	log.Printf("VFO Attenuator Levels: %v", rig.Caps.Attenuators)
+	log.Printf("VFOs: %v", rig.Caps.Vfos)
+	log.Printf("VFO Operations: %v", rig.Caps.VfoOperations)
+	log.Printf("Modes: %v", rig.Caps.Modes)
+	log.Printf("Get Functions: %v", rig.Caps.GetFunctions)
+	log.Printf("Set Functions: %v", rig.Caps.SetFunctions)
+	log.Printf("Get Levels: %v", rig.Caps.GetLevels)
+	log.Printf("Set Levels: %v", rig.Caps.SetLevels)
+	log.Printf("Get Parameter: %v", rig.Caps.GetParameter)
+	log.Printf("Set Parameter: %v", rig.Caps.SetParameter)
 	time.Sleep(time.Second*2)
 
 //	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);

@@ -57,13 +57,31 @@ const (
 	RIG_VFO_CURR = 1<<29
 	RIG_VFO_MEM = 1<<28
 	RIG_VFO_VFO = 1<<27
+//	RIG_VFO_TX_VFO 			//TBD Macro
+	RIG_VFO_TX = RIG_VFO_CURR | RIG_VFO_TX_FLAG
 	RIG_VFO_RX = RIG_VFO_CURR
 	RIG_VFO_MAIN = 1<<26
 	RIG_VFO_SUB = 1<<25
-	RIG_VFO_A = 1<<1
-	RIG_VFO_B = 1<<2
-	RIG_VFO_C = 1<<3
+	RIG_VFO_A = 1<<0
+	RIG_VFO_B = 1<<1
+	RIG_VFO_C = 1<<2
 )
+
+//Map containing Strings for VFOs
+var VfoStrMap = map[int]string{
+	RIG_VFO_NONE: "",
+	RIG_VFO_A: "VFOA",
+	RIG_VFO_B: "VFOB",
+	RIG_VFO_C: "VFOC",
+	RIG_VFO_CURR: "currVFO",
+	RIG_VFO_MEM: "MEM",
+	RIG_VFO_VFO: "VFO",
+	RIG_VFO_TX: "TX",
+//	RIG_VFO_RX: "RX",
+	RIG_VFO_MAIN: "Main",
+	RIG_VFO_SUB: "Sub",
+}
+
 
 //Hamlib Rig Operations
 const (
@@ -83,6 +101,23 @@ const (
 	RIG_OP_TOGGLE = 1<<12
 )
 
+//Map containing Strings for VFO Operations
+var VfoOpStrMap = map[int]string{
+	RIG_OP_NONE: "",
+        RIG_OP_CPY: "CPY",
+        RIG_OP_XCHG: "XCHG",
+        RIG_OP_FROM_VFO: "FROM_VFO",
+        RIG_OP_TO_VFO: "TO_VFO",
+        RIG_OP_MCL: "MCL",
+        RIG_OP_UP: "UP",
+        RIG_OP_DOWN: "DOWN",
+        RIG_OP_BAND_IP: "BAND_UP",
+        RIG_OP_BAND_DOWN: "BAND_DOWN",
+        RIG_OP_LEFT: "LEFT",
+        RIG_OP_RIGHT: "RIGHT",
+        RIG_OP_TUNE: "TUNE",
+	RIG_OP_TOGGLE: "TOGGLE",
+}
 // Hamlib modes
 const (
 	RIG_MODE_NONE = 0
@@ -109,6 +144,35 @@ const (
 	RIG_MODE_FMN = 1<<21
 	RIG_MODE_TESTS_MAX
 )
+
+//Map containing Strings for Modes
+var ModeStrMap = map[int]string{
+        RIG_MODE_NONE: "",
+        RIG_MODE_AM: "AM",
+        RIG_MODE_CW: "CW",
+        RIG_MODE_USB: "USB",
+        RIG_MODE_LSB: "LSB",
+        RIG_MODE_RTTY: "RTTY",
+        RIG_MODE_FM: "FM",
+        RIG_MODE_WFM: "WFM",
+        RIG_MODE_CWR: "CWR",
+        RIG_MODE_RTTYR: "RTTYR",
+        RIG_MODE_AMS: "AMS",
+        RIG_MODE_PKTLSB: "PKTLSB",
+        RIG_MODE_PKTUSB: "PKTUSB",
+        RIG_MODE_PKTFM: "PKTFM",
+        RIG_MODE_ECSSUSB: "ECSSUSB",
+        RIG_MODE_ECSSLSB: "ECSSLSB",
+        RIG_MODE_FAX: "FAX",
+        RIG_MODE_SAM: "SAM",
+        RIG_MODE_SAL: "SAL",
+        RIG_MODE_SAH: "SAH",
+        RIG_MODE_DSB: "DSB",
+        RIG_MODE_FMN: "FMN",
+}
+
+
+
 
 // Hamlib Powerstats
 const (
@@ -178,6 +242,42 @@ const (
 	RIG_LEVEL_STRENGTH = 1<<30
 )
 
+var LevelStrMap = map[uint32]string{
+        RIG_LEVEL_NONE: "",
+        RIG_LEVEL_PREAMP: "PREAMP",
+        RIG_LEVEL_ATT: "ATT",
+        RIG_LEVEL_VOX: "VOX",
+        RIG_LEVEL_AF: "AF",
+        RIG_LEVEL_RF: "RF",
+        RIG_LEVEL_SQL: "SQL",
+        RIG_LEVEL_IF: "IF",
+        RIG_LEVEL_APF: "APF",
+        RIG_LEVEL_NR: "NR",
+        RIG_LEVEL_PBT_IN: "PBT_IN",
+        RIG_LEVEL_PBT_OUT: "PBT_OUT",
+        RIG_LEVEL_CWPITCH: "CWPITCH",
+        RIG_LEVEL_RFPOWER: "RFPOWER",
+        RIG_LEVEL_MICGAIN: "MICGAIN",
+        RIG_LEVEL_KEYSPD: "KEYSPD",
+        RIG_LEVEL_NOTCHF: "NOTCHF",
+        RIG_LEVEL_COMP: "COMP",
+        RIG_LEVEL_AGC: "AGC",
+        RIG_LEVEL_BKINDL: "BKINDL",
+        RIG_LEVEL_BALANCE: "BALANCE",
+        RIG_LEVEL_METER: "METER",
+        RIG_LEVEL_VOXGAIN: "VOXGAIN",
+        //RIG_LEVEL_VOXDELAY = RIG_LEVEL_VOX
+        RIG_LEVEL_ANTIVOX: "ANTIVOX",
+        RIG_LEVEL_SLOPE_LOW: "SLOPE_LOW",
+        RIG_LEVEL_SLOPE_HIGH: "SLOPE_HIGH",
+        RIG_LEVEL_BKIN_DLYMS: "BKIN_DLYMS",
+        RIG_LEVEL_RAWSTR: "RAWSTR",
+        RIG_LEVEL_SQLSTAT: "SQLSTAT",
+        RIG_LEVEL_SWR: "SWR",
+        RIG_LEVEL_ALC: "ALC",
+        RIG_LEVEL_STRENGTH: "STRENGTH",
+}
+
 //Hamlib Params
 const (
 	RIG_PARM_NONE = 0
@@ -189,6 +289,17 @@ const (
 	RIG_PARM_BAT = 1<<6
 	RIG_PARM_KEYLIGHT = 1<<7
 )
+
+var ParamStrMap = map[uint32]string{
+        RIG_PARM_NONE: "",
+        RIG_PARM_ANN: "ANN",
+        RIG_PARM_APO: "APO",
+        RIG_PARM_BACKLIGHT: "BACKLIGHT",
+        RIG_PARM_BEEP: "BEEP",
+        RIG_PARM_TIME: "TIME",
+        RIG_PARM_BAT: "BAT",
+        RIG_PARM_KEYLIGHT: "KEYLIGHT",
+}
 
 //Hamlib Functions
 const (
@@ -227,6 +338,42 @@ const (
 	RIG_FUNC_XIT = 1<<31
 )
 
+var FuncStrMap = map[uint32]string{
+        RIG_FUNC_NONE: "",
+        RIG_FUNC_FAGC: "FAGC",
+        RIG_FUNC_NB: "NB",
+        RIG_FUNC_COMP: "COMP",
+        RIG_FUNC_VOX: "VOX",
+        RIG_FUNC_TONE: "TONE",
+        RIG_FUNC_TSQL: "TSQL",
+        RIG_FUNC_SBKIN: "SBKIN",
+        RIG_FUNC_FBKIN: "FBKIN",
+        RIG_FUNC_ANF: "ANF",
+        RIG_FUNC_NR: "NR",
+        RIG_FUNC_AIP: "AIP",
+        RIG_FUNC_APF: "APF",
+        RIG_FUNC_MON: "MON",
+        RIG_FUNC_MN: "MN",
+        RIG_FUNC_RF: "RF",
+        RIG_FUNC_ARO: "ARO",
+        RIG_FUNC_LOCK: "LOCK",
+        RIG_FUNC_MUTE: "MUTE",
+        RIG_FUNC_VSC: "VSC",
+        RIG_FUNC_REV: "REV",
+        RIG_FUNC_SQL: "SQL",
+        RIG_FUNC_ABM: "ABM",
+        RIG_FUNC_BC: "BC",
+        RIG_FUNC_MBC: "MBC",
+        RIG_FUNC_RIT: "RIT",
+        RIG_FUNC_AFC: "AFC",
+        RIG_FUNC_SATMODE: "SATMODE",
+        RIG_FUNC_SCOPE: "SCOPE",
+        RIG_FUNC_RESUME: "RESUME",
+        RIG_FUNC_TBURST: "TBURST",
+        RIG_FUNC_TUNER: "TUNER",
+        RIG_FUNC_XIT: "XIT",
+}
+
 //Rig Meter
 const (
 	RIG_METER_NONE = 0
@@ -250,13 +397,21 @@ type Port_t struct{
 }
 
 type Caps_t struct{
-	PreampLevels		[]int32
-	AttenuatorLevels	[]int32
+	Preamps			[]int
+	Attenuators		[]int
 	MaxRit			int
 	MaxXit			int
 	MaxIfShift		int
-	VfoOps			[]int32
-	TargetableVfos		[]int32
+	Vfos			[]string
+	VfoOperations		[]string
+	Modes			[]string
+	GetFunctions		[]string
+	SetFunctions		[]string
+	GetLevels		[]string
+	SetLevels		[]string
+	GetParameter		[]string
+	SetParameter		[]string
+	TargetableVfos		[]int
 	Filters			map[int][]int //mode + List of supported filter bandwidths
 }
 
