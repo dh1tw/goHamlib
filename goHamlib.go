@@ -421,7 +421,7 @@ type Caps_t struct{
 	GetParameter		Values
 	SetParameter		Values
 	TargetableVfos		[]int
-	Filters			map[int][]int //mode + List of supported filter bandwidths
+	Filters			map[string][]int //mode + List of supported filter bandwidths
 }
 
 type Rig struct{

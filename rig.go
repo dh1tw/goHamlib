@@ -62,6 +62,8 @@ extern int* get_caps_preamp_list_pointer_and_length(int *length);
 extern int get_supported_vfos(int *vfo_list);
 extern int get_supported_vfo_operations(int *vfo_ops);
 extern int get_supported_modes(int *modes);
+extern int get_filter_count(int *filter_count);
+extern int get_filter_mode_width(int filter, int *mode, signed long *width);
 extern int get_int_from_array(int *array, int *el, int index);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
@@ -486,6 +488,9 @@ func (rig *Rig) GetCaps() error{
 	if err := rig.getSetParameter(); err != nil{
 		log.Println(err)
 	}
+	if err := rig.getFilters(); err != nil{
+		log.Println(err)
+	}
 
 	return nil
 
@@ -778,6 +783,37 @@ func (rig *Rig) getSetParameter() error{
 	rig.Caps.SetParameter = parmList
 	return nil
 }
+
+func (rig *Rig) getFilters() error{
+	var cfc C.int
+	var cWidth C.long
+	var cMode C.int
+
+	var filterMap map[string][]int
+	filterMap = make(map[string][]int)
+
+	res, err := C.get_filter_count(&cfc)
+	if checkError(res, err, "get_filter_count") != nil{
+		return checkError(res, err, "get_filter_count")
+	}
+	log.Printf("Total amount of Filters: %v", int(cfc))
+
+	for i:= 0; i < int(cfc); i++{
+		res, err = C.get_filter_mode_width(C.int(i), &cMode, &cWidth)
+		if checkError(res, err, "") != nil{
+			return checkError(res, err, "get_filter_mode_width")
+		}
+                for mode, modeStr := range ModeStrMap {
+			if int(cMode) & mode > 0 {
+			        filterMap[modeStr] = append(filterMap[modeStr], int(cWidth))
+			}
+		}
+        }
+
+	rig.Caps.Filters = filterMap
+	return nil
+}
+
 
 // Set Debug level
 func (rig *Rig) SetDebugLevel(dbgLevel int){

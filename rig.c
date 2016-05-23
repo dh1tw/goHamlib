@@ -552,6 +552,24 @@ int get_supported_modes(int *modes)
 	return RIG_OK;
 }
 
+int get_filter_count(int *filter_count)
+{
+	int i;
+	for (i=0; i<FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
+	{
+		*filter_count += 1;
+	}
+	return RIG_OK;
+}
+
+int get_filter_mode_width(int filter, int *mode, signed long *width)
+{
+	*mode = myrig->caps->filters[filter].modes;	
+	*width = myrig->caps->filters[filter].width;
+
+	return RIG_OK;
+} 
+
 int get_int_from_array(int *array, int *el, int index)
 {
 	*el = array[index];

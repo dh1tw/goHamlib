@@ -340,6 +340,7 @@ func TestFT950(t *testing.T){
 	log.Printf("Set Levels: %v", rig.Caps.SetLevels)
 	log.Printf("Get Parameter: %v", rig.Caps.GetParameter)
 	log.Printf("Set Parameter: %v", rig.Caps.SetParameter)
+	log.Printf("Filters: %v", rig.Caps.Filters)
 	time.Sleep(time.Second*2)
 
 //	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
