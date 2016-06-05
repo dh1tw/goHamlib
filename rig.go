@@ -46,6 +46,8 @@ extern unsigned long has_get_func(unsigned long function);
 extern unsigned long has_set_func(unsigned long function);
 extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
+extern int get_conf(char *token, char* val);
+extern int set_conf(char *token, char *val);
 extern int get_level(int vfo, unsigned long level, float *value);
 extern int set_level(int vfo, unsigned long level, float value);
 extern int get_level_gran(unsigned long level, float *step, float *min, float *max);
@@ -54,6 +56,7 @@ extern int set_func(int vfo, unsigned long function, int value);
 extern int get_parm(unsigned long parm, float *value);
 extern int set_parm(unsigned long parm, float value);
 extern int get_parm_gran(unsigned long parm, float *step, float *min, float *max);
+extern int vfo_op(int vfo, int op);
 extern int get_caps_max_rit(int *rit);
 extern int get_caps_max_xit(int *xit);
 extern int get_caps_max_if_shift(int *if_shift);
@@ -443,6 +446,29 @@ func (rig *Rig) GetParmGran(parm uint32) (step float32, min float32, max float32
 	return float32(cStep), float32(cMin), float32(cMax), nil
 }
 
+//Set configuration token
+func (rig *Rig) SetConf(token string, val string) error {
+	res, err := C.set_conf(C.CString(token), C.CString(val))
+	return checkError(res, err, "set_conf")
+}
+
+//Get configuration token
+func (rig *Rig) GetConf(token string) (val string, err error) {
+	//dirty hack - provide fix length char*
+	//there should be a better way
+	v := C.CString("                                                          ")
+
+	res, err := C.get_conf(C.CString(token), v)
+	val = C.GoString(v)
+
+	return val, checkError(res, err, "get_conf")
+}
+
+//Execute VFO Operation
+func (rig *Rig) VfoOp(vfo int32, op int) error{
+	res, err := C.vfo_op(C.int(vfo), C.int(op))
+	return checkError(res, err, "vfo_op")
+}
 
 //Copy capabilities into Rig->Caps struct
 func (rig *Rig) GetCaps() error{

@@ -386,6 +386,12 @@ const (
 	RIG_METER_VDD = 1<<6
 )
 
+
+//configuration Token
+const (
+	TOK_FAST_SET_CMD = 1
+)
+
 type Port_t struct{
 	RigPortType	int
 	Portname	string
