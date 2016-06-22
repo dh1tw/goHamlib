@@ -69,7 +69,7 @@ const (
 
 //Map containing Strings for VFOs
 var VfoName = map[int]string{
-	RIG_VFO_NONE: "",
+	RIG_VFO_NONE: "VFO_NONE",
 	RIG_VFO_A: "VFOA",
 	RIG_VFO_B: "VFOB",
 	RIG_VFO_C: "VFOC",
@@ -83,16 +83,16 @@ var VfoName = map[int]string{
 }
 
 var VfoValue = map[string]int{
-	"": RIG_VFO_NONE,
-	"VFOA", RIG_VFO_A,
-	"VFOB", RIG_VFO_B,
-	"VFOC", RIG_VFO_C,
-	"VFO_CURRENT", RIG_VFO_CURR,
-	"VFO_MAIN", RIG_VFO_MAIN,
-	"VFO_SUB", RIG_VFO_SUB,
-	"VFO_MEM", RIG_VFO_MEM,
-	"VFO_VFO", RIG_VFO_VFO,
-	"VFO_TX", RIG_VFO_TX, 
+	"VFO_NONE": RIG_VFO_NONE,
+	"VFOA": RIG_VFO_A,
+	"VFOB": RIG_VFO_B,
+	"VFOC": RIG_VFO_C,
+	"VFO_CURRENT": RIG_VFO_CURR,
+	"VFO_MAIN": RIG_VFO_MAIN,
+	"VFO_SUB": RIG_VFO_SUB,
+	"VFO_MEM": RIG_VFO_MEM,
+	"VFO_VFO": RIG_VFO_VFO,
+	"VFO_TX": RIG_VFO_TX, 
 }
 
 //Hamlib Rig Operations
@@ -105,7 +105,7 @@ const (
 	RIG_OP_MCL = 1<<4
 	RIG_OP_UP = 1<<5
 	RIG_OP_DOWN = 1<<6
-	RIG_OP_BAND_IP = 1<<7
+	RIG_OP_BAND_UP = 1<<7
 	RIG_OP_BAND_DOWN = 1<<8
 	RIG_OP_LEFT = 1<<9
 	RIG_OP_RIGHT = 1<<10
@@ -114,7 +114,7 @@ const (
 )
 
 //Map containing Strings for VFO Operations
-var VfoOpStrMap = map[int]string{
+var OperationName = map[int]string{
 	RIG_OP_NONE: "",
         RIG_OP_CPY: "CPY",
         RIG_OP_XCHG: "XCHG",
@@ -123,13 +123,31 @@ var VfoOpStrMap = map[int]string{
         RIG_OP_MCL: "MCL",
         RIG_OP_UP: "UP",
         RIG_OP_DOWN: "DOWN",
-        RIG_OP_BAND_IP: "BAND_UP",
+        RIG_OP_BAND_UP: "BAND_UP",
         RIG_OP_BAND_DOWN: "BAND_DOWN",
         RIG_OP_LEFT: "LEFT",
         RIG_OP_RIGHT: "RIGHT",
         RIG_OP_TUNE: "TUNE",
 	RIG_OP_TOGGLE: "TOGGLE",
 }
+
+var OperationValue = map[string]int{
+	"None" : RIG_OP_NONE,
+	"CPY" : RIG_OP_CPY,
+	"XCHG" : RIG_OP_XCHG,
+	"FROM_VFO": RIG_OP_FROM_VFO,
+	"TO_VFO": RIG_OP_TO_VFO,
+	"MCL": RIG_OP_MCL,
+	"UP": RIG_OP_UP,
+	"DOWN": RIG_OP_DOWN,
+	"BAND_UP": RIG_OP_BAND_UP,
+	"BAND_DOWN": RIG_OP_BAND_DOWN,
+	"LEFT" : RIG_OP_LEFT,
+	"RIGHT" : RIG_OP_RIGHT,
+	"TUNE" : RIG_OP_TUNE,
+	"TOGGLE" : RIG_OP_TOGGLE,
+}
+
 // Hamlib modes
 const (
 	RIG_MODE_NONE = 0
@@ -430,7 +448,7 @@ type Caps_t struct{
 	MaxXit			int
 	MaxIfShift		int
 	Vfos			[]string
-	VfoOperations		[]string
+	Operations		[]string
 	Modes			[]string
 	GetFunctions		[]string
 	SetFunctions		[]string

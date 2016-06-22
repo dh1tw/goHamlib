@@ -490,7 +490,7 @@ func (rig *Rig) GetCaps() error{
 	if err := rig.getVfos(); err != nil{
 		log.Println(err)
 	}
-	if err := rig.getVfoOperations(); err != nil{
+	if err := rig.getOperations(); err != nil{
 		log.Println(err)
 	}
 	if err := rig.getModes(); err != nil{
@@ -626,7 +626,7 @@ func (rig *Rig) getVfos() error{
 		return checkError(res, err, "get_supported_vfos")
 	}
 
-	for vfo, vfoStr := range VfoStrMap {
+	for vfo, vfoStr := range VfoName {
 		if int(vfoClist) & vfo > 0 {
 			vfoList = append(vfoList, vfoStr)
 		}
@@ -638,7 +638,7 @@ func (rig *Rig) getVfos() error{
 
 
 //get Capabilities > List of supported VFO Operations
-func (rig *Rig) getVfoOperations() error{
+func (rig *Rig) getOperations() error{
 	var vfoOpClist C.int
 	var vfoOpList []string
 
@@ -647,13 +647,13 @@ func (rig *Rig) getVfoOperations() error{
                 return checkError(res, err, "get_supported_vfo_operations")
         }
 
-        for op, opStr := range VfoOpStrMap {
+        for op, opStr := range OperationName {
                 if int(vfoOpClist) & op > 0 {
                         vfoOpList = append(vfoOpList, opStr)
                 }
         }
         sort.Strings(vfoOpList)
-        rig.Caps.VfoOperations = vfoOpList
+        rig.Caps.Operations = vfoOpList
 	return nil
 }
 
