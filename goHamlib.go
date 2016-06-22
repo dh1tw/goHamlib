@@ -68,20 +68,32 @@ const (
 )
 
 //Map containing Strings for VFOs
-var VfoStrMap = map[int]string{
+var VfoName = map[int]string{
 	RIG_VFO_NONE: "",
 	RIG_VFO_A: "VFOA",
 	RIG_VFO_B: "VFOB",
 	RIG_VFO_C: "VFOC",
 	RIG_VFO_CURR: "currVFO",
-	RIG_VFO_MEM: "MEM",
-	RIG_VFO_VFO: "VFO",
-	RIG_VFO_TX: "TX",
+	RIG_VFO_MEM: "VFO_MEM",
+	RIG_VFO_VFO: "VFO_VFO",
+	RIG_VFO_TX: "VFO_TX",
 //	RIG_VFO_RX: "RX",
-	RIG_VFO_MAIN: "Main",
-	RIG_VFO_SUB: "Sub",
+	RIG_VFO_MAIN: "VFO_MAIN",
+	RIG_VFO_SUB: "VFO_SUB",
 }
 
+var VfoValue = map[string]int{
+	"": RIG_VFO_NONE,
+	"VFOA", RIG_VFO_A,
+	"VFOB", RIG_VFO_B,
+	"VFOC", RIG_VFO_C,
+	"VFO_CURRENT", RIG_VFO_CURR,
+	"VFO_MAIN", RIG_VFO_MAIN,
+	"VFO_SUB", RIG_VFO_SUB,
+	"VFO_MEM", RIG_VFO_MEM,
+	"VFO_VFO", RIG_VFO_VFO,
+	"VFO_TX", RIG_VFO_TX, 
+}
 
 //Hamlib Rig Operations
 const (
@@ -199,7 +211,7 @@ const (
 	RIG_ANT_5 = 1<<4
 )
 
-// Hamlib Split 
+// Hamlib Split
 const (
 	RIG_SPLIT_OFF = 0
 	RIG_SPLIT_ON = 1
