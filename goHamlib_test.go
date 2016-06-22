@@ -28,6 +28,7 @@ func TestFT950(t *testing.T){
 	var rig goHamlib.Rig
 
 	rig.SetDebugLevel(goHamlib.RIG_DEBUG_NONE)
+	//rig.SetDebugLevel(goHamlib.RIG_DEBUG_TRACE)
 	rig.Init(128)
 	rig.SetPort(p)
 	rig.Open()
@@ -325,6 +326,45 @@ func TestFT950(t *testing.T){
 	if err := rig.GetCaps(); err != nil{
 		log.Println("Couldn't load all caps; Check log")
 	}
+
+	//set & get Configuration tokens
+	log.Println("setting token 'fast_set_commands' to 0")
+	if err := rig.SetConf("fast_set_commands", "0"); err != nil {
+		log.Println(err)
+	}
+
+	if val, err := rig.GetConf("fast_set_commands"); err != nil {
+		log.Println(err)
+	} else {
+		log.Println("GetConf: Token (fast_set_commands), value: ", val)
+	}
+
+	log.Println("setting token 'fast_set_commands' to 1")
+	if err := rig.SetConf("fast_set_commands", "1"); err != nil {
+		log.Println(err)
+	}
+
+	if val, err := rig.GetConf("fast_set_commands"); err != nil {
+		log.Println(err)
+	} else {
+		log.Println("GetConf: Token (fast_set_commands), value: ", val)
+	}
+
+
+	//trying to set invalid value of exisiting token
+	log.Println("setting token 'fast_set_commands' to invalid value 55")
+	if err := rig.SetConf("fast_set_commands", "55"); err != nil {
+		log.Println(err)
+	}
+
+	//trying to set invalid token
+	log.Println("setting token 'my_unknown_token' to 55")
+	if err := rig.SetConf("my_unknown_token", "55"); err != nil {
+		log.Println(err)
+	}
+
+
+
 	log.Printf("------ Print Capabilities -------")
 	log.Printf("Max RIT: %vHz", rig.Caps.MaxRit)
 	log.Printf("Max XIT: %vHz", rig.Caps.MaxXit)

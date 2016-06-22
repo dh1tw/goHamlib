@@ -243,6 +243,30 @@ unsigned long has_set_parm(unsigned long parm)
 	return res;
 }
 
+int get_conf(char* token, char* val)
+{
+	token_t t = rig_token_lookup(myrig, token);
+
+	if (t == RIG_CONF_END){
+		return -RIG_EINVAL;
+	}
+	
+	int res = rig_get_conf(myrig, t, val);
+	return res; 
+}
+
+int set_conf(char* token, char* val)
+{
+	token_t t = rig_token_lookup(myrig, token);
+
+	if (t == RIG_CONF_END){
+		return -RIG_EINVAL;
+	}
+	
+	int res = rig_set_conf(myrig, t, val);
+	return res; 
+}
+
 int get_level(int vfo, unsigned long level, float *value)
 {	
 	value_t v;
@@ -501,6 +525,13 @@ int set_parm(unsigned long parm, float value)
 	}
 	
 	int res = rig_set_parm(myrig, parm, v);
+	return res;
+}
+
+int vfo_op(int vfo, int op)
+{
+	int res;
+	res = rig_vfo_op(myrig, (vfo_t)vfo, (vfo_op_t)op);
 	return res;
 }
 
