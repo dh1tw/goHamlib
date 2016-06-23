@@ -667,7 +667,7 @@ func (rig *Rig) getModes() error{
                 return checkError(res, err, "get_supported_modes")
         }
 
-        for mode, modeStr := range ModeStrMap {
+        for mode, modeStr := range ModeName {
                 if int(modesClist) & mode > 0 {
                         modesList = append(modesList, modeStr)
                 }
@@ -829,7 +829,7 @@ func (rig *Rig) getFilters() error{
 		if checkError(res, err, "") != nil{
 			return checkError(res, err, "get_filter_mode_width")
 		}
-                for mode, modeStr := range ModeStrMap {
+                for mode, modeStr := range ModeName {
 			if int(cMode) & mode > 0 {
 			        filterMap[modeStr] = append(filterMap[modeStr], int(cWidth))
 			}

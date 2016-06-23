@@ -176,7 +176,7 @@ const (
 )
 
 //Map containing Strings for Modes
-var ModeStrMap = map[int]string{
+var ModeName = map[int]string{
         RIG_MODE_NONE: "",
         RIG_MODE_AM: "AM",
         RIG_MODE_CW: "CW",
@@ -199,6 +199,32 @@ var ModeStrMap = map[int]string{
         RIG_MODE_SAH: "SAH",
         RIG_MODE_DSB: "DSB",
         RIG_MODE_FMN: "FMN",
+}
+
+//Map containing Values for Modes
+var ModeValue = map[string]int{
+        "": RIG_MODE_NONE,
+        "AM": RIG_MODE_AM,
+        "CW": RIG_MODE_CW,
+        "USB": RIG_MODE_USB,
+        "LSB": RIG_MODE_LSB,
+        "RTTY": RIG_MODE_RTTY,
+        "FM": RIG_MODE_FM,
+        "WFM": RIG_MODE_WFM,
+        "CWR": RIG_MODE_CWR,
+        "RTTYR": RIG_MODE_RTTYR,
+        "AMS": RIG_MODE_AMS,
+        "PKTLSB": RIG_MODE_PKTLSB,
+        "PKTUSB": RIG_MODE_PKTUSB,
+        "PKTFM": RIG_MODE_PKTFM,
+        "ECSSUSB": RIG_MODE_ECSSUSB,
+        "ECSSLSB": RIG_MODE_ECSSLSB,
+        "FAX": RIG_MODE_FAX,
+        "SAM": RIG_MODE_SAM,
+        "SAL": RIG_MODE_SAL,
+        "SAH": RIG_MODE_SAH,
+        "DSB": RIG_MODE_DSB,
+        "FMN": RIG_MODE_FMN,
 }
 
 
