@@ -227,15 +227,24 @@ var ModeValue = map[string]int{
         "FMN": RIG_MODE_FMN,
 }
 
-
-
-
 // Hamlib Powerstats
 const (
 	RIG_POWER_OFF = 0
 	RIG_POWER_ON = 1
 	RIG_POWER_STANDBY = 2
 )
+
+var RigPowerName = map[int]string{
+	RIG_POWER_OFF: "OFF",
+	RIG_POWER_ON: "ON",
+	RIG_POWER_STANDBY: "STANDBY",
+}
+
+var RigPowerValue = map[string]int{
+	"OFF" : RIG_POWER_OFF,
+	"ON": RIG_POWER_ON,
+	"STANDBY": RIG_POWER_STANDBY,
+}
 
 // Hamlib PTT
 const (
