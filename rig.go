@@ -1,10 +1,10 @@
-// +build linux
+// +build linux,cgo darwin,cgo
 
 package goHamlib
 
 /*
 #cgo CFLAGS: -I /usr/local/lib
-#cgo LDFLAGS: -L /usr/local/lib -lhamlib 
+#cgo LDFLAGS: -L /usr/local/lib -lhamlib
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,13 +14,14 @@ extern int set_port(int rig_port_type, char* portname, int baudrate, int databit
 extern int init_rig(int rig_model);
 extern int open_rig();
 extern int set_vfo(int vfo);
+extern int get_vfo(int *vfo);
 extern int set_freq(int vfo, double freq);
-extern int set_mode(int vfo, int mode, int pb_width);
+extern int set_mode(int vfo, int mode, long pb_width);
 extern int get_passband_narrow(int mode);
 extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
 extern int get_freq(int vfo, double *freq);
-extern int get_mode(int vfo, int *mode, int *pb_width);
+extern int get_mode(int vfo, int *mode, long *pb_width);
 extern int set_ptt(int vfo, int ptt);
 extern int get_ptt(int vfo, int *ptt);
 extern int set_rit(int vfo, int offset);
@@ -30,7 +31,7 @@ extern int get_xit(int vfo, int *offset);
 extern int set_split_freq(int vfo, double tx_freq);
 extern int get_split_freq(int vfo, double *tx_freq);
 extern int set_split_mode(int vfo, int tx_mode, int tx_width);
-extern int get_split_mode(int vfo, int *tx_mode, int *tx_width);
+extern int get_split_mode(int vfo, int *tx_mode, long *tx_width);
 extern int set_split_vfo(int vfo, int split, int tx_vfo);
 extern int get_split_vfo(int vfo, int *split, int *tx_vfo);
 extern int set_powerstat(int status);
@@ -39,7 +40,7 @@ extern const char* get_info();
 extern int set_ant(int vfo, int ant);
 extern int get_ant(int vfo, int *ant);
 extern int set_ts(int vfo, int ts);
-extern int get_ts(int vfo, int *ts);
+extern int get_ts(int vfo, long *ts);
 extern unsigned long has_get_level(unsigned long level);
 extern unsigned long has_set_level(unsigned long level);
 extern unsigned long has_get_func(unsigned long function);
@@ -76,50 +77,67 @@ extern int cleanup_rig();
 import "C"
 
 import (
-//	"unsafe"
+	"errors"
 	"log"
 	"sort"
 	//"encoding/hex"
 )
 
 // Initialize Rig
-func (rig *Rig) Init(rigModel int) error{
+func (rig *Rig) Init(rigModel int) error {
+
+	if rigModel <= 0 {
+		return checkError(RIG_EINVAL, errors.New("invalid rig model"), "init_rig")
+	}
+
 	res, err := C.init_rig(C.int(rigModel))
-	return checkError(res, err, "open_rig")
+	if err != nil {
+		return checkError(res, err, "init_rig")
+	}
+	err = rig.getCaps()
+	return checkError(res, err, "init_rig")
 }
 
 // Set Port of Rig
-func (rig *Rig) SetPort(p Port_t) error{
-	res, err := C.set_port(C.int(p.RigPortType), C.CString(p.Portname) , C.int(p.Baudrate), C.int(p.Databits), C.int(p.Stopbits), C.int(p.Parity), C.int(p.Handshake))
+func (rig *Rig) SetPort(p Port_t) error {
+	res, err := C.set_port(C.int(p.RigPortType), C.CString(p.Portname), C.int(p.Baudrate), C.int(p.Databits), C.int(p.Stopbits), C.int(p.Parity), C.int(p.Handshake))
 	return checkError(res, err, "set_port")
 }
 
 // Open Radio / Port
-func (rig *Rig) Open() error{
+func (rig *Rig) Open() error {
 	res, err := C.open_rig()
 	return checkError(res, err, "open_rig")
 }
 
 // Set default VFO
-func (rig *Rig) SetVfo(vfo int) error{
+func (rig *Rig) SetVfo(vfo int) error {
 	res, err := C.set_vfo(C.int(vfo))
 	return checkError(res, err, "set_vfo")
 }
 
+// Get default VFO
+func (rig *Rig) GetVfo() (vfo int, err error) {
+	var v C.int
+	res, err := C.get_vfo(&v)
+	vfo = int(v)
+	return vfo, checkError(res, err, "get_vfo")
+}
+
 // Set Frequency for a VFO
-func (rig *Rig) SetFreq(vfo int, freq float64) error{
+func (rig *Rig) SetFreq(vfo int, freq float64) error {
 	res, err := C.set_freq(C.int(vfo), C.double(freq))
 	return checkError(res, err, "set_freq")
 }
 
 // Set Mode for a VFO
-func (rig *Rig) SetMode(vfo int, mode int, pb_width int) error{
-	res, err := C.set_mode(C.int(vfo), C.int(mode), C.int(pb_width))
+func (rig *Rig) SetMode(vfo int, mode int, pb_width int) error {
+	res, err := C.set_mode(C.int(vfo), C.int(mode), C.long(pb_width))
 	return checkError(res, err, "set_freq")
 }
 
 // Find the next suitable narrow available filter
-func (rig *Rig) GetPbNarrow(mode int) (int, error){
+func (rig *Rig) GetPbNarrow(mode int) (int, error) {
 	pb, err := C.get_passband_narrow(C.int(mode))
 	pb_width := int(pb)
 
@@ -127,7 +145,7 @@ func (rig *Rig) GetPbNarrow(mode int) (int, error){
 }
 
 // Find the next suitable normal available filter
-func (rig *Rig) GetPbNormal(mode int) (int, error){
+func (rig *Rig) GetPbNormal(mode int) (int, error) {
 	pb, err := C.get_passband_normal(C.int(mode))
 	pb_width := int(pb)
 
@@ -135,7 +153,7 @@ func (rig *Rig) GetPbNormal(mode int) (int, error){
 }
 
 // Find the next suitable wide available filter
-func (rig *Rig) GetPbWide(mode int) (int, error){
+func (rig *Rig) GetPbWide(mode int) (int, error) {
 	pb, err := C.get_passband_wide(C.int(mode))
 	pb_width := int(pb)
 
@@ -143,7 +161,7 @@ func (rig *Rig) GetPbWide(mode int) (int, error){
 }
 
 // Get Frequency from a VFO
-func (rig *Rig) GetFreq(vfo int) (freq float64, err error){
+func (rig *Rig) GetFreq(vfo int) (freq float64, err error) {
 	var f C.double
 	var res C.int
 	res, err = C.get_freq(C.int(vfo), &f)
@@ -152,9 +170,9 @@ func (rig *Rig) GetFreq(vfo int) (freq float64, err error){
 }
 
 // Get Mode and Passband width for a VFO
-func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error){
+func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error) {
 	var m C.int
-	var pb C.int
+	var pb C.long
 	var res C.int
 	res, err = C.get_mode(C.int(vfo), &m, &pb)
 	pb_width = int(pb)
@@ -163,13 +181,13 @@ func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error){
 }
 
 // Set Ptt
-func (rig *Rig) SetPtt(vfo int, ptt int) error{
+func (rig *Rig) SetPtt(vfo int, ptt int) error {
 	res, err := C.set_ptt(C.int(vfo), C.int(ptt))
 	return checkError(res, err, "set_ptt")
 }
 
 // Get Ptt state
-func (rig *Rig) GetPtt(vfo int) (ptt int, err error){
+func (rig *Rig) GetPtt(vfo int) (ptt int, err error) {
 	var p C.int
 	res, err := C.get_ptt(C.int(vfo), &p)
 	ptt = int(p)
@@ -177,13 +195,13 @@ func (rig *Rig) GetPtt(vfo int) (ptt int, err error){
 }
 
 // Set Rit offset value
-func (rig *Rig) SetRit(vfo int, offset int) error{
+func (rig *Rig) SetRit(vfo int, offset int) error {
 	res, err := C.set_rit(C.int(vfo), C.int(offset))
 	return checkError(res, err, "set_rit")
 }
 
 // Get Rit offset value
-func (rig *Rig) GetRit(vfo int) (offset int, err error){
+func (rig *Rig) GetRit(vfo int) (offset int, err error) {
 	var o C.int
 	res, err := C.get_rit(C.int(vfo), &o)
 	offset = int(o)
@@ -191,13 +209,13 @@ func (rig *Rig) GetRit(vfo int) (offset int, err error){
 }
 
 // Set Xit offset value
-func (rig *Rig) SetXit(vfo int, offset int) error{
+func (rig *Rig) SetXit(vfo int, offset int) error {
 	res, err := C.set_xit(C.int(vfo), C.int(offset))
 	return checkError(res, err, "set_xit")
 }
 
 // Get Xit offset value
-func (rig *Rig) GetXit(vfo int) (offset int, err error){
+func (rig *Rig) GetXit(vfo int) (offset int, err error) {
 	var o C.int
 	res, err := C.get_xit(C.int(vfo), &o)
 	offset = int(o)
@@ -205,59 +223,59 @@ func (rig *Rig) GetXit(vfo int) (offset int, err error){
 }
 
 // Set Split Frequency
-func (rig *Rig) SetSplitFreq(vfo int, txFreq float64) error{
+func (rig *Rig) SetSplitFreq(vfo int, txFreq float64) error {
 	res, err := C.set_split_freq(C.int(vfo), C.double(txFreq))
 	return checkError(res, err, "set_split_freq")
 }
 
 // Get Split Frequency
-func (rig *Rig) GetSplitFreq(vfo int) (txFreq float64, err error){
-        var f C.double
-        res, err := C.get_split_freq(C.int(vfo), &f)
-        txFreq = float64(f)
-        return txFreq, checkError(res, err, "get_split_freq")
+func (rig *Rig) GetSplitFreq(vfo int) (txFreq float64, err error) {
+	var f C.double
+	res, err := C.get_split_freq(C.int(vfo), &f)
+	txFreq = float64(f)
+	return txFreq, checkError(res, err, "get_split_freq")
 }
 
 // Set Split Mode
-func (rig *Rig) SetSplitMode(vfo int, txMode int, txWidth int) error{
-        res, err := C.set_split_mode(C.int(vfo), C.int(txMode), C.int(txWidth))
-        return checkError(res, err, "set_split_mode")
+func (rig *Rig) SetSplitMode(vfo int, txMode int, txWidth int) error {
+	res, err := C.set_split_mode(C.int(vfo), C.int(txMode), C.int(txWidth))
+	return checkError(res, err, "set_split_mode")
 }
 
 // Get Split Mode
-func (rig *Rig) GetSplitMode(vfo int) (txMode int, txWidth int, err error){
-        var m C.int
-	var w C.int
-        res, err := C.get_split_mode(C.int(vfo), &m, &w)
-        txMode = int(m)
+func (rig *Rig) GetSplitMode(vfo int) (txMode int, txWidth int, err error) {
+	var m C.int
+	var w C.long
+	res, err := C.get_split_mode(C.int(vfo), &m, &w)
+	txMode = int(m)
 	txWidth = int(w)
-        return txMode, txWidth, checkError(res, err, "get_split_mode")
+	return txMode, txWidth, checkError(res, err, "get_split_mode")
 }
 
 // Set Split Vfo
-func (rig *Rig) SetSplitVfo(vfo int, split int, txVfo int) error{
-        res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(txVfo))
-        return checkError(res, err, "set_split_vfo")
+func (rig *Rig) SetSplitVfo(vfo int, split int, txVfo int) error {
+	res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(txVfo))
+	return checkError(res, err, "set_split_vfo")
 }
 
 // Get Split Vfo
-func (rig *Rig) GetSplitVfo(vfo int) (split int, txVfo int, err error){
-        var s C.int
-        var v C.int
-        res, err := C.get_split_mode(C.int(vfo), &s, &v)
-        split = int(s)
-        txVfo = int(v)
-        return split, txVfo, checkError(res, err, "get_split_vfo")
+func (rig *Rig) GetSplitVfo(vfo int) (split int, txVfo int, err error) {
+	var s C.int
+	var v C.long
+	res, err := C.get_split_mode(C.int(vfo), &s, &v)
+	split = int(s)
+	txVfo = int(v)
+	return split, txVfo, checkError(res, err, "get_split_vfo")
 }
 
 // Set Split (shortcut for SetSplitVfo)
-func (rig *Rig) SetSplit(vfo int, split int) error{
+func (rig *Rig) SetSplit(vfo int, split int) error {
 	res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(RIG_VFO_CURR))
 	return checkError(res, err, "set_split")
 }
 
 // Get Split (shortcut for GetSplitVfo)
-func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error){
+func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error) {
 	var s C.int
 	var t C.int
 	res, err := C.get_split_vfo(C.int(vfo), &s, &t)
@@ -267,13 +285,13 @@ func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error){
 }
 
 // Set Rig Power On/Off/Standby
-func (rig *Rig) SetPowerStat(status int) error{
+func (rig *Rig) SetPowerStat(status int) error {
 	res, err := C.set_powerstat(C.int(status))
 	return checkError(res, err, "set_powerstat")
 }
 
 // Get Rig Power On/Off/Standby
-func (rig *Rig) GetPowerStat() (status int, err error){
+func (rig *Rig) GetPowerStat() (status int, err error) {
 	var s C.int
 	var res C.int
 	res, err = C.get_powerstat(&s)
@@ -282,20 +300,20 @@ func (rig *Rig) GetPowerStat() (status int, err error){
 }
 
 // Get Rig info
-func (rig *Rig) GetInfo() (info string, err error){
+func (rig *Rig) GetInfo() (info string, err error) {
 	i, err := C.get_info()
 	info = C.GoString(i)
 	return info, checkError(C.int(0), err, "get_info")
 }
 
 // Set Antenna
-func (rig *Rig) SetAnt(vfo int, ant int) error{
+func (rig *Rig) SetAnt(vfo int, ant int) error {
 	res, err := C.set_ant(C.int(vfo), C.int(ant))
-	return checkError(res, err, "set_ant") 
+	return checkError(res, err, "set_ant")
 }
 
 // Get Antenna
-func (rig *Rig) GetAnt(vfo int) (ant int, err error){
+func (rig *Rig) GetAnt(vfo int) (ant int, err error) {
 	var a C.int
 	res, err := C.get_ant(C.int(vfo), &a)
 	ant = int(a)
@@ -303,21 +321,21 @@ func (rig *Rig) GetAnt(vfo int) (ant int, err error){
 }
 
 // Set Tuning step
-func (rig *Rig) SetTs(vfo int, ts int) error{
+func (rig *Rig) SetTs(vfo int, ts int) error {
 	res, err := C.set_ts(C.int(vfo), C.int(ts))
 	return checkError(res, err, "set_ts")
 }
 
 // Get Tuning step
-func (rig *Rig) GetTs(vfo int) (ts int, err error){
-	var t C.int
+func (rig *Rig) GetTs(vfo int) (ts int, err error) {
+	var t C.long
 	res, err := C.get_ts(C.int(vfo), &t)
 	ts = int(t)
 	return ts, checkError(res, err, "get_ts")
 }
 
 // has supports getting a specific level
-func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error){
+func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_get_level(C.ulong(level))
 	res = uint32(c)
@@ -325,7 +343,7 @@ func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error){
 }
 
 // has supports setting a specific level
-func (rig *Rig) HasSetLevel(level uint32) (res uint32, err error){
+func (rig *Rig) HasSetLevel(level uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_set_level(C.ulong(level))
 	res = uint32(c)
@@ -333,7 +351,7 @@ func (rig *Rig) HasSetLevel(level uint32) (res uint32, err error){
 }
 
 // has supports getting a specific function
-func (rig *Rig) HasGetFunc(function uint32) (res uint32, err error){
+func (rig *Rig) HasGetFunc(function uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_get_func(C.ulong(function))
 	res = uint32(c)
@@ -341,16 +359,15 @@ func (rig *Rig) HasGetFunc(function uint32) (res uint32, err error){
 }
 
 // has supports setting a specific function
-func (rig *Rig) HasSetFunc(function uint32) (res uint32, err error){
+func (rig *Rig) HasSetFunc(function uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_set_func(C.ulong(function))
 	res = uint32(c)
 	return res, checkError(0, err, "has_set_func")
 }
 
-
 // has supports getting a specific parameter
-func (rig *Rig) HasGetParm(parm uint32) (res uint32, err error){
+func (rig *Rig) HasGetParm(parm uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_get_parm(C.ulong(parm))
 	res = uint32(c)
@@ -358,7 +375,7 @@ func (rig *Rig) HasGetParm(parm uint32) (res uint32, err error){
 }
 
 // has supports setting a specific parameter
-func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
+func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error) {
 	var c C.ulong
 	c, err = C.has_set_parm(C.ulong(parm))
 	res = uint32(c)
@@ -366,7 +383,7 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error){
 }
 
 //get Level
-func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error){
+func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_level(C.int(vfo), C.ulong(level), &v)
@@ -375,19 +392,19 @@ func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error){
 }
 
 //set Level
-func (rig *Rig) SetLevel(vfo int32, level uint32, value float32) error{
+func (rig *Rig) SetLevel(vfo int32, level uint32, value float32) error {
 	res, err := C.set_level(C.int(vfo), C.ulong(level), C.float(value))
 	return checkError(res, err, "set_level")
 }
 
 //Get granularity (stepsize, minimum, maximum) for a Level
-func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float32, err error){
+func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float32, err error) {
 	var cStep C.float
 	var cMin C.float
 	var cMax C.float
 
 	res, err := C.get_level_gran(C.ulong(level), &cStep, &cMin, &cMax)
-	if checkError(res, err, "get_level_gran") != nil{
+	if checkError(res, err, "get_level_gran") != nil {
 		return 0, 0, 0, err
 	}
 
@@ -395,22 +412,22 @@ func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float
 }
 
 //get Function
-func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error){
+func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error) {
 	var v C.int
 	var res C.int
 	res, err = C.get_func(C.int(vfo), C.ulong(function), &v)
 	value, err2 := CIntToBool(v)
-	if err2 != nil{ //not so nice...
+	if err2 != nil { //not so nice...
 		return value, checkError(0, err2, "get_func")
 	}
 	return value, checkError(res, err, "get_func")
 }
 
 //set Function
-func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
+func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error {
 	var v C.int
 	v, err := BoolToCint(value)
-	if err != nil{
+	if err != nil {
 		return checkError(0, err, "set_func")
 	}
 	res, err := C.set_func(C.int(vfo), C.ulong(function), v)
@@ -418,7 +435,7 @@ func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error{
 }
 
 //get Parameter
-func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error){
+func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_parm(C.ulong(parm), &v)
@@ -427,19 +444,19 @@ func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error){
 }
 
 //set Parameter
-func (rig *Rig) SetParm(vfo int32, parm uint32, value float32) error{
+func (rig *Rig) SetParm(vfo int32, parm uint32, value float32) error {
 	res, err := C.set_parm(C.ulong(parm), C.float(value))
 	return checkError(res, err, "set_parm")
 }
 
 //Get granularity (stepsize, minimum, maximum) for a Parameter
-func (rig *Rig) GetParmGran(parm uint32) (step float32, min float32, max float32, err error){
+func (rig *Rig) GetParmGran(parm uint32) (step float32, min float32, max float32, err error) {
 	var cStep C.float
 	var cMin C.float
 	var cMax C.float
 
 	res, err := C.get_parm_gran(C.ulong(parm), &cStep, &cMin, &cMax)
-	if checkError(res, err, "get_parm_gran") != nil{
+	if checkError(res, err, "get_parm_gran") != nil {
 		return 0, 0, 0, err
 	}
 
@@ -465,56 +482,56 @@ func (rig *Rig) GetConf(token string) (val string, err error) {
 }
 
 //Execute VFO Operation
-func (rig *Rig) VfoOp(vfo int32, op int) error{
+func (rig *Rig) VfoOp(vfo int32, op int) error {
 	res, err := C.vfo_op(C.int(vfo), C.int(op))
 	return checkError(res, err, "vfo_op")
 }
 
 //Copy capabilities into Rig->Caps struct
-func (rig *Rig) GetCaps() error{
-	if err := rig.getMaxRit(); err != nil{
+func (rig *Rig) getCaps() error {
+	if err := rig.getMaxRit(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getMaxXit(); err != nil{
+	if err := rig.getMaxXit(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getMaxIfShift(); err != nil{
+	if err := rig.getMaxIfShift(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getAttenuators(); err != nil{
+	if err := rig.getAttenuators(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getPreamps(); err != nil{
+	if err := rig.getPreamps(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getVfos(); err != nil{
+	if err := rig.getVfos(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getOperations(); err != nil{
+	if err := rig.getOperations(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getModes(); err != nil{
+	if err := rig.getModes(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getGetFunctions(); err != nil{
+	if err := rig.getGetFunctions(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getSetFunctions(); err != nil{
+	if err := rig.getSetFunctions(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getGetLevels(); err != nil{
+	if err := rig.getGetLevels(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getSetLevels(); err != nil{
+	if err := rig.getSetLevels(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getGetParameter(); err != nil{
+	if err := rig.getGetParameter(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getSetParameter(); err != nil{
+	if err := rig.getSetParameter(); err != nil {
 		log.Println(err)
 	}
-	if err := rig.getFilters(); err != nil{
+	if err := rig.getFilters(); err != nil {
 		log.Println(err)
 	}
 
@@ -523,10 +540,10 @@ func (rig *Rig) GetCaps() error{
 }
 
 //get Capabilities > Max Rit
-func (rig *Rig) getMaxRit() error{
+func (rig *Rig) getMaxRit() error {
 	var rit C.int
 	res, err := C.get_caps_max_rit(&rit)
-	if checkError(res, err, "get_caps_max_rit") != nil{
+	if checkError(res, err, "get_caps_max_rit") != nil {
 		return checkError(res, err, "get_caps_max_rit")
 	}
 	rig.Caps.MaxRit = int(rit)
@@ -534,10 +551,10 @@ func (rig *Rig) getMaxRit() error{
 }
 
 //get Capabilities > Max Xit
-func (rig *Rig) getMaxXit() error{
+func (rig *Rig) getMaxXit() error {
 	var xit C.int
 	res, err := C.get_caps_max_xit(&xit)
-	if checkError(res, err, "get_caps_max_xit") != nil{
+	if checkError(res, err, "get_caps_max_xit") != nil {
 		return checkError(res, err, "get_caps_max_xit")
 	}
 	rig.Caps.MaxXit = int(xit)
@@ -545,10 +562,10 @@ func (rig *Rig) getMaxXit() error{
 }
 
 //get Capabilities > Max IF Shift
-func (rig *Rig) getMaxIfShift() error{
+func (rig *Rig) getMaxIfShift() error {
 	var ifShift C.int
 	res, err := C.get_caps_max_if_shift(&ifShift)
-	if checkError(res, err, "get_caps_max_if_shift") != nil{
+	if checkError(res, err, "get_caps_max_if_shift") != nil {
 		return checkError(res, err, "get_caps_max_if_shift")
 	}
 	rig.Caps.MaxIfShift = int(ifShift)
@@ -556,25 +573,25 @@ func (rig *Rig) getMaxIfShift() error{
 }
 
 //get Capabilities > List of supported Attenuators
-func (rig *Rig) getAttenuators() error{
+func (rig *Rig) getAttenuators() error {
 
 	var att_array *C.int
 	var length C.int
 	var el C.int
 
-	att_array ,err := C.get_caps_attenuator_list_pointer_and_length(&length)
-	if att_array == nil{
-                return &HamlibError{"getAttenuators", int(RIG_EINTERNAL), "invalid pointer"}
+	att_array, err := C.get_caps_attenuator_list_pointer_and_length(&length)
+	if att_array == nil {
+		return &HamlibError{"getAttenuators", int(RIG_EINTERNAL), "invalid pointer"}
 	}
-	if err != nil{
+	if err != nil {
 		return &Error{"getAttenuators", err}
 	}
 
 	var att []int
-	for i := 0; i< int(length); i++ {
-		C.get_int_from_array(att_array, &el, C.int(i)); 
+	for i := 0; i < int(length); i++ {
+		C.get_int_from_array(att_array, &el, C.int(i))
 
-		if int(el) == 0{
+		if int(el) == 0 {
 			break
 		}
 
@@ -586,25 +603,25 @@ func (rig *Rig) getAttenuators() error{
 }
 
 //get Capabilities > List of supported Preamp Levels
-func (rig *Rig) getPreamps() error{
+func (rig *Rig) getPreamps() error {
 
 	var preamp_array *C.int
 	var length C.int
 	var el C.int
 
-	preamp_array ,err := C.get_caps_preamp_list_pointer_and_length(&length)
-	if preamp_array == nil{
-                return &HamlibError{"getPreamp", int(RIG_EINTERNAL), "invalid pointer"}
+	preamp_array, err := C.get_caps_preamp_list_pointer_and_length(&length)
+	if preamp_array == nil {
+		return &HamlibError{"getPreamp", int(RIG_EINTERNAL), "invalid pointer"}
 	}
-	if err != nil{
+	if err != nil {
 		return &Error{"getPreamp", err}
 	}
 
 	var preamps []int
-	for i := 0; i< int(length); i++ {
-		C.get_int_from_array(preamp_array, &el, C.int(i)); 
+	for i := 0; i < int(length); i++ {
+		C.get_int_from_array(preamp_array, &el, C.int(i))
 
-		if int(el) == 0{
+		if int(el) == 0 {
 			break
 		}
 
@@ -615,11 +632,10 @@ func (rig *Rig) getPreamps() error{
 	return nil
 }
 
-
 //get Capabilities > List of supported VFOs
-func (rig *Rig) getVfos() error{
+func (rig *Rig) getVfos() error {
 	var vfoClist C.int
- 	var vfoList []string
+	var vfoList []string
 
 	res, err := C.get_supported_vfos(&vfoClist)
 	if checkError(res, err, "get_supported_vfos") != nil {
@@ -627,7 +643,7 @@ func (rig *Rig) getVfos() error{
 	}
 
 	for vfo, vfoStr := range VfoName {
-		if int(vfoClist) & vfo > 0 {
+		if int(vfoClist)&vfo > 0 {
 			vfoList = append(vfoList, vfoStr)
 		}
 	}
@@ -636,56 +652,55 @@ func (rig *Rig) getVfos() error{
 	return nil
 }
 
-
 //get Capabilities > List of supported VFO Operations
-func (rig *Rig) getOperations() error{
+func (rig *Rig) getOperations() error {
 	var vfoOpClist C.int
 	var vfoOpList []string
 
-        res, err := C.get_supported_vfo_operations(&vfoOpClist)
-        if checkError(res, err, "get_supported_vfo_operations") != nil {
-                return checkError(res, err, "get_supported_vfo_operations")
-        }
+	res, err := C.get_supported_vfo_operations(&vfoOpClist)
+	if checkError(res, err, "get_supported_vfo_operations") != nil {
+		return checkError(res, err, "get_supported_vfo_operations")
+	}
 
-        for op, opStr := range OperationName {
-                if int(vfoOpClist) & op > 0 {
-                        vfoOpList = append(vfoOpList, opStr)
-                }
-        }
-        sort.Strings(vfoOpList)
-        rig.Caps.Operations = vfoOpList
+	for op, opStr := range OperationName {
+		if int(vfoOpClist)&op > 0 {
+			vfoOpList = append(vfoOpList, opStr)
+		}
+	}
+	sort.Strings(vfoOpList)
+	rig.Caps.Operations = vfoOpList
 	return nil
 }
 
 //get Capabilities > List of supported Modes
-func (rig *Rig) getModes() error{
+func (rig *Rig) getModes() error {
 	var modesClist C.int
 	var modesList []string
 
-        res, err := C.get_supported_modes(&modesClist)
-        if checkError(res, err, "get_supported_modes") != nil {
-                return checkError(res, err, "get_supported_modes")
-        }
+	res, err := C.get_supported_modes(&modesClist)
+	if checkError(res, err, "get_supported_modes") != nil {
+		return checkError(res, err, "get_supported_modes")
+	}
 
-        for mode, modeStr := range ModeName {
-                if int(modesClist) & mode > 0 {
-                        modesList = append(modesList, modeStr)
-                }
-        }
-        sort.Strings(modesList)
-        rig.Caps.Modes = modesList
+	for mode, modeStr := range ModeName {
+		if int(modesClist)&mode > 0 {
+			modesList = append(modesList, modeStr)
+		}
+	}
+	sort.Strings(modesList)
+	rig.Caps.Modes = modesList
 	return nil
 }
 
 //get Capabilities > List of supported Functions that can be read
-func (rig *Rig) getGetFunctions() error{
+func (rig *Rig) getGetFunctions() error {
 	var funcList []string
 
-	for f, fStr := range FuncStrMap {
-		if res, err := rig.HasGetFunc(f); err != nil{
+	for f, fStr := range FuncName {
+		if res, err := rig.HasGetFunc(f); err != nil {
 			return err
 		} else {
-			if res > 0{
+			if res > 0 {
 				funcList = append(funcList, fStr)
 			}
 		}
@@ -696,41 +711,42 @@ func (rig *Rig) getGetFunctions() error{
 }
 
 //get Capabilities > List of supported Functions that can be set
-func (rig *Rig) getSetFunctions() error{
-        var funcList []string
+func (rig *Rig) getSetFunctions() error {
+	var funcList []string
 
-        for f, fStr := range FuncStrMap {
-                if res, err := rig.HasSetFunc(f); err != nil{
-                        return err
-                } else {
-                        if res > 0{
-                                funcList = append(funcList, fStr)
-                        }
-                }
-        }
-	sort.Strings(funcList)
-        rig.Caps.SetFunctions = funcList
-        return nil
-}
-
-
-//get Capabilities > List of supported Levels that can be read
-func (rig *Rig) getGetLevels() error{
-	var levelList Values
-
-	for l, lStr := range LevelStrMap {
-		if res, err := rig.HasGetLevel(l); err != nil{
+	for f, fStr := range FuncName {
+		if res, err := rig.HasSetFunc(f); err != nil {
 			return err
 		} else {
-			if res > 0{
-				var level Value_t
-				level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
-				if err != nil {
-					return err
-				}
-				level.Name = lStr
-				levelList = append(levelList, level)
+			if res > 0 {
+				funcList = append(funcList, fStr)
 			}
+		}
+	}
+	sort.Strings(funcList)
+	rig.Caps.SetFunctions = funcList
+	return nil
+}
+
+//get Capabilities > List of supported Levels that can be read
+func (rig *Rig) getGetLevels() error {
+	var levelList Values
+
+	for l, lStr := range LevelName {
+
+		res, err := rig.HasGetLevel(l)
+		if err != nil {
+			return err
+		}
+
+		if res > 0 {
+			var level Value_t
+			level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
+			if err != nil {
+				return err
+			}
+			level.Name = lStr
+			levelList = append(levelList, level)
 		}
 	}
 	sort.Sort(levelList)
@@ -739,22 +755,23 @@ func (rig *Rig) getGetLevels() error{
 }
 
 //get Capabilities > List of supported Levels that can be set
-func (rig *Rig) getSetLevels() error{
+func (rig *Rig) getSetLevels() error {
 	var levelList Values
 
-	for l, lStr := range LevelStrMap {
-		if res, err := rig.HasGetLevel(l); err != nil{
+	for l, lStr := range LevelName {
+		res, err := rig.HasSetLevel(l)
+		if err != nil {
 			return err
-		} else {
-			if res > 0{
-				var level Value_t
-				level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
-				if err != nil {
-					return err
-				}
-				level.Name = lStr
-				levelList = append(levelList, level)
+		}
+
+		if res > 0 {
+			var level Value_t
+			level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
+			if err != nil {
+				return err
 			}
+			level.Name = lStr
+			levelList = append(levelList, level)
 		}
 	}
 	sort.Sort(levelList)
@@ -763,14 +780,14 @@ func (rig *Rig) getSetLevels() error{
 }
 
 //get Capabilities > List of supported Parameters that can be read
-func (rig *Rig) getGetParameter() error{
+func (rig *Rig) getGetParameter() error {
 	var parmList Values
 
-	for p, pStr := range ParmStrMap {
-		if res, err := rig.HasGetParm(p); err != nil{
+	for p, pStr := range ParmName {
+		if res, err := rig.HasGetParm(p); err != nil {
 			return err
 		} else {
-			if res > 0{
+			if res > 0 {
 				var parm Value_t
 				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
 				if err != nil {
@@ -787,14 +804,14 @@ func (rig *Rig) getGetParameter() error{
 }
 
 //get Capabilities > List of supported Parameters that can be set
-func (rig *Rig) getSetParameter() error{
+func (rig *Rig) getSetParameter() error {
 	var parmList Values
 
-	for p, pStr := range ParmStrMap {
-		if res, err := rig.HasSetParm(p); err != nil{
+	for p, pStr := range ParmName {
+		if res, err := rig.HasSetParm(p); err != nil {
 			return err
 		} else {
-			if res > 0{
+			if res > 0 {
 				var parm Value_t
 				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
 				if err != nil {
@@ -810,7 +827,7 @@ func (rig *Rig) getSetParameter() error{
 	return nil
 }
 
-func (rig *Rig) getFilters() error{
+func (rig *Rig) getFilters() error {
 	var cfc C.int
 	var cWidth C.long
 	var cMode C.int
@@ -819,57 +836,53 @@ func (rig *Rig) getFilters() error{
 	filterMap = make(map[string][]int)
 
 	res, err := C.get_filter_count(&cfc)
-	if checkError(res, err, "get_filter_count") != nil{
+	if checkError(res, err, "get_filter_count") != nil {
 		return checkError(res, err, "get_filter_count")
 	}
-	log.Printf("Total amount of Filters: %v", int(cfc))
 
-	for i:= 0; i < int(cfc); i++{
+	for i := 0; i < int(cfc); i++ {
 		res, err = C.get_filter_mode_width(C.int(i), &cMode, &cWidth)
-		if checkError(res, err, "") != nil{
+		if checkError(res, err, "") != nil {
 			return checkError(res, err, "get_filter_mode_width")
 		}
-                for mode, modeStr := range ModeName {
-			if int(cMode) & mode > 0 {
-			        filterMap[modeStr] = append(filterMap[modeStr], int(cWidth))
+		for mode, modeStr := range ModeName {
+			if int(cMode)&mode > 0 {
+				filterMap[modeStr] = append(filterMap[modeStr], int(cWidth))
 			}
 		}
-        }
+	}
 
 	rig.Caps.Filters = filterMap
 	return nil
 }
 
-
 // Set Debug level
-func (rig *Rig) SetDebugLevel(dbgLevel int){
+func (rig *Rig) SetDebugLevel(dbgLevel int) {
 	C.set_debug_level(C.int(dbgLevel))
 }
 
 //Close the Communication with the Radio
-func (rig *Rig) Close() error{
+func (rig *Rig) Close() error {
 	res, err := C.close_rig()
 	return checkError(res, err, "close_rig")
 }
 
 //Grabage collect Radio and free up memory
-func (rig *Rig) Cleanup() error{
+func (rig *Rig) Cleanup() error {
 	res, err := C.cleanup_rig()
 	return checkError(res, err, "cleanup_rig")
-} 
+}
 
 // Check Errors from Hamlib C calls. C Errors have a higher priority.
 // Additional Information is provided for better debugging
-func checkError(res C.int, e error, operation string) error{
+func checkError(res C.int, e error, operation string) error {
 
-        if e != nil {
-                return &Error{operation, e}
-        }
-        if int(res) != RIG_OK{
-                return &HamlibError{operation, int(res), ""}
-        }
+	if e != nil {
+		return &Error{operation, e}
+	}
+	if int(res) != RIG_OK {
+		return &HamlibError{operation, int(res), ""}
+	}
 
-        return nil
+	return nil
 }
-
-

@@ -50,6 +50,12 @@ int set_vfo(int vfo)
 	return res;
 }
 
+int get_vfo(int *vfo)
+{
+	int res = rig_get_vfo(myrig, vfo);
+	return res;
+}
+
 int set_freq(int vfo, double freq)
 {
 	int res = rig_set_freq(myrig, vfo, freq);
@@ -86,9 +92,12 @@ int get_freq(int vfo, double *freq)
 	return res;
 }
 
-int get_mode(int vfo, int *mode, int *pb_width)
+int get_mode(int vfo, int *mode, long *pb_width)
 {
-	int res = rig_get_mode(myrig, vfo, mode, pb_width);
+	rmode_t* m = (rmode_t*)mode;
+	pbwidth_t* pb = (pbwidth_t*)pb_width;
+
+	int res = rig_get_mode(myrig, vfo, m, pb);
 	return res;
 }
 
@@ -100,7 +109,7 @@ int set_ptt(int vfo, int ptt)
 
 int get_ptt(int vfo, int *ptt)
 {
-	int res = rig_get_ptt(myrig, vfo, ptt);
+	int res = rig_get_ptt(myrig, (vfo_t)vfo, (ptt_t*)ptt);
 	return res;
 }
 
@@ -110,7 +119,7 @@ int set_rit(int vfo, int offset)
 	return res;
 }
 
-int get_rit(int vfo, int *offset)
+int get_rit(int vfo, long *offset)
 {
 	int res = rig_get_rit(myrig, vfo, offset);
 	return res;
@@ -122,9 +131,9 @@ int set_xit(int vfo, int offset)
 	return res;
 }
 
-int get_xit(int vfo, int *offset)
+int get_xit(int vfo, long *offset)
 {
-	int res = rig_get_xit(myrig, vfo, offset);
+	int res = rig_get_xit(myrig, (vfo_t)vfo, offset);
 	return res;
 }
 
@@ -146,9 +155,10 @@ int set_split_mode(int vfo, int tx_mode, int tx_width)
 	return res;
 }
 
-int get_split_mode(int vfo, int *tx_mode, int *tx_width)
+int get_split_mode(int vfo, int *tx_mode, long *tx_width)
 {
-	int res = rig_get_split_mode(myrig, vfo, tx_mode, tx_width);
+	rmode_t* mode = (rmode_t*)tx_mode;
+	int res = rig_get_split_mode(myrig, vfo, mode, tx_width);
 	return res;
 }
 
@@ -160,7 +170,8 @@ int set_split_vfo(int vfo, int split, int tx_vfo)
 
 int get_split_vfo(int vfo, int *split, int *tx_vfo)
 {
-	int res = rig_get_split_vfo(myrig, vfo, split, tx_vfo);
+	split_t* sp = (split_t*)split;
+	int res = rig_get_split_vfo(myrig, vfo, sp, tx_vfo);
 	return res;
 }
 
@@ -172,13 +183,13 @@ int set_powerstat(int status)
 
 int get_powerstat(int *status)
 {
-	int res = rig_get_powerstat(myrig, status);
+	int res = rig_get_powerstat(myrig, (powerstat_t*)status);
 	return res;
 }
 
 const char* get_info()
 {
-	char *info;
+	const char *info;
 	info = rig_get_info(myrig);
 	return info;
 }
@@ -201,7 +212,7 @@ int set_ts(int vfo, int ts)
 	return res;
 }
 
-int get_ts(int vfo, int *ts)
+int get_ts(int vfo, long *ts)
 {
 	int res = rig_get_ts(myrig, vfo, ts);
 	return res;
@@ -344,6 +355,10 @@ int get_level_gran(unsigned long level, float *step, float *min, float *max)
 		case RIG_LEVEL_ANTIVOX:
 		case RIG_LEVEL_SWR:
 		case RIG_LEVEL_ALC:
+		case RIG_LEVEL_BALANCE:
+		case RIG_LEVEL_PBT_IN:
+		case RIG_LEVEL_PBT_OUT:
+		case RIG_LEVEL_APF:
 			*min = gran.min.f;
 			*max = gran.max.f;
 			*step = gran.step.f;
@@ -361,6 +376,9 @@ int get_level_gran(unsigned long level, float *step, float *min, float *max)
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_STRENGTH:
 		case RIG_LEVEL_RAWSTR:
+		case RIG_LEVEL_SLOPE_LOW:
+		case RIG_LEVEL_SLOPE_HIGH:
+		case RIG_LEVEL_BKIN_DLYMS:
 			*min = (float)gran.min.i;
 			*max = (float)gran.max.i;
 			*step = (float)gran.step.i;
@@ -390,8 +408,9 @@ int set_level(int vfo, unsigned long level, float value)
 		case RIG_LEVEL_COMP:
 		case RIG_LEVEL_VOXGAIN:
 		case RIG_LEVEL_ANTIVOX:
-		case RIG_LEVEL_SWR:
-		case RIG_LEVEL_ALC:
+		case RIG_LEVEL_BALANCE:
+		case RIG_LEVEL_PBT_IN:
+		case RIG_LEVEL_PBT_OUT:
 			v.f = value;
 			break;
 		case RIG_LEVEL_NONE:
@@ -405,8 +424,8 @@ int set_level(int vfo, unsigned long level, float value)
 		case RIG_LEVEL_VOX:
 		case RIG_LEVEL_BKINDL:
 		case RIG_LEVEL_METER:
-		case RIG_LEVEL_STRENGTH:
-		case RIG_LEVEL_RAWSTR:
+		case RIG_LEVEL_SLOPE_LOW:
+		case RIG_LEVEL_SLOPE_HIGH:
 			v.i = (int) value;
 			break;
 		default: 
@@ -621,6 +640,7 @@ int close_rig()
 int cleanup_rig()
 {
 	int res = rig_cleanup(myrig);
+	myrig = 0;
 	return res;
 }
 
