@@ -1,393 +1,250 @@
 package goHamlib_test
 
 import (
-	"log"
 	"testing"
-	"time"
-	"math/rand"
 
 	"github.com/dh1tw/goHamlib"
 )
 
-//Tests against an FT950
-func TestFT950(t *testing.T){
+// Test consistency of Vfo Value and Name maps
+func TestVfoMaps(t *testing.T) {
 
-	//setup random number generator
-	seed := rand.NewSource(time.Now().UnixNano())
-	random := rand.New(seed)
-
-	var p goHamlib.Port_t
-	p.RigPortType = 1 
-	p.Portname = "/dev/mhuxd/cat"
-	p.Baudrate = 38400
-	p.Databits = 8
-	p.Stopbits = 1
-	p.Parity = goHamlib.N
-	p.Handshake = goHamlib.NO_HANDSHAKE
-
-	var rig goHamlib.Rig
-
-	rig.SetDebugLevel(goHamlib.RIG_DEBUG_NONE)
-	//rig.SetDebugLevel(goHamlib.RIG_DEBUG_TRACE)
-	rig.Init(128)
-	rig.SetPort(p)
-	rig.Open()
-
-	if stat, err := rig.GetPowerStat(); err != nil {
-		log.Println(err)
-	} else {
-		if stat == goHamlib.RIG_POWER_OFF{
-			if err = rig.SetPowerStat(goHamlib.RIG_POWER_ON); err != nil{
-				log.Println(err)
-				// HERE WE SHOULD PANIC!!!
-			}
-			time.Sleep(time.Second * 5)
+	// Test VfoValue map
+	for vfoName, vfoValue := range goHamlib.VfoValue {
+		_, ok := goHamlib.VfoName[vfoValue]
+		if !ok {
+			t.Fatalf("VFO %d does not exist in VfoName map", vfoValue)
+		}
+		if vfoName != goHamlib.VfoName[vfoValue] {
+			t.Fatalf("Name of VFO inconsisted: %s", vfoName)
 		}
 	}
 
-	//Set Frequency
-	if err:= rig.SetFreq(goHamlib.RIG_VFO_MAIN, 7005000); err != nil{
-		log.Println(err)
-	}
-
-	//set invalid frequency
-	if err:= rig.SetFreq(goHamlib.RIG_VFO_MAIN, -3580000); err != nil{
-		log.Println(err)
-	}
-
-	//set mode Narrow Filter
-	mode, err := rig.GetPbNarrow(goHamlib.RIG_MODE_CW)
-	if err != nil{
-		log.Println("Couldn't get Narrow Pb")
-	}
-	if mode == 0{
-		log.Println("can not determin narrow Passband")
-	}
-	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
-		log.Println(err)
-	}
-
-	// set mode with Normal Filter
-	time.Sleep(time.Second)
-	mode, _ = rig.GetPbNormal(goHamlib.RIG_MODE_CW)
-	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
-		log.Println(err)
-	}
-
-	// set mode with Wide Filter
-	time.Sleep(time.Second)
-	mode, _ = rig.GetPbWide(goHamlib.RIG_MODE_CW)
-	if err:= rig.SetMode(goHamlib.RIG_VFO_CURR, goHamlib.RIG_MODE_CW,mode); err != nil{
-		log.Println(err)
-	}
-
-	// get Frequency
-	freq, _ := rig.GetFreq(goHamlib.RIG_VFO_CURR)
-	log.Printf("Current Frequency is: %08v Hz", freq)
-
-	// get mode
-	mode, pb_width, err := rig.GetMode(goHamlib.RIG_VFO_CURR)
-	log.Printf("Current Mode: %v, Passband: %v", mode, pb_width)
-
-	// set Ptt true
-	if err := rig.SetPtt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_PTT_ON); err != nil{
-		log.Println(err)
-	}
-	time.Sleep(time.Second)
-
-	// get Ptt state
-	if ptt, err:= rig.GetPtt(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Ptt state: %v", ptt)
-	}
-
-	// set Ptt false
-	if err := rig.SetPtt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_PTT_OFF); err != nil{
-		log.Println(err)
-	}
-	time.Sleep(time.Second)
-
-	// get Ptt state
-	if ptt, err:= rig.GetPtt(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Ptt state: %v", ptt)
-	}
-
-	// set Rit
-	if err := rig.SetRit(goHamlib.RIG_VFO_CURR, -500); err != nil{
-		log.Println(err)
-	}
-
-	// get Rit
-	if rit, err := rig.GetRit(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Rit offset: %v Hz", rit)
-	}
-
-	// set Rit on invalid VFO
-	if err := rig.SetRit(goHamlib.RIG_VFO_C, 20000); err != nil{
-		log.Println(err)
-	}
-
-	// get Rit from invalid VFO
-	if rit, err := rig.GetRit(goHamlib.RIG_VFO_C); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Rit offset: %v Hz", rit)
-	}
-
-	// set Xit
-	if err := rig.SetXit(goHamlib.RIG_VFO_CURR, 5555); err != nil{
-		log.Println(err)
-	}
-
-	// get Rit
-	if xit, err := rig.GetXit(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Xit offset: %v Hz", xit)
-	}
-
-	time.Sleep(time.Second)
-/*
-	// rig.SetVfo(goHamlib.RIG_VFO_MAIN)
-
-	// set split on VFOB - same mode and pb as VFO A
-	if mode, pb, err := rig.GetMode(goHamlib.RIG_VFO_MAIN); err != nil{
-		log.Println(err)
-	} else {
-		if err := rig.SetSplitVfo(goHamlib.RIG_VFO_MAIN, goHamlib.RIG_SPLIT_ON, goHamlib.RIG_VFO_SUB); err != nil{
-			log.Println(err)
+	// Test VfoName map
+	for vfoValue, vfoName := range goHamlib.VfoName {
+		_, ok := goHamlib.VfoValue[vfoName]
+		if !ok {
+			t.Fatalf("VFO %s does not exist in VfoValue map", vfoName)
 		}
-		if err := rig.SetSplitFreq(goHamlib.RIG_VFO_SUB, 7020000); err != nil{
-			log.Println(err)
+		if vfoValue != goHamlib.VfoValue[vfoName] {
+			t.Fatalf("Value of VFO inconsisted: %s", vfoName)
 		}
-		mode = mode
-		pb = pb
-		if err = rig.SetSplitMode(goHamlib.RIG_VFO_SUB, mode, pb); err != nil{
-			log.Println(err)
+	}
+}
+
+// Test consistency of OperationValue and OperationName maps
+func TestOperationMaps(t *testing.T) {
+
+	// Test OperationValue map
+	for opName, opValue := range goHamlib.OperationValue {
+		_, ok := goHamlib.OperationName[opValue]
+		if !ok {
+			t.Fatalf("Operation %d does not exist in OperationName map", opValue)
+		}
+		if opName != goHamlib.OperationName[opValue] {
+			t.Fatalf("Name of Operation inconsisted: %s", opName)
 		}
 	}
 
-	// check status on Split
-	if split, txVfo, err := rig.GetSplit(goHamlib.RIG_VFO_MAIN); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Split is: %v on VFO: %v", split, txVfo)
+	// Test OperationName map
+	for opValue, opName := range goHamlib.OperationName {
+		_, ok := goHamlib.OperationValue[opName]
+		if !ok {
+			t.Fatalf("Operation %s does not exist in OperationValue map", opName)
+		}
+		if opValue != goHamlib.OperationValue[opName] {
+			t.Fatalf("Value of Operation inconsisted: %s", opName)
+		}
 	}
-*/
-	time.Sleep(time.Second)
+}
 
-	// get Rig Info
-	if info, err := rig.GetInfo(); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Rig Info: %s", info)
-	}
+// Test consistency of ModeValue and ModeName maps
+func TestModeMaps(t *testing.T) {
 
-	// Set and check Antenna
-	if err := rig.SetAnt(goHamlib.RIG_VFO_CURR, goHamlib.RIG_ANT_1); err != nil{
-		log.Println(err)
-	}
-
-	if ant, err := rig.GetAnt(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Selected antenna: %v", ant)
-	}
-
-	// Get current tuning step
-	if ts, err := rig.GetTs(goHamlib.RIG_VFO_CURR); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Tuning step: %vHz", ts)
+	// Test ModeValue map
+	for modeName, modeValue := range goHamlib.ModeValue {
+		_, ok := goHamlib.ModeName[modeValue]
+		if !ok {
+			t.Fatalf("Mode %d does not exist in ModeName map", modeValue)
+		}
+		if modeName != goHamlib.ModeName[modeValue] {
+			t.Fatalf("Name of Mode inconsisted: %s", modeName)
+		}
 	}
 
-	// Set tuning step to 100Hz
-	if err := rig.SetTs(goHamlib.RIG_VFO_CURR, 100); err != nil{
-		log.Println(err)
+	// Test ModeName map
+	for modeValue, modeName := range goHamlib.ModeName {
+		_, ok := goHamlib.ModeValue[modeName]
+		if !ok {
+			t.Fatalf("Mode %s does not exist in ModeValue map", modeName)
+		}
+		if modeValue != goHamlib.ModeValue[modeName] {
+			t.Fatalf("Value of Mode inconsisted: %s", modeName)
+		}
+	}
+}
+
+// Test consistency of RigPowerValue and RigPowerName maps
+func TestRigPowerMaps(t *testing.T) {
+
+	// Test ModeValue map
+	for rpName, rpValue := range goHamlib.RigPowerValue {
+		_, ok := goHamlib.RigPowerName[rpValue]
+		if !ok {
+			t.Fatalf("RigPower %d does not exist in RigPowerName map", rpValue)
+		}
+		if rpName != goHamlib.RigPowerName[rpValue] {
+			t.Fatalf("Name of RigPower inconsisted: %s", rpName)
+		}
 	}
 
-        // Verify that tuning step was set accordingly
-        if ts, err := rig.GetTs(goHamlib.RIG_VFO_CURR); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("Tuning step: %vHz", ts)
-        }
+	// Test RigPowerName map
+	for rpValue, rpName := range goHamlib.RigPowerName {
+		_, ok := goHamlib.RigPowerValue[rpName]
+		if !ok {
+			t.Fatalf("RigPower %s does not exist in RigPowerValue map", rpName)
+		}
+		if rpValue != goHamlib.RigPowerValue[rpName] {
+			t.Fatalf("Value of RigPower inconsisted: %s", rpName)
+		}
+	}
+}
 
-	// Has Set / Get Levels
-	if level, err := rig.HasGetLevel(goHamlib.RIG_LEVEL_ATT); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("can get Level ATT: %t", level==goHamlib.RIG_LEVEL_ATT)
+// Test consistency of LevelValue and LevelName maps
+func TestLevelMaps(t *testing.T) {
+
+	// Test LevelValue map
+	for lName, lValue := range goHamlib.LevelValue {
+		_, ok := goHamlib.LevelName[lValue]
+		if !ok {
+			t.Fatalf("Level %d does not exist in LevelName map", lValue)
+		}
+		if lName != goHamlib.LevelName[lValue] {
+			t.Fatalf("Name of Level inconsisted: %s", lName)
+		}
 	}
 
-	if res, err := rig.HasSetLevel(goHamlib.RIG_LEVEL_IF); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("can set Level IF: %t", res==goHamlib.RIG_LEVEL_IF)
+	// Test LevelName map
+	for lValue, lName := range goHamlib.LevelName {
+		_, ok := goHamlib.LevelValue[lName]
+		if !ok {
+			t.Fatalf("Level %s does not exist in LevelValue map", lName)
+		}
+		if lValue != goHamlib.LevelValue[lName] {
+			t.Fatalf("Value of Level inconsisted: %s", lName)
+		}
+	}
+}
+
+// Test consistency of ParmValue and ParmName maps
+func TestParmMaps(t *testing.T) {
+
+	// Test ParmValue map
+	for pName, pValue := range goHamlib.ParmValue {
+		_, ok := goHamlib.ParmName[pValue]
+		if !ok {
+			t.Fatalf("Parm %d does not exist in ParmName map", pValue)
+		}
+		if pName != goHamlib.ParmName[pValue] {
+			t.Fatalf("Name of Parm inconsisted: %s", pName)
+		}
 	}
 
-	// Has set / get Functions
-        if res, err := rig.HasGetFunc(goHamlib.RIG_FUNC_LOCK); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("can get Function LOCK: %t", res==goHamlib.RIG_FUNC_LOCK)
-        }
+	// Test ParmName map
+	for pValue, pName := range goHamlib.ParmName {
+		_, ok := goHamlib.ParmValue[pName]
+		if !ok {
+			t.Fatalf("Parm %s does not exist in ParmValue map", pName)
+		}
+		if pValue != goHamlib.ParmValue[pName] {
+			t.Fatalf("Value of Parm inconsisted: %s", pName)
+		}
+	}
+}
 
-        if res, err := rig.HasSetFunc(goHamlib.RIG_FUNC_ABM); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("can set Function ABM: %t", res==goHamlib.RIG_FUNC_ABM)
-        }
+// Test consistency of FuncValue and FuncName maps
+func TestFuncMaps(t *testing.T) {
 
-        // Has set / get Parameters
-        if res, err := rig.HasGetParm(goHamlib.RIG_PARM_APO); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("can get Parameter APO: %t", res==goHamlib.RIG_PARM_APO)
-        }
-
-        if res, err := rig.HasSetParm(goHamlib.RIG_PARM_TIME); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("can set Parameter TIME: %t", res==goHamlib.RIG_PARM_TIME)
-        }
-
-	// Get Level (converted Float)
-	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("RF Power: %v", value)
+	// Test FuncValue map
+	for fName, fValue := range goHamlib.FuncValue {
+		_, ok := goHamlib.FuncName[fValue]
+		if !ok {
+			t.Fatalf("Func %d does not exist in FuncName map", fValue)
+		}
+		if fName != goHamlib.FuncName[fValue] {
+			t.Fatalf("Name of Func inconsisted: %s", fName)
+		}
 	}
 
-	// Get Level (Integer)
-	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Key Speed: %v", value)
+	// Test FuncName map
+	for fValue, fName := range goHamlib.FuncName {
+		_, ok := goHamlib.FuncValue[fName]
+		if !ok {
+			t.Fatalf("Func %s does not exist in FuncValue map", fName)
+		}
+		if fValue != goHamlib.FuncValue[fName] {
+			t.Fatalf("Value of Func inconsisted: %s", fName)
+		}
+	}
+}
+
+// Test consistency of PttValue and PttName maps
+func TestPttMaps(t *testing.T) {
+
+	// Test PttValue map
+	for pName, pValue := range goHamlib.PttValue {
+		_, ok := goHamlib.PttName[pValue]
+		if !ok {
+			t.Fatalf("Ptt %d does not exist in PttName map", pValue)
+		}
+		if pName != goHamlib.PttName[pValue] {
+			t.Fatalf("Name of Ptt inconsisted: %s", pName)
+		}
 	}
 
-	// Set Level (with conversion to float)
-	pwr := random.Intn(100)
-	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER, float32(pwr)); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Trying to set Power to: %v%%", pwr)
+	// Test PttName map
+	for pValue, pName := range goHamlib.PttName {
+		_, ok := goHamlib.PttValue[pName]
+		if !ok {
+			t.Fatalf("Ptt %s does not exist in PttValue map", pName)
+		}
+		if pValue != goHamlib.PttValue[pName] {
+			t.Fatalf("Value of Ptt inconsisted: %s", pName)
+		}
+	}
+}
+
+func TestCIntToBool(t *testing.T) {
+	x, err := goHamlib.CIntToBool(0)
+	if err != nil || x != false {
+		t.Fatalf("0 should result in false")
 	}
 
- 	// Set Level (integer)
-	speed := random.Intn(40)
-	if err := rig.SetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD, float32(speed)); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Trying to set Key Speed to: %v WPM", speed)
+	x, err = goHamlib.CIntToBool(1)
+	if err != nil || x != true {
+		t.Fatalf("1 should result in true")
 	}
 
-	// Get Level (converted Float)
-	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_RFPOWER); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("RF Power: %v", value)
+	_, err = goHamlib.CIntToBool(-1)
+	if err == nil {
+		t.Fatalf("-1 should result in err")
 	}
 
-	// Get Level (Integer)
-	if value, err := rig.GetLevel(goHamlib.RIG_VFO_CURR, goHamlib.RIG_LEVEL_KEYSPD); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Key Speed: %v", value)
+	_, err = goHamlib.CIntToBool(2)
+	if err == nil {
+		t.Fatalf("2 should result in err")
+	}
+}
+
+func TestBoolToInt(t *testing.T) {
+	x, err := goHamlib.BoolToCint(true)
+	if err != nil || x != 1 {
+		t.Fatal("true should result in 1")
 	}
 
-
-	// Get Function - check if Monitor is on 
-	if value, err := rig.GetFunc(goHamlib.RIG_VFO_A, goHamlib.RIG_FUNC_LOCK); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Monitor on: %t", value)
+	x, err = goHamlib.BoolToCint(false)
+	if err != nil || x != 0 {
+		t.Fatal("false should result in 0")
 	}
 
-	// Turn Monitor on
-	if err := rig.SetFunc(goHamlib.RIG_VFO_CURR, goHamlib.RIG_FUNC_LOCK, true); err != nil{
-		log.Println(err)
-	} else {
-		log.Printf("Set monitor on");
-	}
-
-        // Get Function - verify that monitor has been turned on
-        if value, err := rig.GetFunc(goHamlib.RIG_VFO_CURR, goHamlib.RIG_FUNC_LOCK); err != nil{
-                log.Println(err)
-        } else {
-                log.Printf("Monitor on: %t", value)
-        }
-
-	if err := rig.GetCaps(); err != nil{
-		log.Println("Couldn't load all caps; Check log")
-	}
-
-	//set & get Configuration tokens
-	log.Println("setting token 'fast_set_commands' to 0")
-	if err := rig.SetConf("fast_set_commands", "0"); err != nil {
-		log.Println(err)
-	}
-
-	if val, err := rig.GetConf("fast_set_commands"); err != nil {
-		log.Println(err)
-	} else {
-		log.Println("GetConf: Token (fast_set_commands), value: ", val)
-	}
-
-	log.Println("setting token 'fast_set_commands' to 1")
-	if err := rig.SetConf("fast_set_commands", "1"); err != nil {
-		log.Println(err)
-	}
-
-	if val, err := rig.GetConf("fast_set_commands"); err != nil {
-		log.Println(err)
-	} else {
-		log.Println("GetConf: Token (fast_set_commands), value: ", val)
-	}
-
-
-	//trying to set invalid value of exisiting token
-	log.Println("setting token 'fast_set_commands' to invalid value 55")
-	if err := rig.SetConf("fast_set_commands", "55"); err != nil {
-		log.Println(err)
-	}
-
-	//trying to set invalid token
-	log.Println("setting token 'my_unknown_token' to 55")
-	if err := rig.SetConf("my_unknown_token", "55"); err != nil {
-		log.Println(err)
-	}
-
-
-
-	log.Printf("------ Print Capabilities -------")
-	log.Printf("Max RIT: %vHz", rig.Caps.MaxRit)
-	log.Printf("Max XIT: %vHz", rig.Caps.MaxXit)
-	log.Printf("Max IF Shift: %vHz", rig.Caps.MaxIfShift)
-	log.Printf("VFO Preamp Levels: %v", rig.Caps.Preamps)
-	log.Printf("VFO Attenuator Levels: %v", rig.Caps.Attenuators)
-	log.Printf("VFOs: %v", rig.Caps.Vfos)
-	log.Printf("VFO Operations: %v", rig.Caps.VfoOperations)
-	log.Printf("Modes: %v", rig.Caps.Modes)
-	log.Printf("Get Functions: %v", rig.Caps.GetFunctions)
-	log.Printf("Set Functions: %v", rig.Caps.SetFunctions)
-	log.Printf("Get Levels: %v", rig.Caps.GetLevels)
-	log.Printf("Set Levels: %v", rig.Caps.SetLevels)
-	log.Printf("Get Parameter: %v", rig.Caps.GetParameter)
-	log.Printf("Set Parameter: %v", rig.Caps.SetParameter)
-	log.Printf("Filters: %v", rig.Caps.Filters)
-	time.Sleep(time.Second*2)
-
-//	rig.SetPowerStat(goHamlib.RIG_POWER_OFF);
-
-	//Shutdown & Cleanup
-	rig.Close()
-	rig.Cleanup()
-
-	log.Println("finished testing")
 }
