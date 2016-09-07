@@ -214,6 +214,58 @@ func TestPttMaps(t *testing.T) {
 	}
 }
 
+// Test consistency of AntValue and AntName maps
+func TestAntennaMaps(t *testing.T) {
+
+	// Test AntValue map
+	for aName, aValue := range goHamlib.AntValue {
+		_, ok := goHamlib.AntName[aValue]
+		if !ok {
+			t.Fatalf("Antenna %d does not exist in AntName map", aValue)
+		}
+		if aName != goHamlib.AntName[aValue] {
+			t.Fatalf("Name of Antenna inconsisted: %s", aName)
+		}
+	}
+
+	// Test AntName map
+	for aValue, aName := range goHamlib.AntName {
+		_, ok := goHamlib.AntValue[aName]
+		if !ok {
+			t.Fatalf("Antenna %s does not exist in AntValue map", aName)
+		}
+		if aValue != goHamlib.AntValue[aName] {
+			t.Fatalf("Value of Antenna inconsisted: %s", aName)
+		}
+	}
+}
+
+// Test consistency of DebugLevelValue and DebugLevelName maps
+func TestDebugLevelMaps(t *testing.T) {
+
+	// Test DebugLevelValue map
+	for dName, dValue := range goHamlib.DebugLevelValue {
+		_, ok := goHamlib.DebugLevelName[dValue]
+		if !ok {
+			t.Fatalf("Debug Level %d does not exist in DebugLevelName map", dValue)
+		}
+		if dName != goHamlib.DebugLevelName[dValue] {
+			t.Fatalf("Name of Debug Level inconsisted: %s", dName)
+		}
+	}
+
+	// Test DebugLevelName map
+	for dValue, dName := range goHamlib.DebugLevelName {
+		_, ok := goHamlib.DebugLevelValue[dName]
+		if !ok {
+			t.Fatalf("DebugLevel %s does not exist in DebugLevelValue map", dName)
+		}
+		if dValue != goHamlib.DebugLevelValue[dName] {
+			t.Fatalf("Value of DebugLevel inconsisted: %s", dName)
+		}
+	}
+}
+
 func TestCIntToBool(t *testing.T) {
 	x, err := goHamlib.CIntToBool(0)
 	if err != nil || x != false {

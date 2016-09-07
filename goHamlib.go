@@ -50,6 +50,24 @@ const (
 	RIG_DEBUG_TRACE   = 5
 )
 
+var DebugLevelValue = map[string]int{
+	"NONE":    RIG_DEBUG_NONE,
+	"BUG":     RIG_DEBUG_BUG,
+	"ERROR":   RIG_DEBUG_ERR,
+	"WARN":    RIG_DEBUG_WARN,
+	"VERBOSE": RIG_DEBUG_VERBOSE,
+	"TRACE":   RIG_DEBUG_TRACE,
+}
+
+var DebugLevelName = map[int]string{
+	RIG_DEBUG_NONE:    "NONE",
+	RIG_DEBUG_BUG:     "BUG",
+	RIG_DEBUG_ERR:     "ERROR",
+	RIG_DEBUG_WARN:    "WARN",
+	RIG_DEBUG_VERBOSE: "VERBOSE",
+	RIG_DEBUG_TRACE:   "TRACE",
+}
+
 //Hamlib VFOs
 const (
 	RIG_VFO_NONE    = 0
@@ -277,6 +295,22 @@ const (
 	RIG_ANT_4    = 1 << 3
 	RIG_ANT_5    = 1 << 4
 )
+
+var AntName = map[int]string{
+	RIG_ANT_1: "ANT1",
+	RIG_ANT_2: "ANT2",
+	RIG_ANT_3: "ANT3",
+	RIG_ANT_4: "ANT4",
+	RIG_ANT_5: "ANT5",
+}
+
+var AntValue = map[string]int{
+	"ANT1": RIG_ANT_1,
+	"ANT2": RIG_ANT_2,
+	"ANT3": RIG_ANT_3,
+	"ANT4": RIG_ANT_4,
+	"ANT5": RIG_ANT_5,
+}
 
 // Hamlib Split
 const (
@@ -585,8 +619,8 @@ type Caps_t struct {
 	SetFunctions   []string
 	GetLevels      Values
 	SetLevels      Values
-	GetParameter   Values
-	SetParameter   Values
+	GetParameters  Values
+	SetParameters  Values
 	TargetableVfos []int
 	Filters        map[string][]int //mode + List of supported filter bandwidths
 }
