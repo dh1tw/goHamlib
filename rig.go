@@ -3,7 +3,7 @@
 package goHamlib
 
 /*
-#cgo CFLAGS: -I /usr/local/lib
+#cgo CFLAGS: -I /usr/local/include
 #cgo LDFLAGS: -L /usr/local/lib -lhamlib
 
 #include <stdio.h>
@@ -41,6 +41,7 @@ extern int set_ant(int vfo, int ant);
 extern int get_ant(int vfo, int *ant);
 extern int set_ts(int vfo, int ts);
 extern int get_ts(int vfo, long *ts);
+extern signed long get_rig_resolution(int mode);
 extern unsigned long has_get_level(unsigned long level);
 extern unsigned long has_set_level(unsigned long level);
 extern unsigned long has_get_func(unsigned long function);
@@ -68,6 +69,8 @@ extern int get_supported_vfo_operations(int *vfo_ops);
 extern int get_supported_modes(int *modes);
 extern int get_filter_count(int *filter_count);
 extern int get_filter_mode_width(int filter, int *mode, signed long *width);
+extern int get_ts_count(int *ts_count);
+extern int get_tuning_steps(int el, int *mode, signed long *ts);
 extern int get_int_from_array(int *array, int *el, int index);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
@@ -342,6 +345,14 @@ func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error) {
 	return res, checkError(0, err, "has_get_level")
 }
 
+// get the best frequency resolution for this rig (minimum step size)
+func (rig *Rig) GetRigResolution(mode int) (resolution int, err error) {
+	var r C.long
+	r, err = C.get_rig_resolution(C.int(mode))
+	resolution = int(r)
+	return resolution, checkError(0, err, "get_rig_resolution")
+}
+
 // has supports setting a specific level
 func (rig *Rig) HasSetLevel(level uint32) (res uint32, err error) {
 	var c C.ulong
@@ -482,7 +493,7 @@ func (rig *Rig) GetConf(token string) (val string, err error) {
 }
 
 //Execute VFO Operation
-func (rig *Rig) VfoOp(vfo int32, op int) error {
+func (rig *Rig) VfoOp(vfo int, op int) error {
 	res, err := C.vfo_op(C.int(vfo), C.int(op))
 	return checkError(res, err, "vfo_op")
 }
@@ -532,6 +543,9 @@ func (rig *Rig) getCaps() error {
 		log.Println(err)
 	}
 	if err := rig.getFilters(); err != nil {
+		log.Println(err)
+	}
+	if err := rig.getTuningSteps(); err != nil {
 		log.Println(err)
 	}
 
@@ -799,7 +813,7 @@ func (rig *Rig) getGetParameter() error {
 		}
 	}
 	sort.Sort(parmList)
-	rig.Caps.GetParameter = parmList
+	rig.Caps.GetParameters = parmList
 	return nil
 }
 
@@ -823,7 +837,7 @@ func (rig *Rig) getSetParameter() error {
 		}
 	}
 	sort.Sort(parmList)
-	rig.Caps.SetParameter = parmList
+	rig.Caps.SetParameters = parmList
 	return nil
 }
 
@@ -853,6 +867,36 @@ func (rig *Rig) getFilters() error {
 	}
 
 	rig.Caps.Filters = filterMap
+	return nil
+}
+
+//get supported Tuning steps
+func (rig *Rig) getTuningSteps() error {
+
+	var tsc C.int
+	var cMode C.int
+	var cTs C.long
+	var tsMap map[string][]int
+	tsMap = make(map[string][]int)
+
+	res, err := C.get_ts_count(&tsc)
+	if checkError(res, err, "get_ts_count") != nil {
+		return checkError(res, err, "get_ts_count")
+	}
+
+	for i := 0; i < int(tsc); i++ {
+		res, err = C.get_tuning_steps(C.int(i), &cMode, &cTs)
+		if checkError(res, err, "") != nil {
+			return checkError(res, err, "get_tuning_steps")
+		}
+		for mode, modeStr := range ModeName {
+			if int(cMode)&mode > 0 {
+				tsMap[modeStr] = append(tsMap[modeStr], int(cTs))
+			}
+		}
+	}
+
+	rig.Caps.TuningSteps = tsMap
 	return nil
 }
 

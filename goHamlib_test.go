@@ -299,4 +299,9 @@ func TestBoolToInt(t *testing.T) {
 		t.Fatal("false should result in 0")
 	}
 
+	x, err = goHamlib.BoolToCint(false)
+	if err != nil || x != 0 {
+		t.Fatal("false should result in 0")
+	}
+
 }

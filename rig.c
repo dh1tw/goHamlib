@@ -218,6 +218,12 @@ int get_ts(int vfo, long *ts)
 	return res;
 }
 
+signed long get_rig_resolution(int mode)
+{
+	signed long resolution = rig_get_resolution(myrig, mode);
+	return resolution; 
+}
+
 unsigned long has_get_level(unsigned long level)
 {
 	unsigned long res = rig_has_get_level(myrig, level);
@@ -619,6 +625,21 @@ int get_filter_mode_width(int filter, int *mode, signed long *width)
 
 	return RIG_OK;
 } 
+
+int get_ts_count(int *ts_count)
+{
+	int i;
+	*ts_count = sizeof(myrig->caps->tuning_steps)/ sizeof(myrig->caps->tuning_steps[0]);
+	return RIG_OK;
+}
+
+int get_tuning_steps(int el, int *mode, signed long *ts)
+{
+	*mode = myrig->caps->tuning_steps[el].modes;
+	*ts = myrig->caps->tuning_steps[el].ts;
+
+	return RIG_OK;
+}
 
 int get_int_from_array(int *array, int *el, int index)
 {

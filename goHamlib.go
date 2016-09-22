@@ -623,6 +623,46 @@ type Caps_t struct {
 	SetParameters  Values
 	TargetableVfos []int
 	Filters        map[string][]int //mode + List of supported filter bandwidths
+	TuningSteps    map[string][]int // mode + List of supported tuning steps
+
+	/* TODO */
+	/*********/
+	// ScanOperations
+	// targetable VfoName
+	// ctcss_list
+	// dcs_list
+	// extparms
+	// extlevels
+	// transceive
+	// announces
+	// bank_qty
+	// chan_desc_sz
+	// Channels
+	// rx_range_list1
+	// tx_range_list1
+	// rx_range_list2
+	// tx_range_list2
+	// TuningSteps
+	// StrCal
+
+	// mode_name
+	// mfg_name
+	// version
+	// copyright
+	// status
+	// ptt_type
+	// dcd_type
+	// port_type
+	// SerialRateMin int
+	// SerialRateMax int
+	// SerialDataBits int
+	// SerialStopBits int
+	// SerialParity
+	// SerialHandshake
+	// WriteDelay	int
+	// PostWriteDelay int
+	// Timeout	int
+	// Retry	int
 }
 
 type Rig struct {
@@ -662,12 +702,11 @@ func CIntToBool(myInt C.int) (bool, error) {
 }
 
 func BoolToCint(myBool bool) (C.int, error) {
-	if myBool == true {
+	if myBool {
 		return C.int(1), nil
-	} else if myBool == false {
-		return C.int(0), nil
 	}
-	return C.int(0), errors.New("Unable to convert bool into C.int32")
+
+	return C.int(0), nil
 }
 
 func (e *HamlibError) Error() string {
