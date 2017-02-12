@@ -102,7 +102,7 @@ func (rig *Rig) Init(rigModel int) error {
 }
 
 // Set Port of Rig
-func (rig *Rig) SetPort(p Port_t) error {
+func (rig *Rig) SetPort(p Port) error {
 	res, err := C.set_port(C.int(p.RigPortType), C.CString(p.Portname), C.int(p.Baudrate), C.int(p.Databits), C.int(p.Stopbits), C.int(p.Parity), C.int(p.Handshake))
 	return checkError(res, err, "set_port")
 }
@@ -754,7 +754,7 @@ func (rig *Rig) getGetLevels() error {
 		}
 
 		if res > 0 {
-			var level Value_t
+			var level Value
 			level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
 			if err != nil {
 				return err
@@ -779,7 +779,7 @@ func (rig *Rig) getSetLevels() error {
 		}
 
 		if res > 0 {
-			var level Value_t
+			var level Value
 			level.Step, level.Min, level.Max, err = rig.GetLevelGran(l)
 			if err != nil {
 				return err
@@ -802,7 +802,7 @@ func (rig *Rig) getGetParameter() error {
 			return err
 		} else {
 			if res > 0 {
-				var parm Value_t
+				var parm Value
 				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
 				if err != nil {
 					return err
@@ -826,7 +826,7 @@ func (rig *Rig) getSetParameter() error {
 			return err
 		} else {
 			if res > 0 {
-				var parm Value_t
+				var parm Value
 				parm.Step, parm.Min, parm.Max, err = rig.GetParmGran(p)
 				if err != nil {
 					return err

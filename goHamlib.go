@@ -587,7 +587,7 @@ const (
 	TOK_FAST_SET_CMD = 1
 )
 
-type Port_t struct {
+type Port struct {
 	RigPortType int
 	Portname    string
 	Baudrate    int
@@ -597,36 +597,242 @@ type Port_t struct {
 	Handshake   int
 }
 
-type Value_t struct {
+type Value struct {
 	Name string
 	Step float32
 	Min  float32
 	Max  float32
 }
 
-type Values []Value_t
+const (
+	RIG_STATUS_ALPHA    = 0
+	RIG_STATUS_UNTESTED = 1
+	RIG_STATUS_BETA     = 2
+	RIG_STATUS_STABLE   = 3
+	RIG_STATUS_BUGGY    = 4
+)
 
-type Caps_t struct {
-	Preamps        []int
-	Attenuators    []int
-	MaxRit         int
-	MaxXit         int
-	MaxIfShift     int
-	Vfos           []string
-	Operations     []string
-	Modes          []string
-	GetFunctions   []string
-	SetFunctions   []string
-	GetLevels      Values
-	SetLevels      Values
-	GetParameters  Values
-	SetParameters  Values
-	TargetableVfos []int
-	Filters        map[string][]int //mode + List of supported filter bandwidths
-	TuningSteps    map[string][]int // mode + List of supported tuning steps
+var RigStatusName = map[int]string{
+	RIG_STATUS_ALPHA:    "ALPHA",
+	RIG_STATUS_UNTESTED: "UNTESTED",
+	RIG_STATUS_BETA:     "BETA",
+	RIG_STATUS_STABLE:   "STABLE",
+	RIG_STATUS_BUGGY:    "BUGGY",
+}
+
+var RigStatusValue = map[string]int{
+	"ALPHA":    RIG_STATUS_ALPHA,
+	"UNTESTED": RIG_STATUS_UNTESTED,
+	"BETA":     RIG_STATUS_BETA,
+	"STABLE":   RIG_STATUS_STABLE,
+	"BUGGY":    RIG_STATUS_BUGGY,
+}
+
+const (
+	RIG_PTT_NONE        = 0
+	RIG_PTT_RIG         = 1
+	RIG_PTT_SERIAL_DTR  = 2
+	RIG_PTT_SERIAL_RTS  = 3
+	RIG_PTT_PARALLEL    = 4
+	RIG_PTT_RIG_MICDATA = 5
+	RIG_PTT_CM108       = 6
+)
+
+var RigPttName = map[int]string{
+	RIG_PTT_NONE:        "NONE",
+	RIG_PTT_RIG:         "CAT",
+	RIG_PTT_SERIAL_DTR:  "DTR",
+	RIG_PTT_SERIAL_RTS:  "RTS",
+	RIG_PTT_PARALLEL:    "PARALLEL",
+	RIG_PTT_RIG_MICDATA: "MIC",
+	RIG_PTT_CM108:       "GPIO",
+}
+
+var RigPttValue = map[string]int{
+	"NONE":     RIG_PTT_NONE,
+	"CAT":      RIG_PTT_RIG,
+	"DTR":      RIG_PTT_SERIAL_DTR,
+	"RTS":      RIG_PTT_SERIAL_RTS,
+	"PARALLEL": RIG_PTT_PARALLEL,
+	"MIC":      RIG_PTT_RIG_MICDATA,
+	"GPIO":     RIG_PTT_CM108,
+}
+
+const (
+	RIG_DCD_NONE       = 0
+	RIG_DCD_RIG        = 1
+	RIG_DCD_SERIAL_DSR = 2
+	RIG_DCD_SERIAL_CTS = 3
+	RIG_DCD_SERIAL_CAR = 4
+	RIG_DCD_PARALLEL   = 5
+	RIG_DCD_CM108      = 6
+)
+
+var RigDcdName = map[int]string{
+	RIG_DCD_NONE:       "NONE",
+	RIG_DCD_RIG:        "RIG",
+	RIG_DCD_SERIAL_DSR: "DSR",
+	RIG_DCD_SERIAL_CTS: "CTS",
+	RIG_DCD_SERIAL_CAR: "CAR",
+	RIG_DCD_PARALLEL:   "PARALLEL",
+	RIG_DCD_CM108:      "GPIO",
+}
+
+var RigDcdValue = map[string]int{
+	"NONE":     RIG_DCD_NONE,
+	"RIG":      RIG_DCD_RIG,
+	"DSR":      RIG_DCD_SERIAL_DSR,
+	"CTS":      RIG_DCD_SERIAL_CTS,
+	"CAR":      RIG_DCD_SERIAL_CAR,
+	"PARALLEL": RIG_DCD_PARALLEL,
+	"GPIO":     RIG_DCD_CM108,
+}
+
+const (
+	RIG_PORT_NONE        = 0
+	RIG_PORT_SERIAL      = 1
+	RIG_PORT_NETWORK     = 2
+	RIG_PORT_DEVICE      = 3
+	RIG_PORT_PACKET      = 4
+	RIG_PORT_DTMF        = 5
+	RIG_PORT_ULTRA       = 6
+	RIG_PORT_RPC         = 7
+	RIG_PORT_PARALLEL    = 8
+	RIG_PORT_USB         = 9
+	RIG_PORT_UDP_NETWORK = 10
+	RIG_PORT_CM108       = 11
+)
+
+var RigPortName = map[int]string{
+	RIG_PORT_NONE:        "RIG_PORT_NONE",
+	RIG_PORT_SERIAL:      "RIG_PORT_SERIAL",
+	RIG_PORT_NETWORK:     "RIG_PORT_NETWORK",
+	RIG_PORT_DEVICE:      "RIG_PORT_DEVICE",
+	RIG_PORT_PACKET:      "RIG_PORT_PACKET",
+	RIG_PORT_DTMF:        "RIG_PORT_DTMF",
+	RIG_PORT_ULTRA:       "RIG_PORT_ULTRA",
+	RIG_PORT_RPC:         "RIG_PORT_RPC",
+	RIG_PORT_PARALLEL:    "RIG_PORT_PARALLEL",
+	RIG_PORT_USB:         "RIG_PORT_USB",
+	RIG_PORT_UDP_NETWORK: "RIG_PORT_UDP_NETWORK",
+	RIG_PORT_CM108:       "RIG_PORT_CM108",
+}
+
+var RigPortValue = map[string]int{
+	"RIG_PORT_NONE":        RIG_PORT_NONE,
+	"RIG_PORT_SERIAL":      RIG_PORT_SERIAL,
+	"RIG_PORT_NETWORK":     RIG_PORT_NETWORK,
+	"RIG_PORT_DEVICE":      RIG_PORT_DEVICE,
+	"RIG_PORT_PACKET":      RIG_PORT_PACKET,
+	"RIG_PORT_DTMF":        RIG_PORT_DTMF,
+	"RIG_PORT_ULTRA":       RIG_PORT_ULTRA,
+	"RIG_PORT_RPC":         RIG_PORT_RPC,
+	"RIG_PORT_PARALLEL":    RIG_PORT_PARALLEL,
+	"RIG_PORT_USB":         RIG_PORT_USB,
+	"RIG_PORT_UDP_NETWORK": RIG_PORT_UDP_NETWORK,
+	"RIG_PORT_CM108":       RIG_PORT_CM108,
+}
+
+type Values []Value
+
+type ConfParams struct {
+	Token    int64
+	Name     string
+	Label    string
+	Tooltip  string
+	Dflt     string
+	RigConfE int
+}
+
+type ExtList struct {
+	Token int64
+	Value Value
+}
+
+type Channel struct {
+	ChannelNum  int
+	BankNum     int
+	Vfo         uint32
+	Ant         int
+	Freq        float64
+	Mode        uint32
+	Width       int
+	TxFreq      float64
+	TxMode      uint32
+	TxWidth     int
+	Split       int
+	TxVfo       uint32
+	RptrShift   int
+	RptrOffset  int
+	TuningStep  int
+	Rit         int
+	Xit         int
+	Funcs       uint32
+	Levels      Value
+	CtcssTone   uint
+	CtcssSql    uint
+	DcsCode     uint
+	DcsSql      uint
+	ScanGroup   int
+	Flags       int
+	Description string
+	ExtLevels   []ExtList
+}
+
+type Caps struct {
+	RigModel        int
+	ModelName       string
+	MfgName         string
+	Version         string
+	Copyright       string
+	Status          int
+	RigType         int
+	PttType         int
+	DcdType         int
+	PortType        int
+	SerialRateMin   int
+	SerialRateMax   int
+	SerialDataBits  int
+	SerialStopBits  int
+	SerialParity    int
+	SerialHandshake int
+	WriteDelay      int
+	PostWriteDelay  int
+	Timeout         int
+	Retry           int
+	Preamps         []int
+	Attenuators     []int
+	MaxRit          int
+	MaxXit          int
+	MaxIfShift      int
+	Vfos            []string
+	Operations      []string
+	Modes           []string
+	GetFunctions    []string
+	SetFunctions    []string
+	GetLevels       Values
+	SetLevels       Values
+	GetParameters   Values
+	SetParameters   Values
+	TargetableVfo   int
+	TargetableVfos  []int
+	Transceive      int
+	BankQty         int
+	ChannelDescSz   int
+	ChannelList     []Channel
+	Filters         map[string][]int //mode + List of supported filter bandwidths
+	TuningSteps     map[string][]int // mode + List of supported tuning steps
+	ExtParms        []ConfParams
+	ExtLevels       []ConfParams
+	CtcssList       []uint
+	DcsList         []uint
+	Announces       int
+	ScanOperations  []string
+	CfgParams       []ConfParams
 
 	/* TODO */
 	/*********/
+
 	// ScanOperations
 	// targetable VfoName
 	// ctcss_list
@@ -644,30 +850,11 @@ type Caps_t struct {
 	// tx_range_list2
 	// TuningSteps
 	// StrCal
-
-	// mode_name
-	// mfg_name
-	// version
-	// copyright
-	// status
-	// ptt_type
-	// dcd_type
-	// port_type
-	// SerialRateMin int
-	// SerialRateMax int
-	// SerialDataBits int
-	// SerialStopBits int
-	// SerialParity
-	// SerialHandshake
-	// WriteDelay	int
-	// PostWriteDelay int
-	// Timeout	int
-	// Retry	int
 }
 
 type Rig struct {
-	port Port_t
-	Caps Caps_t
+	port Port
+	Caps Caps
 }
 
 type HamlibError struct {
