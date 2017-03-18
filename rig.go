@@ -394,7 +394,7 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error) {
 }
 
 //get Level
-func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error) {
+func (rig *Rig) GetLevel(vfo int, level uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_level(C.int(vfo), C.ulong(level), &v)
@@ -403,7 +403,7 @@ func (rig *Rig) GetLevel(vfo int32, level uint32) (value float32, err error) {
 }
 
 //set Level
-func (rig *Rig) SetLevel(vfo int32, level uint32, value float32) error {
+func (rig *Rig) SetLevel(vfo int, level uint32, value float32) error {
 	res, err := C.set_level(C.int(vfo), C.ulong(level), C.float(value))
 	return checkError(res, err, "set_level")
 }
@@ -423,7 +423,7 @@ func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float
 }
 
 //get Function
-func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error) {
+func (rig *Rig) GetFunc(vfo int, function uint32) (value bool, err error) {
 	var v C.int
 	var res C.int
 	res, err = C.get_func(C.int(vfo), C.ulong(function), &v)
@@ -435,7 +435,7 @@ func (rig *Rig) GetFunc(vfo int32, function uint32) (value bool, err error) {
 }
 
 //set Function
-func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error {
+func (rig *Rig) SetFunc(vfo int, function uint32, value bool) error {
 	var v C.int
 	v, err := BoolToCint(value)
 	if err != nil {
@@ -446,7 +446,7 @@ func (rig *Rig) SetFunc(vfo int32, function uint32, value bool) error {
 }
 
 //get Parameter
-func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error) {
+func (rig *Rig) GetParm(vfo int, parm uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_parm(C.ulong(parm), &v)
@@ -455,7 +455,7 @@ func (rig *Rig) GetParm(vfo int32, parm uint32) (value float32, err error) {
 }
 
 //set Parameter
-func (rig *Rig) SetParm(vfo int32, parm uint32, value float32) error {
+func (rig *Rig) SetParm(vfo int, parm uint32, value float32) error {
 	res, err := C.set_parm(C.ulong(parm), C.float(value))
 	return checkError(res, err, "set_parm")
 }
