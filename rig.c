@@ -598,7 +598,7 @@ int get_supported_vfos(int *vfo_list)
 
 int get_supported_vfo_operations(int *vfo_ops)
 {
-	*vfo_ops = (int)myrig->caps->vfo_op;
+	*vfo_ops = (int)myrig->caps->vfo_ops;
 	return RIG_OK;
 }
 
