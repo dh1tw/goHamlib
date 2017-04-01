@@ -19,8 +19,8 @@ int set_port(int rig_port_type, char* portname, int baudrate, int databits, int 
 	myrig->state.rigport.parm.serial.parity = parity;
 	myrig->state.rigport.parm.serial.handshake = handshake;
 	strncpy(myrig->state.rigport.pathname, portname, FILPATHLEN - 1);
-	printf("path: %s\n", portname);
-	printf("path: %s\n", myrig->state.rigport.pathname);
+	// printf("path: %s\n", portname);
+	// printf("path: %s\n", myrig->state.rigport.pathname);
 	return 0;
 }
 
@@ -29,7 +29,7 @@ int init_rig(int rig_model)
 	//check if rig already exists
 	if (myrig != 0) return -1;
 
-	rig_load_all_backends();
+	// rig_load_all_backends();
 	myrig = rig_init(rig_model);
 	if (!myrig) {
 		return -1;
