@@ -71,6 +71,10 @@ extern int get_filter_count(int *filter_count);
 extern int get_filter_mode_width(int filter, int *mode, signed long *width);
 extern int get_ts_count(int *ts_count);
 extern int get_tuning_steps(int el, int *mode, signed long *ts);
+extern void get_model_name(char *model_name);
+extern void get_version(char *version);
+extern void get_mfg_name(char *mfg_name);
+extern int get_status();
 extern int get_int_from_array(int *array, int *el, int index);
 extern void set_debug_level(int debug_level);
 extern int close_rig();
@@ -83,6 +87,8 @@ import (
 	"errors"
 	"log"
 	"sort"
+	"strings"
+	"unsafe"
 	//"encoding/hex"
 )
 
@@ -98,6 +104,9 @@ func (rig *Rig) Init(rigModel int) error {
 		return checkError(res, err, "init_rig")
 	}
 	err = rig.getCaps()
+
+	rig.Caps.RigModel = rigModel
+
 	return checkError(res, err, "init_rig")
 }
 
@@ -488,6 +497,7 @@ func (rig *Rig) GetConf(token string) (val string, err error) {
 
 	res, err := C.get_conf(C.CString(token), v)
 	val = C.GoString(v)
+	C.free(unsafe.Pointer(v))
 
 	return val, checkError(res, err, "get_conf")
 }
@@ -548,6 +558,10 @@ func (rig *Rig) getCaps() error {
 	if err := rig.getTuningSteps(); err != nil {
 		log.Println(err)
 	}
+	rig.getModelName()
+	rig.getVersion()
+	rig.getMfgName()
+	rig.getStatus()
 
 	return nil
 
@@ -839,6 +853,40 @@ func (rig *Rig) getSetParameter() error {
 	sort.Sort(parmList)
 	rig.Caps.SetParameters = parmList
 	return nil
+}
+
+// get Capabilities > Rig Model Name
+func (rig *Rig) getModelName() {
+	cModelName := C.CString("                         ")
+
+	C.get_model_name(cModelName)
+	rig.Caps.ModelName = strings.TrimSpace(C.GoString(cModelName))
+	C.free(unsafe.Pointer(cModelName))
+}
+
+// get Capabilities > Version
+func (rig *Rig) getVersion() {
+	cVersion := C.CString("                         ")
+
+	C.get_version(cVersion)
+	rig.Caps.Version = strings.TrimSpace(C.GoString(cVersion))
+	C.free(unsafe.Pointer(cVersion))
+}
+
+// get Capabilities > Manufacturer Name
+func (rig *Rig) getMfgName() {
+	cMfGName := C.CString("                         ")
+
+	C.get_mfg_name(cMfGName)
+	rig.Caps.MfgName = strings.TrimSpace(C.GoString(cMfGName))
+	C.free(unsafe.Pointer(cMfGName))
+}
+
+// get Capabilities > Status
+func (rig *Rig) getStatus() {
+
+	cStatus := C.get_status()
+	rig.Caps.Status = int(cStatus)
 }
 
 func (rig *Rig) getFilters() error {
