@@ -48,6 +48,7 @@ extern unsigned long has_get_func(unsigned long function);
 extern unsigned long has_set_func(unsigned long function);
 extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
+extern int has_token(char *token);
 extern int get_conf(char *token, char* val);
 extern int set_conf(char *token, char *val);
 extern int get_level(int vfo, unsigned long level, float *value);
@@ -487,6 +488,20 @@ func (rig *Rig) GetParmGran(parm uint32) (step float32, min float32, max float32
 func (rig *Rig) SetConf(token string, val string) error {
 	res, err := C.set_conf(C.CString(token), C.CString(val))
 	return checkError(res, err, "set_conf")
+}
+
+//HasToken checks if the rig supports a given token
+func (rig *Rig) HasToken(token string) bool {
+	//dirty hack - provide fix length char*
+	//there should be a better way
+
+	res, _ := C.has_token(C.CString(token))
+
+	if res == RIG_OK {
+		return true
+	}
+
+	return false
 }
 
 //Get configuration token

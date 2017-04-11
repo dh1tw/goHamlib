@@ -280,6 +280,17 @@ unsigned long has_set_parm(unsigned long parm)
 	return res;
 }
 
+int has_token(char *token)
+{
+	token_t t = rig_token_lookup(myrig, token);
+
+	if (t == RIG_CONF_END)
+	{
+		return RIG_EINVAL;
+	}
+	return RIG_OK;
+}
+
 int get_conf(char* token, char* val)
 {
 	token_t t = rig_token_lookup(myrig, token);
