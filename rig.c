@@ -321,6 +321,10 @@ int get_level(int vfo, unsigned long level, float *value)
 		case RIG_LEVEL_ANTIVOX:
 		case RIG_LEVEL_SWR:
 		case RIG_LEVEL_ALC:
+		case RIG_LEVEL_BALANCE:
+		case RIG_LEVEL_PBT_IN:
+		case RIG_LEVEL_PBT_OUT:
+		case RIG_LEVEL_APF:		
 			*value = v.f;
 			break;
 		case RIG_LEVEL_NONE:
@@ -336,6 +340,9 @@ int get_level(int vfo, unsigned long level, float *value)
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_STRENGTH:
 		case RIG_LEVEL_RAWSTR:
+		case RIG_LEVEL_SLOPE_LOW:
+		case RIG_LEVEL_SLOPE_HIGH:
+		case RIG_LEVEL_BKIN_DLYMS:
 			*value = (float)v.i;
 			break;
 		default: 
