@@ -91,7 +91,7 @@ var VfoName = map[int]string{
 	RIG_VFO_A:    "VFOA",
 	RIG_VFO_B:    "VFOB",
 	RIG_VFO_C:    "VFOC",
-	RIG_VFO_CURR: "VFO_CURRENT",
+	RIG_VFO_CURR: "VFO_CURR",
 	RIG_VFO_MEM:  "VFO_MEM",
 	RIG_VFO_VFO:  "VFO_VFO",
 	RIG_VFO_TX:   "VFO_TX",
@@ -101,16 +101,16 @@ var VfoName = map[int]string{
 }
 
 var VfoValue = map[string]int{
-	"VFO_NONE":    RIG_VFO_NONE,
-	"VFOA":        RIG_VFO_A,
-	"VFOB":        RIG_VFO_B,
-	"VFOC":        RIG_VFO_C,
-	"VFO_CURRENT": RIG_VFO_CURR,
-	"VFO_MAIN":    RIG_VFO_MAIN,
-	"VFO_SUB":     RIG_VFO_SUB,
-	"VFO_MEM":     RIG_VFO_MEM,
-	"VFO_VFO":     RIG_VFO_VFO,
-	"VFO_TX":      RIG_VFO_TX,
+	"VFO_NONE": RIG_VFO_NONE,
+	"VFOA":     RIG_VFO_A,
+	"VFOB":     RIG_VFO_B,
+	"VFOC":     RIG_VFO_C,
+	"VFO_CURR": RIG_VFO_CURR,
+	"VFO_MAIN": RIG_VFO_MAIN,
+	"VFO_SUB":  RIG_VFO_SUB,
+	"VFO_MEM":  RIG_VFO_MEM,
+	"VFO_VFO":  RIG_VFO_VFO,
+	"VFO_TX":   RIG_VFO_TX,
 }
 
 //Hamlib Rig Operations
