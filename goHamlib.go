@@ -935,7 +935,7 @@ func (e *HamlibError) Error() string {
 	case RIG_EDOM:
 		e.Description = "Argument out of domain of func"
 	default:
-		e.Description = "unkown Error"
+		e.Description = "unknown Error"
 	}
 	return fmt.Sprintf("%s: %s (%v)", e.Operation, e.Description, e.Errorcode)
 }
