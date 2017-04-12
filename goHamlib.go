@@ -829,6 +829,32 @@ type Caps struct {
 	Announces       int
 	ScanOperations  []string
 	CfgParams       []ConfParams
+	HasGetPowerStat bool
+	HasSetPowerStat bool
+	HasGetVfo       bool
+	HasSetVfo       bool
+	HasSetFreq      bool
+	HasGetFreq      bool
+	HasSetMode      bool
+	HasGetMode      bool
+	HasSetPtt       bool
+	HasGetPtt       bool
+	HasSetRit       bool
+	HasGetRit       bool
+	HasSetXit       bool
+	HasGetXit       bool
+	HasSetSplitVfo  bool
+	HasGetSplitVfo  bool
+	HasSetSplitMode bool
+	HasGetSplitMode bool
+	HasSetSplitFreq bool
+	HasGetSplitFreq bool
+	HasSetAnt       bool
+	HasGetAnt       bool
+	HasSetTs        bool
+	HasGetTs        bool
+	HasGetConf      bool
+	HasSetConf      bool
 
 	/* TODO */
 	/*********/

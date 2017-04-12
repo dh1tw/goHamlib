@@ -13,33 +13,57 @@ package goHamlib
 extern int set_port(int rig_port_type, char* portname, int baudrate, int databits, int stopbits, int parity, int handshake);
 extern int init_rig(int rig_model);
 extern int open_rig();
+extern int has_set_vfo();
 extern int set_vfo(int vfo);
+extern int has_get_vfo();
 extern int get_vfo(int *vfo);
+extern int has_set_freq();
 extern int set_freq(int vfo, double freq);
+extern int has_set_mode();
 extern int set_mode(int vfo, int mode, long pb_width);
 extern int get_passband_narrow(int mode);
 extern int get_passband_normal(int mode);
 extern int get_passband_wide(int mode);
+extern int has_get_freq();
 extern int get_freq(int vfo, double *freq);
+extern int has_get_mode();
 extern int get_mode(int vfo, int *mode, long *pb_width);
+extern int has_set_ptt();
 extern int set_ptt(int vfo, int ptt);
+extern int has_get_ptt();
 extern int get_ptt(int vfo, int *ptt);
+extern int has_set_rit();
 extern int set_rit(int vfo, int offset);
+extern int has_get_rit();
 extern int get_rit(int vfo, int *offset);
+extern int has_set_xit();
 extern int set_xit(int vfo, int offset);
+extern int has_get_xit();
 extern int get_xit(int vfo, int *offset);
+extern int has_set_split_freq();
 extern int set_split_freq(int vfo, double tx_freq);
+extern int has_get_split_freq();
 extern int get_split_freq(int vfo, double *tx_freq);
+extern int has_set_split_mode();
 extern int set_split_mode(int vfo, int tx_mode, int tx_width);
+extern int has_get_split_mode();
 extern int get_split_mode(int vfo, int *tx_mode, long *tx_width);
+extern int has_set_split_vfo();
 extern int set_split_vfo(int vfo, int split, int tx_vfo);
+extern int has_get_split_vfo();
 extern int get_split_vfo(int vfo, int *split, int *tx_vfo);
+extern int has_set_powerstat();
 extern int set_powerstat(int status);
+extern int has_get_powerstat();
 extern int get_powerstat(int *status);
 extern const char* get_info();
+extern int has_set_ant();
 extern int set_ant(int vfo, int ant);
+extern int has_get_ant();
 extern int get_ant(int vfo, int *ant);
+extern int has_set_ts();
 extern int set_ts(int vfo, int ts);
+extern int has_get_ts();
 extern int get_ts(int vfo, long *ts);
 extern signed long get_rig_resolution(int mode);
 extern unsigned long has_get_level(unsigned long level);
@@ -49,7 +73,9 @@ extern unsigned long has_set_func(unsigned long function);
 extern unsigned long has_get_parm(unsigned long parm);
 extern unsigned long has_set_parm(unsigned long parm);
 extern int has_token(char *token);
+extern int has_get_conf();
 extern int get_conf(char *token, char* val);
+extern int has_set_conf();
 extern int set_conf(char *token, char *val);
 extern int get_level(int vfo, unsigned long level, float *value);
 extern int set_level(int vfo, unsigned long level, float value);
@@ -274,17 +300,11 @@ func (rig *Rig) SetSplitVfo(vfo int, split int, txVfo int) error {
 // Get Split Vfo
 func (rig *Rig) GetSplitVfo(vfo int) (split int, txVfo int, err error) {
 	var s C.int
-	var v C.long
-	res, err := C.get_split_mode(C.int(vfo), &s, &v)
+	var v C.int
+	res, err := C.get_split_vfo(C.int(vfo), &s, &v)
 	split = int(s)
 	txVfo = int(v)
 	return split, txVfo, checkError(res, err, "get_split_vfo")
-}
-
-// Set Split (shortcut for SetSplitVfo)
-func (rig *Rig) SetSplit(vfo int, split int) error {
-	res, err := C.set_split_vfo(C.int(vfo), C.int(split), C.int(RIG_VFO_CURR))
-	return checkError(res, err, "set_split")
 }
 
 // Get Split (shortcut for GetSplitVfo)
@@ -577,6 +597,32 @@ func (rig *Rig) getCaps() error {
 	rig.getVersion()
 	rig.getMfgName()
 	rig.getStatus()
+	rig.hasGetPowerStat()
+	rig.hasSetPowerStat()
+	rig.hasGetVfo()
+	rig.hasSetVfo()
+	rig.hasSetFreq()
+	rig.hasGetFreq()
+	rig.hasGetMode()
+	rig.hasSetMode()
+	rig.hasSetPtt()
+	rig.hasSetPtt()
+	rig.hasGetRit()
+	rig.hasSetRit()
+	rig.hasGetXit()
+	rig.hasSetXit()
+	rig.hasSetSplitVfo()
+	rig.hasGetSplitVfo()
+	rig.hasGetSplitFreq()
+	rig.hasSetSplitVfo()
+	rig.hasSetSplitMode()
+	rig.hasGetSplitMode()
+	rig.hasGetAnt()
+	rig.hasSetAnt()
+	rig.hasSetTs()
+	rig.hasGetTs()
+	rig.hasGetConf()
+	rig.hasSetConf()
 
 	return nil
 
@@ -961,6 +1007,239 @@ func (rig *Rig) getTuningSteps() error {
 
 	rig.Caps.TuningSteps = tsMap
 	return nil
+}
+
+func (rig *Rig) hasSetPowerStat() {
+	res := C.has_set_powerstat()
+	if res == RIG_OK {
+		rig.Caps.HasSetPowerStat = true
+	}
+	rig.Caps.HasSetPowerStat = false
+}
+
+func (rig *Rig) hasGetPowerStat() {
+	res := C.has_get_powerstat()
+	if res == RIG_OK {
+		rig.Caps.HasGetPowerStat = true
+		return
+	}
+	rig.Caps.HasGetPowerStat = false
+}
+
+func (rig *Rig) hasSetVfo() {
+	res := C.has_set_vfo()
+	if res == RIG_OK {
+		rig.Caps.HasSetVfo = true
+		return
+	}
+	rig.Caps.HasSetVfo = false
+}
+
+func (rig *Rig) hasGetVfo() {
+	res := C.has_get_vfo()
+	if res == RIG_OK {
+		rig.Caps.HasGetVfo = true
+		return
+	}
+	rig.Caps.HasGetVfo = false
+}
+
+func (rig *Rig) hasSetFreq() {
+	res := C.has_set_freq()
+	if res == RIG_OK {
+		rig.Caps.HasSetFreq = true
+		return
+	}
+	rig.Caps.HasSetFreq = false
+}
+
+func (rig *Rig) hasGetFreq() {
+	res := C.has_get_freq()
+	if res == RIG_OK {
+		rig.Caps.HasGetFreq = true
+		return
+	}
+	rig.Caps.HasGetFreq = false
+}
+
+func (rig *Rig) hasSetMode() {
+	res := C.has_set_mode()
+	if res == RIG_OK {
+		rig.Caps.HasSetMode = true
+		return
+	}
+	rig.Caps.HasSetMode = false
+}
+
+func (rig *Rig) hasGetMode() {
+	res := C.has_get_mode()
+	if res == RIG_OK {
+		rig.Caps.HasGetMode = true
+		return
+	}
+	rig.Caps.HasGetMode = false
+}
+
+func (rig *Rig) hasSetPtt() {
+	res := C.has_set_ptt()
+	if res == RIG_OK {
+		rig.Caps.HasSetPtt = true
+		return
+	}
+	rig.Caps.HasSetPtt = false
+}
+
+func (rig *Rig) hasGetPtt() {
+	res := C.has_get_ptt()
+	if res == RIG_OK {
+		rig.Caps.HasGetPtt = true
+		return
+	}
+	rig.Caps.HasGetPtt = false
+}
+
+func (rig *Rig) hasSetRit() {
+	res := C.has_set_rit()
+	if res == RIG_OK {
+		rig.Caps.HasSetRit = true
+		return
+	}
+	rig.Caps.HasSetRit = false
+}
+
+func (rig *Rig) hasGetRit() {
+	res := C.has_get_rit()
+	if res == RIG_OK {
+		rig.Caps.HasGetRit = true
+		return
+	}
+	rig.Caps.HasGetRit = false
+}
+
+func (rig *Rig) hasSetXit() {
+	res := C.has_set_xit()
+	if res == RIG_OK {
+		rig.Caps.HasSetXit = true
+		return
+	}
+	rig.Caps.HasSetXit = false
+}
+
+func (rig *Rig) hasGetXit() {
+	res := C.has_get_xit()
+	if res == RIG_OK {
+		rig.Caps.HasGetXit = true
+		return
+	}
+	rig.Caps.HasGetXit = false
+}
+
+func (rig *Rig) hasSetSplitVfo() {
+	res := C.has_set_split_vfo()
+	if res == RIG_OK {
+		rig.Caps.HasSetSplitVfo = true
+		return
+	}
+	rig.Caps.HasSetSplitVfo = false
+}
+
+func (rig *Rig) hasGetSplitVfo() {
+	res := C.has_get_split_vfo()
+	if res == RIG_OK {
+		rig.Caps.HasGetSplitVfo = true
+		return
+	}
+	rig.Caps.HasGetSplitVfo = false
+}
+
+func (rig *Rig) hasSetSplitMode() {
+	res := C.has_set_split_mode()
+	if res == RIG_OK {
+		rig.Caps.HasSetSplitMode = true
+		return
+	}
+	rig.Caps.HasSetSplitMode = false
+}
+
+func (rig *Rig) hasGetSplitMode() {
+	res := C.has_get_split_mode()
+	if res == RIG_OK {
+		rig.Caps.HasGetSplitMode = true
+		return
+	}
+	rig.Caps.HasGetSplitMode = false
+}
+
+func (rig *Rig) hasSetSplitFreq() {
+	res := C.has_set_split_freq()
+	if res == RIG_OK {
+		rig.Caps.HasSetSplitFreq = true
+		return
+	}
+	rig.Caps.HasSetSplitFreq = false
+}
+
+func (rig *Rig) hasGetSplitFreq() {
+	res := C.has_get_split_freq()
+	if res == RIG_OK {
+		rig.Caps.HasGetSplitFreq = true
+		return
+	}
+	rig.Caps.HasGetSplitFreq = false
+}
+
+func (rig *Rig) hasSetAnt() {
+	res := C.has_set_ant()
+	if res == RIG_OK {
+		rig.Caps.HasSetAnt = true
+		return
+	}
+	rig.Caps.HasSetAnt = false
+}
+
+func (rig *Rig) hasGetAnt() {
+	res := C.has_get_ant()
+	if res == RIG_OK {
+		rig.Caps.HasGetAnt = true
+		return
+	}
+	rig.Caps.HasGetAnt = false
+}
+
+func (rig *Rig) hasSetTs() {
+	res := C.has_set_ts()
+	if res == RIG_OK {
+		rig.Caps.HasSetTs = true
+		return
+	}
+	rig.Caps.HasSetTs = false
+}
+
+func (rig *Rig) hasGetTs() {
+	res := C.has_get_ts()
+	if res == RIG_OK {
+		rig.Caps.HasGetTs = true
+		return
+	}
+	rig.Caps.HasGetTs = false
+}
+
+func (rig *Rig) hasSetConf() {
+	res := C.has_set_conf()
+	if res == RIG_OK {
+		rig.Caps.HasSetConf = true
+		return
+	}
+	rig.Caps.HasSetConf = false
+}
+
+func (rig *Rig) hasGetConf() {
+	res := C.has_get_conf()
+	if res == RIG_OK {
+		rig.Caps.HasGetConf = true
+		return
+	}
+	rig.Caps.HasGetConf = false
 }
 
 // Set Debug level

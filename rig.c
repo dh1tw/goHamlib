@@ -44,10 +44,28 @@ int open_rig()
 	return res;
 }
 
+int has_set_vfo()
+{
+	if (myrig->caps->set_vfo)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_vfo(int vfo)
 {
 	int res = rig_set_vfo(myrig, vfo);
 	return res;
+}
+
+int has_get_vfo()
+{
+	if (myrig->caps->get_vfo)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_vfo(int *vfo)
@@ -56,10 +74,28 @@ int get_vfo(int *vfo)
 	return res;
 }
 
+int has_set_freq()
+{
+	if (myrig->caps->set_freq)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_freq(int vfo, double freq)
 {
 	int res = rig_set_freq(myrig, vfo, freq);
 	return res;
+}
+
+int has_set_mode()
+{
+	if (myrig->caps->set_mode)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int set_mode(int vfo, int mode, int pb_width)
@@ -86,10 +122,28 @@ int get_passband_wide(int mode)
 	return res;
 }
 
+int has_get_freq()
+{
+	if (myrig->caps->get_freq)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int get_freq(int vfo, double *freq)
 {
 	int res = rig_get_freq(myrig, vfo, freq);
 	return res;
+}
+
+int has_get_mode()
+{
+	if (myrig->caps->get_mode)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_mode(int vfo, int *mode, long *pb_width)
@@ -101,10 +155,28 @@ int get_mode(int vfo, int *mode, long *pb_width)
 	return res;
 }
 
+int has_set_ptt()
+{
+	if (myrig->caps->set_ptt)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_ptt(int vfo, int ptt)
 {
 	int res = rig_set_ptt(myrig, vfo, ptt);
 	return res;
+}
+
+int has_get_ptt()
+{
+	if (myrig->caps->get_ptt)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_ptt(int vfo, int *ptt)
@@ -113,10 +185,28 @@ int get_ptt(int vfo, int *ptt)
 	return res;
 }
 
+int has_set_rit()
+{
+	if (myrig->caps->set_rit)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_rit(int vfo, int offset)
 {
 	int res = rig_set_rit(myrig, vfo, offset);
 	return res;
+}
+
+int has_get_rit()
+{
+	if (myrig->caps->get_rit)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_rit(int vfo, long *offset)
@@ -125,10 +215,28 @@ int get_rit(int vfo, long *offset)
 	return res;
 }
 
+int has_set_xit()
+{
+	if (myrig->caps->set_xit)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_xit(int vfo, int offset)
 {
 	int res = rig_set_xit(myrig, vfo, offset);
 	return res;
+}
+
+int has_get_xit()
+{
+	if (myrig->caps->get_xit)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_xit(int vfo, long *offset)
@@ -137,10 +245,28 @@ int get_xit(int vfo, long *offset)
 	return res;
 }
 
+int has_set_split_freq()
+{
+	if (myrig->caps->set_split_freq)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_split_freq(int vfo, double tx_freq)
 {
 	int res = rig_set_split_freq(myrig, vfo, tx_freq);
 	return res;
+}
+
+int has_get_split_freq()
+{
+	if (myrig->caps->get_split_freq)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_split_freq(int vfo, double *tx_freq)
@@ -149,10 +275,28 @@ int get_split_freq(int vfo, double *tx_freq)
 	return res;
 }
 
+int has_set_split_mode()
+{
+	if (myrig->caps->set_split_mode)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_split_mode(int vfo, int tx_mode, int tx_width)
 {
 	int res = rig_set_split_mode(myrig, vfo, tx_mode, tx_width);
 	return res;
+}
+
+int has_get_split_mode()
+{
+	if (myrig->caps->get_split_mode)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_split_mode(int vfo, int *tx_mode, long *tx_width)
@@ -162,10 +306,28 @@ int get_split_mode(int vfo, int *tx_mode, long *tx_width)
 	return res;
 }
 
+int has_set_split_vfo()
+{
+	if (myrig->caps->set_split_vfo)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_split_vfo(int vfo, int split, int tx_vfo)
 {
 	int res = rig_set_split_vfo(myrig, vfo, split, tx_vfo);
 	return res;
+}
+
+int has_get_split_vfo()
+{
+	if (myrig->caps->get_split_vfo)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_split_vfo(int vfo, int *split, int *tx_vfo)
@@ -175,10 +337,29 @@ int get_split_vfo(int vfo, int *split, int *tx_vfo)
 	return res;
 }
 
+int has_set_powerstat()
+{
+	if (myrig->caps->set_powerstat)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_powerstat(int status)
 {
 	int res = rig_set_powerstat(myrig, status);
 	return res;
+}
+
+int has_get_powerstat()
+{
+	if (myrig->caps->get_powerstat)
+	{
+		return RIG_OK;
+	}
+	// return RIG_ENIMPL
+	;
 }
 
 int get_powerstat(int *status)
@@ -214,10 +395,28 @@ int get_status()
 	return myrig->caps->status;
 }
 
+int has_set_ant()
+{
+	if (myrig->caps->set_ant)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_ant(int vfo, int ant)
 {
 	int res = rig_set_ant(myrig, vfo, ant);
 	return res;
+}
+
+int has_get_ant()
+{
+	if (myrig->caps->get_ant)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_ant(int vfo, int *ant)
@@ -226,10 +425,28 @@ int get_ant(int vfo, int *ant)
 	return res;
 }
 
+int has_set_ts()
+{
+	if (myrig->caps->set_ts)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int set_ts(int vfo, int ts)
 {
 	int res = rig_set_ts(myrig, vfo, ts);
 	return res;
+}
+
+int has_get_ts()
+{
+	if (myrig->caps->get_ts)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int get_ts(int vfo, long *ts)
@@ -291,6 +508,15 @@ int has_token(char *token)
 	return RIG_OK;
 }
 
+int has_get_conf()
+{
+	if (myrig->caps->get_conf)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
+}
+
 int get_conf(char* token, char* val)
 {
 	token_t t = rig_token_lookup(myrig, token);
@@ -301,6 +527,15 @@ int get_conf(char* token, char* val)
 	
 	int res = rig_get_conf(myrig, t, val);
 	return res; 
+}
+
+int has_set_conf()
+{
+	if (myrig->caps->set_conf)
+	{
+		return RIG_OK;
+	}
+	return RIG_ENIMPL;
 }
 
 int set_conf(char* token, char* val)
