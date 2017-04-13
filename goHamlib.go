@@ -87,30 +87,30 @@ const (
 
 //Map containing Strings for VFOs
 var VfoName = map[int]string{
-	RIG_VFO_NONE: "VFO_NONE",
+	RIG_VFO_NONE: "NONE",
 	RIG_VFO_A:    "VFOA",
 	RIG_VFO_B:    "VFOB",
 	RIG_VFO_C:    "VFOC",
-	RIG_VFO_CURR: "VFO_CURR",
-	RIG_VFO_MEM:  "VFO_MEM",
-	RIG_VFO_VFO:  "VFO_VFO",
-	RIG_VFO_TX:   "VFO_TX",
+	RIG_VFO_CURR: "CURR",
+	RIG_VFO_MEM:  "MEM",
+	RIG_VFO_VFO:  "VFO",
+	RIG_VFO_TX:   "TX",
 	//	RIG_VFO_RX: "RX",
 	RIG_VFO_MAIN: "VFO_MAIN",
 	RIG_VFO_SUB:  "VFO_SUB",
 }
 
 var VfoValue = map[string]int{
-	"VFO_NONE": RIG_VFO_NONE,
-	"VFOA":     RIG_VFO_A,
-	"VFOB":     RIG_VFO_B,
-	"VFOC":     RIG_VFO_C,
-	"VFO_CURR": RIG_VFO_CURR,
-	"VFO_MAIN": RIG_VFO_MAIN,
-	"VFO_SUB":  RIG_VFO_SUB,
-	"VFO_MEM":  RIG_VFO_MEM,
-	"VFO_VFO":  RIG_VFO_VFO,
-	"VFO_TX":   RIG_VFO_TX,
+	"NONE": RIG_VFO_NONE,
+	"VFOA": RIG_VFO_A,
+	"VFOB": RIG_VFO_B,
+	"VFOC": RIG_VFO_C,
+	"CURR": RIG_VFO_CURR,
+	"MAIN": RIG_VFO_MAIN,
+	"SUB":  RIG_VFO_SUB,
+	"MEM":  RIG_VFO_MEM,
+	"VFO":  RIG_VFO_VFO,
+	"TX":   RIG_VFO_TX,
 }
 
 //Hamlib Rig Operations
@@ -904,6 +904,7 @@ func (slice Values) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
+// CIntToBool ....
 func CIntToBool(myInt C.int) (bool, error) {
 	i := int(myInt)
 	if i == 0 {
@@ -914,6 +915,7 @@ func CIntToBool(myInt C.int) (bool, error) {
 	return false, errors.New("Unable to convert C.int to bool")
 }
 
+// BoolToCint ...
 func BoolToCint(myBool bool) (C.int, error) {
 	if myBool {
 		return C.int(1), nil
