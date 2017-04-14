@@ -1013,6 +1013,7 @@ func (rig *Rig) hasSetPowerStat() {
 	res := C.has_set_powerstat()
 	if res == RIG_OK {
 		rig.Caps.HasSetPowerStat = true
+		return
 	}
 	rig.Caps.HasSetPowerStat = false
 }
