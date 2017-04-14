@@ -85,15 +85,15 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.MaxIfShift contains unexpected data; expected:", maxIfShift, "got:", rig.Caps.MaxIfShift)
 	}
 
-	vfos := []string{"VFOA", "VFOB", "VFO_MEM"}
+	vfos := []string{"MEM", "VFOA", "VFOB"}
 	if !reflect.DeepEqual(vfos, rig.Caps.Vfos) {
 		t.Fatal("Caps.Vfos contains unexpected data; expected:", vfos, "got:", rig.Caps.Vfos)
 	}
 
-	// ops := []string{"BAND_UP", "MCL", "RIGHT", "TOGGLE", "TUNE", "UP"}
-	// if !reflect.DeepEqual(ops, rig.Caps.Operations) {
-	// 	t.Fatal("Caps.Operations contains unexpected data; expected:", ops, "got:", rig.Caps.Operations)
-	// }
+	ops := []string{"BAND_DOWN", "BAND_UP", "CPY", "DOWN", "FROM_VFO", "LEFT", "MCL", "RIGHT", "TOGGLE", "TO_VFO", "TUNE", "UP", "XCHG"}
+	if !reflect.DeepEqual(ops, rig.Caps.Operations) {
+		t.Fatal("Caps.Operations contains unexpected data; expected:", ops, "got:", rig.Caps.Operations)
+	}
 
 	modes := []string{"AM", "CW", "CWR", "FM", "LSB", "RTTY", "RTTYR", "USB", "WFM"}
 	if !reflect.DeepEqual(modes, rig.Caps.Modes) {
@@ -465,19 +465,19 @@ func TestDummyRigRit(t *testing.T) {
 		}
 
 		// // When rit > maxRit, then maxRit shall be set
-		// ritOutOfRangeNegative := -maxRit - 1
-		// if err := rig.SetRit(vfoValue, ritOutOfRangeNegative); err != nil {
-		// 	t.Fatal(err)
-		// }
+		ritOutOfRangeNegative := -maxRit - 1
+		if err := rig.SetRit(vfoValue, ritOutOfRangeNegative); err != nil {
+			t.Fatal(err)
+		}
 
-		// rit, err := rig.GetRit(vfoValue)
-		// if err != nil {
-		// 	t.Fatal(err)
-		// }
+		rit, err := rig.GetRit(vfoValue)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-		// if rit != -maxRit {
-		// 	t.Fatalf("When the set RIT > maxRit, then maxRit should be set; got: %dHz, should be: %dHz", -rit, -maxRit)
-		// }
+		if rit != -maxRit {
+			t.Fatalf("When the set RIT > maxRit, then maxRit should be set; got: %dHz, should be: %dHz", -rit, -maxRit)
+		}
 	}
 }
 
