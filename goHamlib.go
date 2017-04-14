@@ -96,8 +96,8 @@ var VfoName = map[int]string{
 	RIG_VFO_VFO:  "VFO",
 	RIG_VFO_TX:   "TX",
 	//	RIG_VFO_RX: "RX",
-	RIG_VFO_MAIN: "VFO_MAIN",
-	RIG_VFO_SUB:  "VFO_SUB",
+	RIG_VFO_MAIN: "MAIN",
+	RIG_VFO_SUB:  "SUB",
 }
 
 var VfoValue = map[string]int{
