@@ -1,10 +1,7 @@
-// +build linux,cgo darwin,cgo
-
 package goHamlib
 
 /*
-#cgo CFLAGS: -I /usr/local/include
-#cgo LDFLAGS: -L /usr/local/lib -lhamlib
+#cgo pkg-config: hamlib
 
 #include <stdio.h>
 #include <stdlib.h>
