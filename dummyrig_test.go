@@ -465,19 +465,19 @@ func TestDummyRigRit(t *testing.T) {
 		}
 
 		// // When rit > maxRit, then maxRit shall be set
-		ritOutOfRangeNegative := -maxRit - 1
-		if err := rig.SetRit(vfoValue, ritOutOfRangeNegative); err != nil {
-			t.Fatal(err)
-		}
+		// ritOutOfRangeNegative := -maxRit - 1
+		// if err := rig.SetRit(vfoValue, ritOutOfRangeNegative); err != nil {
+		// 	t.Fatal(err)
+		// }
 
-		rit, err := rig.GetRit(vfoValue)
-		if err != nil {
-			t.Fatal(err)
-		}
+		// rit, err := rig.GetRit(vfoValue)
+		// if err != nil {
+		// 	t.Fatal(err)
+		// }
 
-		if rit != -maxRit {
-			t.Fatalf("When the set RIT > maxRit, then maxRit should be set; got: %dHz, should be: %dHz", -rit, -maxRit)
-		}
+		// if rit != -maxRit {
+		// 	t.Fatalf("When the set RIT > maxRit, then maxRit should be set; got: %dHz, should be: %dHz", -rit, -maxRit)
+		// }
 	}
 }
 
