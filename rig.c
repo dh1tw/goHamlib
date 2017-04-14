@@ -358,8 +358,7 @@ int has_get_powerstat()
 	{
 		return RIG_OK;
 	}
-	// return RIG_ENIMPL
-	;
+	return RIG_ENIMPL;
 }
 
 int get_powerstat(int *status)
