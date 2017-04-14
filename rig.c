@@ -376,17 +376,17 @@ const char* get_info()
 
 void get_model_name(char *rig_name)
 {
-	strncpy(rig_name, myrig->caps->model_name, sizeof(myrig->caps->model_name));
+	strncpy(rig_name, myrig->caps->model_name, sizeof(*myrig->caps->model_name));
 }
 
 void get_version(char *version)
 {
-	strncpy(version, myrig->caps->version, sizeof(myrig->caps->version));
+	strncpy(version, myrig->caps->version, sizeof(*myrig->caps->version));
 }
 
 void get_mfg_name(char *mfg_name)
 {
-	strncpy(mfg_name, myrig->caps->mfg_name, sizeof(myrig->caps->mfg_name));
+	strncpy(mfg_name, myrig->caps->mfg_name, sizeof(*myrig->caps->mfg_name));
 }
 
 int get_status()
