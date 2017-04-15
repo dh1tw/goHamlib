@@ -1,23 +1,18 @@
 language: go
-
 sudo: false
 env:
-    global:
-        - LD_LIBRARY_PATH=/usr/lib/hamlib
-    matrix:
-        - GOARCH=amd64
-
+    - GOARCH=amd64
+    
 go:
-    - 1.6
     - 1.7
     - 1.8
     - tip
 
 addons:
-    apt: 
-      packages: 
-         - libhamlib-dev
-         - libhamlib2
+  apt:
+    packages:
+    - libhamlib-dev
+    - libhamlib2
 before_install:
     - go get github.com/mattn/goveralls
 script:

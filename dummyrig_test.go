@@ -106,18 +106,25 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		}
 	}
 
+	getfsHamlib1_2_15_3_1 := []string{"ABM", "AFC", "AIP", "ANF", "APF", "ARO", "BC", "COMP", "FAGC", "FBKIN", "LOCK", "MBC", "MN", "MON", "MUTE", "NB", "NR", "RESUME", "REV", "RF", "SATMODE", "SBKIN", "SCOPE", "SQL", "TBURST", "TONE", "TSQL", "VOX", "VSC"}
+
 	getfs := []string{"ABM", "AFC", "AIP", "ANF", "APF", "ARO", "BC", "COMP", "FAGC", "FBKIN", "LOCK", "MBC", "MN", "MON",
 		"MUTE", "NB", "NR", "RESUME", "REV", "RF", "RIT", "SATMODE", "SBKIN", "SCOPE", "SQL", "TBURST", "TONE", "TSQL",
 		"TUNER", "VOX", "VSC", "XIT"}
 	if !reflect.DeepEqual(getfs, rig.Caps.GetFunctions) {
-		t.Fatal("Caps.GetFunctions contains unexpected data; expected:", getfs, "got:", rig.Caps.GetFunctions)
+		if !reflect.DeepEqual(getfsHamlib1_2_15_3_1, rig.Caps.GetFunctions) {
+			t.Fatal("Caps.GetFunctions contains unexpected data; expected:", getfs, "got:", rig.Caps.GetFunctions)
+		}
 	}
 
 	setfs := []string{"ABM", "AFC", "AIP", "ANF", "APF", "ARO", "BC", "COMP", "FAGC", "FBKIN", "LOCK", "MBC", "MN", "MON",
 		"MUTE", "NB", "NR", "RESUME", "REV", "RF", "RIT", "SATMODE", "SBKIN", "SCOPE", "SQL", "TBURST", "TONE", "TSQL",
 		"TUNER", "VOX", "VSC", "XIT"}
 	if !reflect.DeepEqual(setfs, rig.Caps.SetFunctions) {
-		t.Fatal("Caps.SetFunctions contains unexpected data; expected:", setfs, "got:", rig.Caps.SetFunctions)
+		if !reflect.DeepEqual(getfsHamlib1_2_15_3_1, rig.Caps.GetFunctions) {
+
+			t.Fatal("Caps.SetFunctions contains unexpected data; expected:", setfs, "got:", rig.Caps.SetFunctions)
+		}
 	}
 
 	getlvs := Values{

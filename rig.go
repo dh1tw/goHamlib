@@ -123,11 +123,12 @@ func (rig *Rig) Init(rigModel int) error {
 		return checkError(RIG_EINVAL, errors.New("invalid rig model"), "init_rig")
 	}
 
-	res, err := C.init_rig(C.int(rigModel))
-	if err != nil {
-		return checkError(res, err, "init_rig")
-	}
-	err = rig.getCaps()
+	res, _ := C.init_rig(C.int(rigModel))
+	// if err != nil {
+	// return checkError(res, nil, "init_rig")
+	// return checkError(res, err, "init_rig")
+	// }
+	err := rig.getCaps()
 
 	rig.Caps.RigModel = rigModel
 
