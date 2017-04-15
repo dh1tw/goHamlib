@@ -85,9 +85,12 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.MaxIfShift contains unexpected data; expected:", maxIfShift, "got:", rig.Caps.MaxIfShift)
 	}
 
-	vfos := []string{"MEM", "VFOA", "VFOB"}
-	if !reflect.DeepEqual(vfos, rig.Caps.Vfos) {
-		t.Fatal("Caps.Vfos contains unexpected data; expected:", vfos, "got:", rig.Caps.Vfos)
+	vfosHamlib1_2_15_3_3 := []string{}
+	vfosHamlib3 := []string{"MEM", "VFOA", "VFOB"}
+	if !reflect.DeepEqual(vfosHamlib3, rig.Caps.Vfos) {
+		if !reflect.DeepEqual(vfosHamlib1_2_15_3_3, rig.Caps.Vfos) {
+			t.Fatal("Caps.Vfos contains unexpected data; expected:", vfosHamlib3, "got:", rig.Caps.Vfos)
+		}
 	}
 
 	ops := []string{"BAND_DOWN", "BAND_UP", "CPY", "DOWN", "FROM_VFO", "LEFT", "MCL", "RIGHT", "TOGGLE", "TO_VFO", "TUNE", "UP", "XCHG"}
@@ -95,9 +98,12 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.Operations contains unexpected data; expected:", ops, "got:", rig.Caps.Operations)
 	}
 
-	modes := []string{"AM", "CW", "CWR", "FM", "LSB", "RTTY", "RTTYR", "USB", "WFM"}
-	if !reflect.DeepEqual(modes, rig.Caps.Modes) {
-		t.Fatal("Caps.Modes contains unexpected data; expected:", modes, "got:", rig.Caps.Modes)
+	modesHamlib1_2_15_3_3 := []string{}
+	modesHamlib3 := []string{"AM", "CW", "CWR", "FM", "LSB", "RTTY", "RTTYR", "USB", "WFM"}
+	if !reflect.DeepEqual(modesHamlib3, rig.Caps.Modes) {
+		if !reflect.DeepEqual(modesHamlib1_2_15_3_3, rig.Caps.Modes) {
+			t.Fatal("Caps.Modes contains unexpected data; expected:", modesHamlib3, "got:", rig.Caps.Modes)
+		}
 	}
 
 	getfs := []string{"ABM", "AFC", "AIP", "ANF", "APF", "ARO", "BC", "COMP", "FAGC", "FBKIN", "LOCK", "MBC", "MN", "MON",

@@ -3,6 +3,7 @@ language: go
 sudo: false
 env:
     - GOARCH=amd64
+    - LD_LIBRARY_PATH=/usr/lib/hamlib
 go:
     - 1.6
     - 1.7
