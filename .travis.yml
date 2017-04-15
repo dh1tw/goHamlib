@@ -18,7 +18,11 @@ addons:
       packages: 
          - libhamlib-dev
          - libhamlib2
-before_install:
-    - go get github.com/mattn/goveralls
+# before_install:
+#     - go get github.com/mattn/goveralls
 script:
-    - $HOME/gopath/bin/goveralls -service=travis-ci
+    export LD_LIBRARY_PATH=/usr/lib/hamlib
+    ls -al /usr/lib/hamlib
+    ls -al /usr/lib | grep libhamlib
+    go test -v
+    # - $HOME/gopath/bin/goveralls -service=travis-ci
