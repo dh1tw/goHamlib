@@ -2,13 +2,9 @@ language: go
 
 sudo: false
 env:
-    global:
-        - LD_LIBRARY_PATH=/usr/lib:/usr/lib/hamlib
-    matrix:
-        - GOARCH=amd64
+    - GOARCH=amd64
 
 go:
-    - 1.6
     - 1.7
     - 1.8
     - tip
@@ -18,11 +14,7 @@ addons:
       packages: 
          - libhamlib-dev
          - libhamlib2
-# before_install:
-#     - go get github.com/mattn/goveralls
+ before_install:
+     - go get github.com/mattn/goveralls
 script:
-    - export LD_LIBRARY_PATH=/usr/lib:/usr/lib/hamlib
-    - ls -al /usr/lib/hamlib
-    - ls -al /usr/lib | grep libhamlib
-    - go test -v
-    # - $HOME/gopath/bin/goveralls -service=travis-ci
+    - $HOME/gopath/bin/goveralls -service=travis-ci
