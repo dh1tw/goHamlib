@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <stdlib.h>
 #include <hamlib/rig.h>
 
@@ -28,7 +28,6 @@ int init_rig(int rig_model)
 {
 	//check if rig already exists
 	if (myrig != 0) return -1;
-
 	// rig_load_all_backends();
 	myrig = rig_init(rig_model);
 	if (!myrig) {
