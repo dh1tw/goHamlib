@@ -2,8 +2,11 @@ language: go
 
 sudo: false
 env:
-    - GOARCH=amd64
-    - LD_LIBRARY_PATH=/usr/lib/hamlib
+    global:
+        - LD_LIBRARY_PATH=/usr/lib/hamlib
+    matrix:
+        - GOARCH=amd64
+
 go:
     - 1.6
     - 1.7
