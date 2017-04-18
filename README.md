@@ -11,6 +11,12 @@ Execpt of hamlib, goHamlib has no other external dependencies.
 
 goHamlib is compatible with both, Hamlib 1.2.x and 3.x.
 
+You might also want to checkout [gorigctl](https://github.com/dh1tw/gorigctl)
+which is a drop-in replacement for hamlib's rigctl, although it comes with a
+cli GUI and a modern, open network interface (implementing the [shackbus](https://shackbus.org) specification using
+[protocol buffers](https://developers.google.com/protocol-buffers/) and
+[MQTT](http://mqtt.org)).
+
 ## Implementation status
 
 Currently, goHamlib covers about 80% of the hamlib API. Basically (the rarely used) Channel API is still missing.
@@ -36,7 +42,7 @@ goHamlib depends on Hamlib which can be either installed through your OS
 packet manager or easily build from source. If you want the latest patches
 and support for the latest rigs, you might want to compile the latest
 [stable release](https://sourceforge.net/projects/hamlib/files/hamlib)
-or directly from the [git repository](https://github.com/n0nb/hamlib)
+or directly from the [git repository](https://github.com/n0nb/hamlib).
 
 Make sure that you have installed the [latest release](https://golang.org/dl/) of Go and set the GOPATH environment variable.
 
