@@ -1,4 +1,4 @@
-# hamlib binding for Golang
+# Hamlib binding for Golang
 [![Go Report Card](https://goreportcard.com/badge/github.com/dh1tw/goHamlib)](https://goreportcard.com/report/github.com/dh1tw/goHamlib)
 [![Build Status](https://travis-ci.org/dh1tw/goHamlib.svg?branch=master)](https://travis-ci.org/dh1tw/goHamlib)
 [![Coverage Status](https://coveralls.io/repos/github/dh1tw/goHamlib/badge.svg?branch=master)](https://coveralls.io/github/dh1tw/goHamlib?branch=master)
@@ -7,7 +7,7 @@ This is a [golang](https://golang.org) binding for
 [Hamlib](http://hamlib.org). The binding has been hand written in order
 to provide a golang idiomatic API but staying also close as possible to
 [hamlib's C API](http://hamlib.sourceforge.net/manuals/3.0.1/index.html).
-Execpt of hamlib, goHamlib has no other external dependencies.
+Except of Hamlib (C), goHamlib has no other external dependencies.
 
 goHamlib is compatible with both, Hamlib 1.2.x and 3.x.
 
