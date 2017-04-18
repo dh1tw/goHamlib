@@ -80,3 +80,7 @@ $ go test
 
 goHamlib's API is documented at [goDoc](https://godoc.org/github.com/dh1tw/goHamlib)
 
+## Example
+
+Checkout the [dummyrig_test.go](https://github.com/dh1tw/goHamlib/blob/master/dummyrig_test.go) in this
+repository to see how to use goHamlib.
