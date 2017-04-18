@@ -36,6 +36,12 @@ and the following operating Systems:
 - MacOS (Sierra)
 - Windows 10
 
+## License
+
+This library is published under the permissive [MIT](https://choosealicense.com/licenses/mit/) license. Although please keep in
+mind that Hamlib is published under the
+[LGPL license](https://choosealicense.com/licenses/lgpl-3.0/).
+
 ## Installation & Compilation
 
 goHamlib depends on Hamlib which can be either installed through your OS
