@@ -603,7 +603,7 @@ func (rig *Rig) getCaps() error {
 	rig.hasGetFreq()
 	rig.hasGetMode()
 	rig.hasSetMode()
-	rig.hasSetPtt()
+	rig.hasGetPtt()
 	rig.hasSetPtt()
 	rig.hasGetRit()
 	rig.hasSetRit()
