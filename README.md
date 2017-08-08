@@ -30,10 +30,6 @@ goHamlib has been tested on the following platforms:
 - ARMv7 (e.g. Raspberry Pi 2)
 - ARMv8 (e.g. Raspberry Pi 3)
 
-Users have reported performance issues with remoteAudio on
-single core ARMv6 SoCs, in particular the Raspberry Pi 1.
-Usage of the Raspberry Pi1 is therefore not recommended.
-
 and the following operating Systems:
 
 - Linux (Ubuntu, Raspian, Armbian)
