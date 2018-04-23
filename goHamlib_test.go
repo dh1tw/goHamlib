@@ -305,3 +305,20 @@ func TestBoolToInt(t *testing.T) {
 	}
 
 }
+
+func TestListModels(t *testing.T) {
+
+	supported := goHamlib.ListModels()
+	if len(supported) < 10 {
+		t.Errorf("expected at least 10 supported hamlib models")
+	}
+	foundDummy := false
+	for _, v := range supported {
+		if v.Manufacturer == "Hamlib" && v.Model == "Dummy" {
+			foundDummy = true
+		}
+	}
+	if !foundDummy {
+		t.Errorf("did not find the hamlib standard dummy driver")
+	}
+}

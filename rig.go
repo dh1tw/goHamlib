@@ -104,6 +104,8 @@ extern void set_debug_level(int debug_level);
 extern int close_rig();
 extern int cleanup_rig();
 
+typedef struct rig_caps rig_caps_t;
+extern int rig_list_foreach_wrap(void *list);
 */
 import "C"
 
@@ -113,11 +115,40 @@ import (
 	"sort"
 	"strings"
 	"unsafe"
-	//"encoding/hex"
 )
 
+// RigModelID is a unique ID that identifies a particular rig driver
+type RigModelID int
+
+// RigModel is a supported rig in hamlib
+type RigModel struct {
+	Manufacturer string
+	Model        string
+	ModelID      RigModelID
+}
+
+// ListModels enumerates all of the hamlib supported rigs
+func ListModels() []RigModel {
+	C.rig_load_all_backends()
+	knownRigs := []RigModel{}
+	C.rig_list_foreach_wrap(unsafe.Pointer(&knownRigs))
+	return knownRigs
+}
+
+//export go_rig_list_callback
+func go_rig_list_callback(p unsafe.Pointer, d unsafe.Pointer) C.int {
+	caps := (*C.rig_caps_t)(p)
+	knownRigs := (*[]RigModel)(d)
+	*knownRigs = append(*knownRigs, RigModel{
+		Manufacturer: C.GoString(caps.mfg_name),
+		Model:        C.GoString(caps.model_name),
+		ModelID:      RigModelID(caps.rig_model),
+	})
+	return 1
+}
+
 // Initialize Rig
-func (rig *Rig) Init(rigModel int) error {
+func (rig *Rig) Init(rigModel RigModelID) error {
 
 	if rigModel <= 0 {
 		return checkError(RIG_EINVAL, errors.New("invalid rig model"), "init_rig")
@@ -130,7 +161,7 @@ func (rig *Rig) Init(rigModel int) error {
 	// }
 	err := rig.getCaps()
 
-	rig.Caps.RigModel = rigModel
+	rig.Caps.RigModel = int(rigModel)
 
 	return checkError(res, err, "init_rig")
 }

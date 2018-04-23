@@ -7,6 +7,15 @@
 hamlib_port_t myport;
 RIG *myrig;
 
+extern int go_rig_list_callback(void*,void*);
+
+typedef int (*rig_list_ptr)(const struct rig_caps*, rig_ptr_t);
+
+int rig_list_foreach_wrap(void *list) {
+        rig_list_ptr fn = (void*)go_rig_list_callback;
+        return rig_list_foreach(fn, list);
+}
+
 int set_port(int rig_port_type, char* portname, int baudrate, int databits, int stopbits, int parity, int handshake){
 
 	//check if rig exists
@@ -28,7 +37,6 @@ int init_rig(int rig_model)
 {
 	//check if rig already exists
 	if (myrig != 0) return -1;
-	// rig_load_all_backends();
 	myrig = rig_init(rig_model);
 	if (!myrig) {
 		return -1;
