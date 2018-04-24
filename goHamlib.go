@@ -43,17 +43,20 @@ const (
 	RIG_EDOM      = -17
 )
 
-//Hamlib Debug levels
+// DebugLevel is the Hamlib Debug level type
+type DebugLevel byte
+
+// Hamlib debug level constants
 const (
-	RIG_DEBUG_NONE    = 0
-	RIG_DEBUG_BUG     = 1
-	RIG_DEBUG_ERR     = 2
-	RIG_DEBUG_WARN    = 3
-	RIG_DEBUG_VERBOSE = 4
-	RIG_DEBUG_TRACE   = 5
+	RIG_DEBUG_NONE    DebugLevel = 0
+	RIG_DEBUG_BUG     DebugLevel = 1
+	RIG_DEBUG_ERR     DebugLevel = 2
+	RIG_DEBUG_WARN    DebugLevel = 3
+	RIG_DEBUG_VERBOSE DebugLevel = 4
+	RIG_DEBUG_TRACE   DebugLevel = 5
 )
 
-var DebugLevelValue = map[string]int{
+var DebugLevelValue = map[string]DebugLevel{
 	"NONE":    RIG_DEBUG_NONE,
 	"BUG":     RIG_DEBUG_BUG,
 	"ERROR":   RIG_DEBUG_ERR,
@@ -62,7 +65,7 @@ var DebugLevelValue = map[string]int{
 	"TRACE":   RIG_DEBUG_TRACE,
 }
 
-var DebugLevelName = map[int]string{
+var DebugLevelName = map[DebugLevel]string{
 	RIG_DEBUG_NONE:    "NONE",
 	RIG_DEBUG_BUG:     "BUG",
 	RIG_DEBUG_ERR:     "ERROR",

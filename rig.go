@@ -100,7 +100,7 @@ extern int get_filter_mode_width(RIG *myrig, int filter, int *mode, signed long 
 extern int get_ts_count(RIG *myrig, int *ts_count);
 extern int get_tuning_steps(RIG *myrig, int el, int *mode, signed long *ts);
 extern int get_int_from_array(RIG *myrig, int *array, int *el, int index);
-extern void set_debug_level(RIG *myrig, int debug_level);
+extern void set_debug_level(int debug_level);
 extern int close_rig(RIG *myrig);
 extern int cleanup_rig(RIG *myrig);
 
@@ -144,6 +144,11 @@ func go_rig_list_callback(p unsafe.Pointer, d unsafe.Pointer) C.int {
 		ModelID:      RigModelID(caps.rig_model),
 	})
 	return 1
+}
+
+// Set Debug level
+func SetDebugLevel(dbgLevel DebugLevel) {
+	C.set_debug_level(C.int(dbgLevel))
 }
 
 // Initialize Rig
@@ -1268,11 +1273,6 @@ func (rig *Rig) hasGetConf() {
 		return
 	}
 	rig.Caps.HasGetConf = false
-}
-
-// Set Debug level
-func (rig *Rig) SetDebugLevel(dbgLevel int) {
-	C.set_debug_level(rig.handle, C.int(dbgLevel))
 }
 
 //Close the Communication with the Radio

@@ -919,7 +919,7 @@ int get_int_from_array(RIG *myrig, int *array, int *el, int index)
 	return RIG_OK;
 }
 
-void set_debug_level(RIG *myrig, int debug_level)
+void set_debug_level(int debug_level)
 {
 	rig_set_debug (debug_level);
 }
