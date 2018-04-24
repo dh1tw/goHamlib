@@ -7,40 +7,50 @@ import (
 	"C"
 	"errors"
 	"fmt"
-	//		"log"
 )
 
+// Parity is the serial port parity
+type Parity byte
+
+// Serial port parity constants
 const (
-	N = 0
-	E = 1
-	O = 2
+	ParityNone Parity = 0
+	ParityEven Parity = 1
+	ParityOdd  Parity = 2
 )
 
+// Handshake is a serial port handshake type
+type Handshake byte
+
+// Serial port handshake constants
 const (
-	NO_HANDSHAKE     = 0
-	RTSCTS_HANDSHAKE = 1
+	HandshakeNone   Handshake = 0
+	HandshakeRTSCTS Handshake = 1
 )
+
+// HamlibError is an error code returned from libhamlib
+type HamlibErrorCode int
 
 //Hamlib Error Codes
 const (
-	RIG_OK        = 0
-	RIG_EINVAL    = -1
-	RIG_ECONF     = -2
-	RIG_ENOMEM    = -3
-	RIG_ENIMPL    = -4
-	RIG_ETIMEOUT  = -5
-	RIG_EIO       = -6
-	RIG_EINTERNAL = -7
-	RIG_EPROTO    = -8
-	RIG_ERJCTED   = -9
-	RIG_ETRUNC    = -10
-	RIG_ENAVAIL   = -11
-	RIG_ENTARGET  = -12
-	RIG_BUSERROR  = -13
-	RIG_BUSBUSY   = -14
-	RIG_EARG      = -15
-	RIG_EVFO      = -16
-	RIG_EDOM      = -17
+	HamlibErrOK        HamlibErrorCode = 0
+	HamlibErrEINVAL    HamlibErrorCode = -1
+	HamlibErrECONF     HamlibErrorCode = -2
+	HamlibErrENOMEM    HamlibErrorCode = -3
+	HamlibErrENIMPL    HamlibErrorCode = -4
+	HamlibErrETIMEOUT  HamlibErrorCode = -5
+	HamlibErrEIO       HamlibErrorCode = -6
+	HamlibErrEINTERNAL HamlibErrorCode = -7
+	HamlibErrEPROTO    HamlibErrorCode = -8
+	HamlibErrERJCTED   HamlibErrorCode = -9
+	HamlibErrETRUNC    HamlibErrorCode = -10
+	HamlibErrENAVAIL   HamlibErrorCode = -11
+	HamlibErrENTARGET  HamlibErrorCode = -12
+	HamlibErrBUSERROR  HamlibErrorCode = -13
+	HamlibErrBUSBUSY   HamlibErrorCode = -14
+	HamlibErrEARG      HamlibErrorCode = -15
+	HamlibErrEVFO      HamlibErrorCode = -16
+	HamlibErrEDOM      HamlibErrorCode = -17
 )
 
 // DebugLevel is the Hamlib Debug level type
@@ -594,13 +604,13 @@ const (
 )
 
 type Port struct {
-	RigPortType int
+	RigPortType RigPort
 	Portname    string
 	Baudrate    int
 	Databits    int
 	Stopbits    int
-	Parity      int
-	Handshake   int
+	Parity      Parity
+	Handshake   Handshake
 }
 
 type Value struct {
@@ -694,49 +704,53 @@ var RigDcdValue = map[string]int{
 	"GPIO":     RIG_DCD_CM108,
 }
 
+// RigPortType is the port connection type for the rig
+type RigPort byte
+
+// Rig Port constants
 const (
-	RIG_PORT_NONE        = 0
-	RIG_PORT_SERIAL      = 1
-	RIG_PORT_NETWORK     = 2
-	RIG_PORT_DEVICE      = 3
-	RIG_PORT_PACKET      = 4
-	RIG_PORT_DTMF        = 5
-	RIG_PORT_ULTRA       = 6
-	RIG_PORT_RPC         = 7
-	RIG_PORT_PARALLEL    = 8
-	RIG_PORT_USB         = 9
-	RIG_PORT_UDP_NETWORK = 10
-	RIG_PORT_CM108       = 11
+	RigPortNone       RigPort = 0
+	RigPortSerial     RigPort = 1
+	RigPortNetwork    RigPort = 2
+	RigPortDevice     RigPort = 3
+	RigPortPacket     RigPort = 4
+	RigPortDTMF       RigPort = 5
+	RigPortUltra      RigPort = 6
+	RigPortRPC        RigPort = 7
+	RigPortParallel   RigPort = 8
+	RigPortUSB        RigPort = 9
+	RigPortUDPNetwork RigPort = 10
+	RigPortCM108      RigPort = 11
 )
 
-var RigPortName = map[int]string{
-	RIG_PORT_NONE:        "RIG_PORT_NONE",
-	RIG_PORT_SERIAL:      "RIG_PORT_SERIAL",
-	RIG_PORT_NETWORK:     "RIG_PORT_NETWORK",
-	RIG_PORT_DEVICE:      "RIG_PORT_DEVICE",
-	RIG_PORT_PACKET:      "RIG_PORT_PACKET",
-	RIG_PORT_DTMF:        "RIG_PORT_DTMF",
-	RIG_PORT_ULTRA:       "RIG_PORT_ULTRA",
-	RIG_PORT_RPC:         "RIG_PORT_RPC",
-	RIG_PORT_PARALLEL:    "RIG_PORT_PARALLEL",
-	RIG_PORT_USB:         "RIG_PORT_USB",
-	RIG_PORT_UDP_NETWORK: "RIG_PORT_UDP_NETWORK",
-	RIG_PORT_CM108:       "RIG_PORT_CM108",
+var RigPortName = map[RigPort]string{
+	RigPortNone:       "RIG_PORT_NONE",
+	RigPortSerial:     "RIG_PORT_SERIAL",
+	RigPortNetwork:    "RIG_PORT_NETWORK",
+	RigPortDevice:     "RIG_PORT_DEVICE",
+	RigPortPacket:     "RIG_PORT_PACKET",
+	RigPortDTMF:       "RIG_PORT_DTMF",
+	RigPortUltra:      "RIG_PORT_ULTRA",
+	RigPortRPC:        "RIG_PORT_RPC",
+	RigPortParallel:   "RIG_PORT_PARALLEL",
+	RigPortUSB:        "RIG_PORT_USB",
+	RigPortUDPNetwork: "RIG_PORT_UDP_NETWORK",
+	RigPortCM108:      "RIG_PORT_CM108",
 }
 
-var RigPortValue = map[string]int{
-	"RIG_PORT_NONE":        RIG_PORT_NONE,
-	"RIG_PORT_SERIAL":      RIG_PORT_SERIAL,
-	"RIG_PORT_NETWORK":     RIG_PORT_NETWORK,
-	"RIG_PORT_DEVICE":      RIG_PORT_DEVICE,
-	"RIG_PORT_PACKET":      RIG_PORT_PACKET,
-	"RIG_PORT_DTMF":        RIG_PORT_DTMF,
-	"RIG_PORT_ULTRA":       RIG_PORT_ULTRA,
-	"RIG_PORT_RPC":         RIG_PORT_RPC,
-	"RIG_PORT_PARALLEL":    RIG_PORT_PARALLEL,
-	"RIG_PORT_USB":         RIG_PORT_USB,
-	"RIG_PORT_UDP_NETWORK": RIG_PORT_UDP_NETWORK,
-	"RIG_PORT_CM108":       RIG_PORT_CM108,
+var RigPortValue = map[string]RigPort{
+	"RIG_PORT_NONE":        RigPortNone,
+	"RIG_PORT_SERIAL":      RigPortSerial,
+	"RIG_PORT_NETWORK":     RigPortNetwork,
+	"RIG_PORT_DEVICE":      RigPortDevice,
+	"RIG_PORT_PACKET":      RigPortPacket,
+	"RIG_PORT_DTMF":        RigPortDTMF,
+	"RIG_PORT_ULTRA":       RigPortUltra,
+	"RIG_PORT_RPC":         RigPortRPC,
+	"RIG_PORT_PARALLEL":    RigPortParallel,
+	"RIG_PORT_USB":         RigPortUSB,
+	"RIG_PORT_UDP_NETWORK": RigPortUDPNetwork,
+	"RIG_PORT_CM108":       RigPortCM108,
 }
 
 type Values []Value
@@ -892,7 +906,7 @@ type Rig struct {
 
 type HamlibError struct {
 	Operation   string
-	Errorcode   int
+	Errorcode   HamlibErrorCode
 	Description string
 }
 
@@ -933,41 +947,41 @@ func BoolToCint(myBool bool) (C.int, error) {
 
 func (e *HamlibError) Error() string {
 	switch e.Errorcode {
-	case RIG_OK:
+	case HamlibErrOK:
 		e.Description = "OK"
-	case RIG_EINVAL:
+	case HamlibErrEINVAL:
 		e.Description = "invalid parameter"
-	case RIG_ECONF:
+	case HamlibErrECONF:
 		e.Description = "invalid configuration (serial,..)"
-	case RIG_ENOMEM:
+	case HamlibErrENOMEM:
 		e.Description = "memory shortage"
-	case RIG_ENIMPL:
+	case HamlibErrENIMPL:
 		e.Description = "function not implemented, but will be"
-	case RIG_ETIMEOUT:
+	case HamlibErrETIMEOUT:
 		e.Description = "communication timed out"
-	case RIG_EIO:
+	case HamlibErrEIO:
 		e.Description = "IO error, including open failed"
-	case RIG_EINTERNAL:
+	case HamlibErrEINTERNAL:
 		e.Description = "Internal Hamlib error, huh!"
-	case RIG_EPROTO:
+	case HamlibErrEPROTO:
 		e.Description = "Protocol error"
-	case RIG_ERJCTED:
+	case HamlibErrERJCTED:
 		e.Description = "Command rejected by the rig"
-	case RIG_ETRUNC:
+	case HamlibErrETRUNC:
 		e.Description = "Command performed, but arg truncated"
-	case RIG_ENAVAIL:
+	case HamlibErrENAVAIL:
 		e.Description = "function not available"
-	case RIG_ENTARGET:
+	case HamlibErrENTARGET:
 		e.Description = "VFO not targetable"
-	case RIG_BUSERROR:
+	case HamlibErrBUSERROR:
 		e.Description = "Error talking on the bus"
-	case RIG_BUSBUSY:
+	case HamlibErrBUSBUSY:
 		e.Description = "Collision on the bus"
-	case RIG_EARG:
+	case HamlibErrEARG:
 		e.Description = "NULL RIG handle or any invalid pointer parameter in get arg"
-	case RIG_EVFO:
+	case HamlibErrEVFO:
 		e.Description = "Invalid VFO"
-	case RIG_EDOM:
+	case HamlibErrEDOM:
 		e.Description = "Argument out of domain of func"
 	default:
 		e.Description = "unknown Error"
