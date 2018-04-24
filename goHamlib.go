@@ -1,6 +1,9 @@
 package goHamlib
 
 import (
+	/*
+		#include <hamlib/rig.h>
+	*/
 	"C"
 	"errors"
 	"fmt"
@@ -879,8 +882,9 @@ type Caps struct {
 }
 
 type Rig struct {
-	port Port
-	Caps Caps
+	port   Port
+	Caps   Caps
+	handle *C.RIG
 }
 
 type HamlibError struct {

@@ -4,9 +4,6 @@
 #include <stdlib.h>
 #include <hamlib/rig.h>
 
-hamlib_port_t myport;
-RIG *myrig;
-
 extern int go_rig_list_callback(void*,void*);
 
 typedef int (*rig_list_ptr)(const struct rig_caps*, rig_ptr_t);
@@ -16,7 +13,7 @@ int rig_list_foreach_wrap(void *list) {
         return rig_list_foreach(fn, list);
 }
 
-int set_port(int rig_port_type, char* portname, int baudrate, int databits, int stopbits, int parity, int handshake){
+int set_port(RIG *myrig,int rig_port_type, char* portname, int baudrate, int databits, int stopbits, int parity, int handshake){
 
 	//check if rig exists
  	if (myrig == 0) return -1;
@@ -33,25 +30,18 @@ int set_port(int rig_port_type, char* portname, int baudrate, int databits, int 
 	return 0;
 }
 
-int init_rig(int rig_model)
+RIG* init_rig(int rig_model)
 {
-	//check if rig already exists
-	if (myrig != 0) return -1;
-	myrig = rig_init(rig_model);
-	if (!myrig) {
-		return -1;
-	}
-	
-	return 0;
+	return rig_init(rig_model);
 }
 
-int open_rig()
+int open_rig(RIG *myrig)
 {
 	int res = rig_open(myrig);
 	return res;
 }
 
-int has_set_vfo()
+int has_set_vfo(RIG *myrig)
 {
 	if (myrig->caps->set_vfo)
 	{
@@ -60,13 +50,13 @@ int has_set_vfo()
 	return RIG_ENIMPL;
 }
 
-int set_vfo(int vfo)
+int set_vfo(RIG *myrig,int vfo)
 {
 	int res = rig_set_vfo(myrig, vfo);
 	return res;
 }
 
-int has_get_vfo()
+int has_get_vfo(RIG *myrig)
 {
 	if (myrig->caps->get_vfo)
 	{
@@ -75,13 +65,13 @@ int has_get_vfo()
 	return RIG_ENIMPL;
 }
 
-int get_vfo(int *vfo)
+int get_vfo(RIG *myrig,int *vfo)
 {
 	int res = rig_get_vfo(myrig, vfo);
 	return res;
 }
 
-int has_set_freq()
+int has_set_freq(RIG *myrig)
 {
 	if (myrig->caps->set_freq)
 	{
@@ -90,13 +80,13 @@ int has_set_freq()
 	return RIG_ENIMPL;
 }
 
-int set_freq(int vfo, double freq)
+int set_freq(RIG *myrig,int vfo, double freq)
 {
 	int res = rig_set_freq(myrig, vfo, freq);
 	return res;
 }
 
-int has_set_mode()
+int has_set_mode(RIG *myrig)
 {
 	if (myrig->caps->set_mode)
 	{
@@ -105,31 +95,31 @@ int has_set_mode()
 	return RIG_ENIMPL;
 }
 
-int set_mode(int vfo, int mode, int pb_width)
+int set_mode(RIG *myrig, int vfo, int mode, int pb_width)
 {
 	int res = rig_set_mode(myrig, vfo, mode, pb_width);
 	return res;
 }
 
-int get_passband_narrow(int mode)
+int get_passband_narrow(RIG *myrig, int mode)
 {
 	int res = rig_passband_narrow(myrig, mode);
 	return res;
 }
 
-int get_passband_normal(int mode)
+int get_passband_normal(RIG *myrig, int mode)
 {
 	int res = rig_passband_normal(myrig, mode);
 	return res;
 }
 
-int get_passband_wide(int mode)
+int get_passband_wide(RIG *myrig, int mode)
 {
 	int res = rig_passband_wide(myrig, mode);
 	return res;
 }
 
-int has_get_freq()
+int has_get_freq(RIG *myrig)
 {
 	if (myrig->caps->get_freq)
 	{
@@ -138,13 +128,13 @@ int has_get_freq()
 	return RIG_ENIMPL;
 }
 
-int get_freq(int vfo, double *freq)
+int get_freq(RIG *myrig, int vfo, double *freq)
 {
 	int res = rig_get_freq(myrig, vfo, freq);
 	return res;
 }
 
-int has_get_mode()
+int has_get_mode(RIG *myrig)
 {
 	if (myrig->caps->get_mode)
 	{
@@ -153,7 +143,7 @@ int has_get_mode()
 	return RIG_ENIMPL;
 }
 
-int get_mode(int vfo, int *mode, long *pb_width)
+int get_mode(RIG *myrig, int vfo, int *mode, long *pb_width)
 {
 	rmode_t* m = (rmode_t*)mode;
 	pbwidth_t* pb = (pbwidth_t*)pb_width;
@@ -162,7 +152,7 @@ int get_mode(int vfo, int *mode, long *pb_width)
 	return res;
 }
 
-int has_set_ptt()
+int has_set_ptt(RIG *myrig)
 {
 	if (myrig->caps->set_ptt)
 	{
@@ -171,13 +161,13 @@ int has_set_ptt()
 	return RIG_ENIMPL;
 }
 
-int set_ptt(int vfo, int ptt)
+int set_ptt(RIG *myrig, int vfo, int ptt)
 {
 	int res = rig_set_ptt(myrig, vfo, ptt);
 	return res;
 }
 
-int has_get_ptt()
+int has_get_ptt(RIG *myrig)
 {
 	if (myrig->caps->get_ptt)
 	{
@@ -186,13 +176,13 @@ int has_get_ptt()
 	return RIG_ENIMPL;
 }
 
-int get_ptt(int vfo, int *ptt)
+int get_ptt(RIG *myrig, int vfo, int *ptt)
 {
 	int res = rig_get_ptt(myrig, (vfo_t)vfo, (ptt_t*)ptt);
 	return res;
 }
 
-int has_set_rit()
+int has_set_rit(RIG *myrig)
 {
 	if (myrig->caps->set_rit)
 	{
@@ -201,13 +191,13 @@ int has_set_rit()
 	return RIG_ENIMPL;
 }
 
-int set_rit(int vfo, int offset)
+int set_rit(RIG *myrig, int vfo, int offset)
 {
 	int res = rig_set_rit(myrig, vfo, offset);
 	return res;
 }
 
-int has_get_rit()
+int has_get_rit(RIG *myrig)
 {
 	if (myrig->caps->get_rit)
 	{
@@ -216,13 +206,13 @@ int has_get_rit()
 	return RIG_ENIMPL;
 }
 
-int get_rit(int vfo, long *offset)
+int get_rit(RIG *myrig, int vfo, long *offset)
 {
 	int res = rig_get_rit(myrig, vfo, offset);
 	return res;
 }
 
-int has_set_xit()
+int has_set_xit(RIG *myrig)
 {
 	if (myrig->caps->set_xit)
 	{
@@ -231,13 +221,13 @@ int has_set_xit()
 	return RIG_ENIMPL;
 }
 
-int set_xit(int vfo, int offset)
+int set_xit(RIG *myrig, int vfo, int offset)
 {
 	int res = rig_set_xit(myrig, vfo, offset);
 	return res;
 }
 
-int has_get_xit()
+int has_get_xit(RIG *myrig)
 {
 	if (myrig->caps->get_xit)
 	{
@@ -246,13 +236,13 @@ int has_get_xit()
 	return RIG_ENIMPL;
 }
 
-int get_xit(int vfo, long *offset)
+int get_xit(RIG *myrig, int vfo, long *offset)
 {
 	int res = rig_get_xit(myrig, (vfo_t)vfo, offset);
 	return res;
 }
 
-int has_set_split_freq()
+int has_set_split_freq(RIG *myrig)
 {
 	if (myrig->caps->set_split_freq)
 	{
@@ -261,13 +251,13 @@ int has_set_split_freq()
 	return RIG_ENIMPL;
 }
 
-int set_split_freq(int vfo, double tx_freq)
+int set_split_freq(RIG *myrig, int vfo, double tx_freq)
 {
 	int res = rig_set_split_freq(myrig, vfo, tx_freq);
 	return res;
 }
 
-int has_get_split_freq()
+int has_get_split_freq(RIG *myrig)
 {
 	if (myrig->caps->get_split_freq)
 	{
@@ -276,13 +266,13 @@ int has_get_split_freq()
 	return RIG_ENIMPL;
 }
 
-int get_split_freq(int vfo, double *tx_freq)
+int get_split_freq(RIG *myrig, int vfo, double *tx_freq)
 {
 	int res = rig_get_split_freq(myrig, vfo, tx_freq);
 	return res;
 }
 
-int has_set_split_mode()
+int has_set_split_mode(RIG *myrig)
 {
 	if (myrig->caps->set_split_mode)
 	{
@@ -291,13 +281,13 @@ int has_set_split_mode()
 	return RIG_ENIMPL;
 }
 
-int set_split_mode(int vfo, int tx_mode, int tx_width)
+int set_split_mode(RIG *myrig, int vfo, int tx_mode, int tx_width)
 {
 	int res = rig_set_split_mode(myrig, vfo, tx_mode, tx_width);
 	return res;
 }
 
-int has_get_split_mode()
+int has_get_split_mode(RIG *myrig)
 {
 	if (myrig->caps->get_split_mode)
 	{
@@ -306,14 +296,14 @@ int has_get_split_mode()
 	return RIG_ENIMPL;
 }
 
-int get_split_mode(int vfo, int *tx_mode, long *tx_width)
+int get_split_mode(RIG *myrig, int vfo, int *tx_mode, long *tx_width)
 {
 	rmode_t* mode = (rmode_t*)tx_mode;
 	int res = rig_get_split_mode(myrig, vfo, mode, tx_width);
 	return res;
 }
 
-int has_set_split_vfo()
+int has_set_split_vfo(RIG *myrig)
 {
 	if (myrig->caps->set_split_vfo)
 	{
@@ -322,13 +312,13 @@ int has_set_split_vfo()
 	return RIG_ENIMPL;
 }
 
-int set_split_vfo(int vfo, int split, int tx_vfo)
+int set_split_vfo(RIG *myrig, int vfo, int split, int tx_vfo)
 {
 	int res = rig_set_split_vfo(myrig, vfo, split, tx_vfo);
 	return res;
 }
 
-int has_get_split_vfo()
+int has_get_split_vfo(RIG *myrig)
 {
 	if (myrig->caps->get_split_vfo)
 	{
@@ -337,14 +327,14 @@ int has_get_split_vfo()
 	return RIG_ENIMPL;
 }
 
-int get_split_vfo(int vfo, int *split, int *tx_vfo)
+int get_split_vfo(RIG *myrig, int vfo, int *split, int *tx_vfo)
 {
 	split_t* sp = (split_t*)split;
 	int res = rig_get_split_vfo(myrig, vfo, sp, tx_vfo);
 	return res;
 }
 
-int has_set_powerstat()
+int has_set_powerstat(RIG *myrig)
 {
 	if (myrig->caps->set_powerstat)
 	{
@@ -353,13 +343,13 @@ int has_set_powerstat()
 	return RIG_ENIMPL;
 }
 
-int set_powerstat(int status)
+int set_powerstat(RIG *myrig, int status)
 {
 	int res = rig_set_powerstat(myrig, status);
 	return res;
 }
 
-int has_get_powerstat()
+int has_get_powerstat(RIG *myrig)
 {
 	if (myrig->caps->get_powerstat)
 	{
@@ -368,43 +358,43 @@ int has_get_powerstat()
 	return RIG_ENIMPL;
 }
 
-int get_powerstat(int *status)
+int get_powerstat(RIG *myrig, int *status)
 {
 	int res = rig_get_powerstat(myrig, (powerstat_t*)status);
 	return res;
 }
 
-const char* get_info()
+const char* get_info(RIG *myrig)
 {
 	const char *info;
 	info = rig_get_info(myrig);
 	return info;
 }
 
-void get_model_name(char *rig_name)
+void get_model_name(RIG *myrig, char *rig_name)
 {
 	int size = sizeof(myrig->caps->model_name);
 	strncpy(rig_name, myrig->caps->model_name, size);
 }
 
-void get_version(char *version)
+void get_version(RIG *myrig, char *version)
 {
 	int size = sizeof(myrig->caps->version);
 	strncpy(version, myrig->caps->version, size);
 }
 
-void get_mfg_name(char *mfg_name)
+void get_mfg_name(RIG *myrig, char *mfg_name)
 {
 	int size = sizeof(myrig->caps->mfg_name);
 	strncpy(mfg_name, myrig->caps->mfg_name, size);
 }
 
-int get_status()
+int get_status(RIG *myrig)
 {
 	return myrig->caps->status;
 }
 
-int has_set_ant()
+int has_set_ant(RIG *myrig)
 {
 	if (myrig->caps->set_ant)
 	{
@@ -413,13 +403,13 @@ int has_set_ant()
 	return RIG_ENIMPL;
 }
 
-int set_ant(int vfo, int ant)
+int set_ant(RIG *myrig, int vfo, int ant)
 {
 	int res = rig_set_ant(myrig, vfo, ant);
 	return res;
 }
 
-int has_get_ant()
+int has_get_ant(RIG *myrig)
 {
 	if (myrig->caps->get_ant)
 	{
@@ -428,13 +418,13 @@ int has_get_ant()
 	return RIG_ENIMPL;
 }
 
-int get_ant(int vfo, int *ant)
+int get_ant(RIG *myrig, int vfo, int *ant)
 {
 	int res = rig_get_ant(myrig, vfo, ant);
 	return res;
 }
 
-int has_set_ts()
+int has_set_ts(RIG *myrig)
 {
 	if (myrig->caps->set_ts)
 	{
@@ -443,13 +433,13 @@ int has_set_ts()
 	return RIG_ENIMPL;
 }
 
-int set_ts(int vfo, int ts)
+int set_ts(RIG *myrig, int vfo, int ts)
 {
 	int res = rig_set_ts(myrig, vfo, ts);
 	return res;
 }
 
-int has_get_ts()
+int has_get_ts(RIG *myrig)
 {
 	if (myrig->caps->get_ts)
 	{
@@ -458,55 +448,55 @@ int has_get_ts()
 	return RIG_ENIMPL;
 }
 
-int get_ts(int vfo, long *ts)
+int get_ts(RIG *myrig, int vfo, long *ts)
 {
 	int res = rig_get_ts(myrig, vfo, ts);
 	return res;
 }
 
-signed long get_rig_resolution(int mode)
+signed long get_rig_resolution(RIG *myrig, int mode)
 {
 	signed long resolution = rig_get_resolution(myrig, mode);
 	return resolution; 
 }
 
-unsigned long has_get_level(unsigned long level)
+unsigned long has_get_level(RIG *myrig, unsigned long level)
 {
 	unsigned long res = rig_has_get_level(myrig, level);
 	return res;
 }
 
-unsigned long has_set_level(unsigned long level)
+unsigned long has_set_level(RIG *myrig, unsigned long level)
 {
 	unsigned long res = rig_has_set_level(myrig, level);
 	return res;
 }
 
-unsigned long has_get_func(unsigned long func)
+unsigned long has_get_func(RIG *myrig, unsigned long func)
 {
 	unsigned long res = rig_has_get_func(myrig, func);
 	return res;
 }
 
-unsigned long has_set_func(unsigned long func)
+unsigned long has_set_func(RIG *myrig, unsigned long func)
 {
 	unsigned long res = rig_has_set_func(myrig, func);
 	return res;
 }
 
-unsigned long has_get_parm(unsigned long parm)
+unsigned long has_get_parm(RIG *myrig, unsigned long parm)
 {
 	unsigned long res = rig_has_get_parm(myrig, parm);
 	return res;
 }
 
-unsigned long has_set_parm(unsigned long parm)
+unsigned long has_set_parm(RIG *myrig, unsigned long parm)
 {
 	unsigned long res = rig_has_set_parm(myrig, parm);
 	return res;
 }
 
-int has_token(char *token)
+int has_token(RIG *myrig, char *token)
 {
 	token_t t = rig_token_lookup(myrig, token);
 
@@ -517,7 +507,7 @@ int has_token(char *token)
 	return RIG_OK;
 }
 
-int has_get_conf()
+int has_get_conf(RIG *myrig)
 {
 	if (myrig->caps->get_conf)
 	{
@@ -526,7 +516,7 @@ int has_get_conf()
 	return RIG_ENIMPL;
 }
 
-int get_conf(char* token, char* val)
+int get_conf(RIG *myrig, char* token, char* val)
 {
 	token_t t = rig_token_lookup(myrig, token);
 
@@ -538,7 +528,7 @@ int get_conf(char* token, char* val)
 	return res; 
 }
 
-int has_set_conf()
+int has_set_conf(RIG *myrig)
 {
 	if (myrig->caps->set_conf)
 	{
@@ -547,7 +537,7 @@ int has_set_conf()
 	return RIG_ENIMPL;
 }
 
-int set_conf(char* token, char* val)
+int set_conf(RIG *myrig, char* token, char* val)
 {
 	token_t t = rig_token_lookup(myrig, token);
 
@@ -559,7 +549,7 @@ int set_conf(char* token, char* val)
 	return res; 
 }
 
-int get_level(int vfo, unsigned long level, float *value)
+int get_level(RIG *myrig, int vfo, unsigned long level, float *value)
 {	
 	value_t v;
 	int res = rig_get_level(myrig, vfo, level, &v);
@@ -609,7 +599,7 @@ int get_level(int vfo, unsigned long level, float *value)
 	return res;
 } 
 
-int get_level_gran(unsigned long level, float *step, float *min, float *max)
+int get_level_gran(RIG *myrig, unsigned long level, float *step, float *min, float *max)
 {
 	gran_t gran;
 	int found = 0;
@@ -682,7 +672,7 @@ int get_level_gran(unsigned long level, float *step, float *min, float *max)
 }
 
 
-int set_level(int vfo, unsigned long level, float value)
+int set_level(RIG *myrig, int vfo, unsigned long level, float value)
 {	
 	value_t v;
 
@@ -725,13 +715,13 @@ int set_level(int vfo, unsigned long level, float value)
 	return res;
 }
  
-int get_func(int vfo, unsigned long function, int *value)
+int get_func(RIG *myrig, int vfo, unsigned long function, int *value)
 {
 	int res = rig_get_func(myrig, vfo, function, value);
 	return res;
 } 
 
-int set_func(int vfo, unsigned long function, int value)
+int set_func(RIG *myrig, int vfo, unsigned long function, int value)
 {
 	int res = rig_set_func(myrig, vfo, function, value);
 	return res;
@@ -739,7 +729,7 @@ int set_func(int vfo, unsigned long function, int value)
 
 //couldn't find an example to check this function properly
 //it might be necessary to cast return values to float or char*
-int get_parm(unsigned long parm, float *value)
+int get_parm(RIG *myrig, unsigned long parm, float *value)
 {	
 	value_t v;
 	int res = rig_get_parm(myrig, parm, &v);
@@ -764,7 +754,7 @@ int get_parm(unsigned long parm, float *value)
 	return res;
 } 
 
-int get_parm_gran(unsigned long parm, float *step, float *min, float *max)
+int get_parm_gran(RIG *myrig, unsigned long parm, float *step, float *min, float *max)
 {
 	gran_t gran;
 	int found = 0;
@@ -811,7 +801,7 @@ int get_parm_gran(unsigned long parm, float *step, float *min, float *max)
 
 //couldn't find an example to check this function properly
 //it might be necessary to cast return values to float or char*
-int set_parm(unsigned long parm, float value)
+int set_parm(RIG *myrig, unsigned long parm, float value)
 {	
 	value_t v;
 
@@ -835,62 +825,62 @@ int set_parm(unsigned long parm, float value)
 	return res;
 }
 
-int vfo_op(int vfo, int op)
+int vfo_op(RIG *myrig, int vfo, int op)
 {
 	int res;
 	res = rig_vfo_op(myrig, (vfo_t)vfo, (vfo_op_t)op);
 	return res;
 }
 
-int get_caps_max_rit(int *rit)
+int get_caps_max_rit(RIG *myrig, int *rit)
 {
 	*rit = myrig->caps->max_rit;
 	return RIG_OK;
 }
 
-int get_caps_max_xit(int *xit)
+int get_caps_max_xit(RIG *myrig, int *xit)
 {
 	*xit = myrig->caps->max_xit;
 	return RIG_OK;
 }
 
-int get_caps_max_if_shift(int *if_shift)
+int get_caps_max_if_shift(RIG *myrig, int *if_shift)
 {
 	*if_shift = myrig->caps->max_ifshift;
 	return RIG_OK;
 }
 
-int* get_caps_attenuator_list_pointer_and_length(int *length)
+int* get_caps_attenuator_list_pointer_and_length(RIG *myrig, int *length)
 {
 	*length = sizeof(myrig->caps->attenuator)/sizeof(int);
 	return myrig->caps->attenuator;
 }
 
-int* get_caps_preamp_list_pointer_and_length(int *length)
+int* get_caps_preamp_list_pointer_and_length(RIG *myrig, int *length)
 {
 	*length = sizeof(myrig->caps->preamp)/sizeof(int);
 	return myrig->caps->preamp;
 }
 
-int get_supported_vfos(int *vfo_list)
+int get_supported_vfos(RIG *myrig, int *vfo_list)
 {
 	*vfo_list = (int)myrig->state.vfo_list;
 	return RIG_OK;
 }
 
-int get_supported_vfo_operations(int *vfo_ops)
+int get_supported_vfo_operations(RIG *myrig, int *vfo_ops)
 {
 	*vfo_ops = (int)myrig->caps->vfo_ops;
 	return RIG_OK;
 }
 
-int get_supported_modes(int *modes)
+int get_supported_modes(RIG *myrig, int *modes)
 {
 	*modes = (int)myrig->state.mode_list;
 	return RIG_OK;
 }
 
-int get_filter_count(int *filter_count)
+int get_filter_count(RIG *myrig, int *filter_count)
 {
 	int i;
 	for (i=0; i<FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
@@ -900,7 +890,7 @@ int get_filter_count(int *filter_count)
 	return RIG_OK;
 }
 
-int get_filter_mode_width(int filter, int *mode, signed long *width)
+int get_filter_mode_width(RIG *myrig, int filter, int *mode, signed long *width)
 {
 	*mode = myrig->caps->filters[filter].modes;	
 	*width = myrig->caps->filters[filter].width;
@@ -908,14 +898,14 @@ int get_filter_mode_width(int filter, int *mode, signed long *width)
 	return RIG_OK;
 } 
 
-int get_ts_count(int *ts_count)
+int get_ts_count(RIG *myrig, int *ts_count)
 {
 	int i;
 	*ts_count = sizeof(myrig->caps->tuning_steps)/ sizeof(myrig->caps->tuning_steps[0]);
 	return RIG_OK;
 }
 
-int get_tuning_steps(int el, int *mode, signed long *ts)
+int get_tuning_steps(RIG *myrig, int el, int *mode, signed long *ts)
 {
 	*mode = myrig->caps->tuning_steps[el].modes;
 	*ts = myrig->caps->tuning_steps[el].ts;
@@ -923,27 +913,26 @@ int get_tuning_steps(int el, int *mode, signed long *ts)
 	return RIG_OK;
 }
 
-int get_int_from_array(int *array, int *el, int index)
+int get_int_from_array(RIG *myrig, int *array, int *el, int index)
 {
 	*el = array[index];
 	return RIG_OK;
 }
 
-void set_debug_level(int debug_level)
+void set_debug_level(RIG *myrig, int debug_level)
 {
 	rig_set_debug (debug_level);
 }
 
-int close_rig()
+int close_rig(RIG *myrig)
 {
 	int res = rig_close(myrig);
 	return res;
 }
 
-int cleanup_rig()
+int cleanup_rig(RIG *myrig)
 {
 	int res = rig_cleanup(myrig);
-	myrig = 0;
 	return res;
 }
 
