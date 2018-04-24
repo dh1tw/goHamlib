@@ -8,7 +8,7 @@ import (
 func getDummyRig() (*Rig, error) {
 	rig := Rig{}
 	// rig.SetDebugLevel(RIG_DEBUG_VERBOSE)
-	rig.SetDebugLevel(RIG_DEBUG_ERR)
+	SetDebugLevel(RIG_DEBUG_ERR)
 	if err := rig.Init(1); err != nil {
 		return nil, err
 	}
