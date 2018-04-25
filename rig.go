@@ -155,7 +155,7 @@ func SetDebugLevel(dbgLevel DebugLevel) {
 func (rig *Rig) Init(rigModel RigModelID) error {
 
 	if rigModel <= 0 {
-		return checkError(RIG_EINVAL, errors.New("invalid rig model"), "init_rig")
+		return checkError(C.int(HamlibErrEINVAL), errors.New("invalid rig model"), "init_rig")
 	}
 
 	rig.handle = C.init_rig(C.int(rigModel))
@@ -549,7 +549,7 @@ func (rig *Rig) HasToken(token string) bool {
 
 	res, _ := C.has_token(rig.handle, C.CString(token))
 
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		return true
 	}
 
@@ -702,7 +702,7 @@ func (rig *Rig) getAttenuators() error {
 
 	att_array, err := C.get_caps_attenuator_list_pointer_and_length(rig.handle, &length)
 	if att_array == nil {
-		return &HamlibError{"getAttenuators", int(RIG_EINTERNAL), "invalid pointer"}
+		return &HamlibError{"getAttenuators", HamlibErrEINTERNAL, "invalid pointer"}
 	}
 	if err != nil {
 		return &Error{"getAttenuators", err}
@@ -732,7 +732,7 @@ func (rig *Rig) getPreamps() error {
 
 	preamp_array, err := C.get_caps_preamp_list_pointer_and_length(rig.handle, &length)
 	if preamp_array == nil {
-		return &HamlibError{"getPreamp", int(RIG_EINTERNAL), "invalid pointer"}
+		return &HamlibError{"getPreamp", HamlibErrEINTERNAL, "invalid pointer"}
 	}
 	if err != nil {
 		return &Error{"getPreamp", err}
@@ -1043,7 +1043,7 @@ func (rig *Rig) getTuningSteps() error {
 
 func (rig *Rig) hasSetPowerStat() {
 	res := C.has_set_powerstat(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetPowerStat = true
 		return
 	}
@@ -1052,7 +1052,7 @@ func (rig *Rig) hasSetPowerStat() {
 
 func (rig *Rig) hasGetPowerStat() {
 	res := C.has_get_powerstat(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetPowerStat = true
 		return
 	}
@@ -1061,7 +1061,7 @@ func (rig *Rig) hasGetPowerStat() {
 
 func (rig *Rig) hasSetVfo() {
 	res := C.has_set_vfo(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetVfo = true
 		return
 	}
@@ -1070,7 +1070,7 @@ func (rig *Rig) hasSetVfo() {
 
 func (rig *Rig) hasGetVfo() {
 	res := C.has_get_vfo(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetVfo = true
 		return
 	}
@@ -1079,7 +1079,7 @@ func (rig *Rig) hasGetVfo() {
 
 func (rig *Rig) hasSetFreq() {
 	res := C.has_set_freq(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetFreq = true
 		return
 	}
@@ -1088,7 +1088,7 @@ func (rig *Rig) hasSetFreq() {
 
 func (rig *Rig) hasGetFreq() {
 	res := C.has_get_freq(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetFreq = true
 		return
 	}
@@ -1097,7 +1097,7 @@ func (rig *Rig) hasGetFreq() {
 
 func (rig *Rig) hasSetMode() {
 	res := C.has_set_mode(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetMode = true
 		return
 	}
@@ -1106,7 +1106,7 @@ func (rig *Rig) hasSetMode() {
 
 func (rig *Rig) hasGetMode() {
 	res := C.has_get_mode(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetMode = true
 		return
 	}
@@ -1115,7 +1115,7 @@ func (rig *Rig) hasGetMode() {
 
 func (rig *Rig) hasSetPtt() {
 	res := C.has_set_ptt(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetPtt = true
 		return
 	}
@@ -1124,7 +1124,7 @@ func (rig *Rig) hasSetPtt() {
 
 func (rig *Rig) hasGetPtt() {
 	res := C.has_get_ptt(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetPtt = true
 		return
 	}
@@ -1133,7 +1133,7 @@ func (rig *Rig) hasGetPtt() {
 
 func (rig *Rig) hasSetRit() {
 	res := C.has_set_rit(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetRit = true
 		return
 	}
@@ -1142,7 +1142,7 @@ func (rig *Rig) hasSetRit() {
 
 func (rig *Rig) hasGetRit() {
 	res := C.has_get_rit(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetRit = true
 		return
 	}
@@ -1151,7 +1151,7 @@ func (rig *Rig) hasGetRit() {
 
 func (rig *Rig) hasSetXit() {
 	res := C.has_set_xit(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetXit = true
 		return
 	}
@@ -1160,7 +1160,7 @@ func (rig *Rig) hasSetXit() {
 
 func (rig *Rig) hasGetXit() {
 	res := C.has_get_xit(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetXit = true
 		return
 	}
@@ -1169,7 +1169,7 @@ func (rig *Rig) hasGetXit() {
 
 func (rig *Rig) hasSetSplitVfo() {
 	res := C.has_set_split_vfo(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetSplitVfo = true
 		return
 	}
@@ -1178,7 +1178,7 @@ func (rig *Rig) hasSetSplitVfo() {
 
 func (rig *Rig) hasGetSplitVfo() {
 	res := C.has_get_split_vfo(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetSplitVfo = true
 		return
 	}
@@ -1187,7 +1187,7 @@ func (rig *Rig) hasGetSplitVfo() {
 
 func (rig *Rig) hasSetSplitMode() {
 	res := C.has_set_split_mode(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetSplitMode = true
 		return
 	}
@@ -1196,7 +1196,7 @@ func (rig *Rig) hasSetSplitMode() {
 
 func (rig *Rig) hasGetSplitMode() {
 	res := C.has_get_split_mode(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetSplitMode = true
 		return
 	}
@@ -1205,7 +1205,7 @@ func (rig *Rig) hasGetSplitMode() {
 
 func (rig *Rig) hasSetSplitFreq() {
 	res := C.has_set_split_freq(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetSplitFreq = true
 		return
 	}
@@ -1214,7 +1214,7 @@ func (rig *Rig) hasSetSplitFreq() {
 
 func (rig *Rig) hasGetSplitFreq() {
 	res := C.has_get_split_freq(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetSplitFreq = true
 		return
 	}
@@ -1223,7 +1223,7 @@ func (rig *Rig) hasGetSplitFreq() {
 
 func (rig *Rig) hasSetAnt() {
 	res := C.has_set_ant(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetAnt = true
 		return
 	}
@@ -1232,7 +1232,7 @@ func (rig *Rig) hasSetAnt() {
 
 func (rig *Rig) hasGetAnt() {
 	res := C.has_get_ant(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetAnt = true
 		return
 	}
@@ -1241,7 +1241,7 @@ func (rig *Rig) hasGetAnt() {
 
 func (rig *Rig) hasSetTs() {
 	res := C.has_set_ts(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetTs = true
 		return
 	}
@@ -1250,7 +1250,7 @@ func (rig *Rig) hasSetTs() {
 
 func (rig *Rig) hasGetTs() {
 	res := C.has_get_ts(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetTs = true
 		return
 	}
@@ -1259,7 +1259,7 @@ func (rig *Rig) hasGetTs() {
 
 func (rig *Rig) hasSetConf() {
 	res := C.has_set_conf(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasSetConf = true
 		return
 	}
@@ -1268,7 +1268,7 @@ func (rig *Rig) hasSetConf() {
 
 func (rig *Rig) hasGetConf() {
 	res := C.has_get_conf(rig.handle)
-	if res == RIG_OK {
+	if HamlibErrorCode(res) == HamlibErrOK {
 		rig.Caps.HasGetConf = true
 		return
 	}
@@ -1290,12 +1290,12 @@ func (rig *Rig) Cleanup() error {
 // Check Errors from Hamlib C calls. C Errors have a higher priority.
 // Additional Information is provided for better debugging
 func checkError(res C.int, e error, operation string) error {
-
 	if e != nil {
 		return &Error{operation, e}
 	}
-	if int(res) != RIG_OK {
-		return &HamlibError{operation, int(res), ""}
+	herr := HamlibErrorCode(res)
+	if herr != HamlibErrOK {
+		return &HamlibError{operation, herr, ""}
 	}
 
 	return nil
