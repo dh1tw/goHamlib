@@ -58,30 +58,32 @@ type DebugLevel byte
 
 // Hamlib debug level constants
 const (
-	RIG_DEBUG_NONE    DebugLevel = 0
-	RIG_DEBUG_BUG     DebugLevel = 1
-	RIG_DEBUG_ERR     DebugLevel = 2
-	RIG_DEBUG_WARN    DebugLevel = 3
-	RIG_DEBUG_VERBOSE DebugLevel = 4
-	RIG_DEBUG_TRACE   DebugLevel = 5
+	DebugNone    DebugLevel = 0
+	DebugBug     DebugLevel = 1
+	DebugErr     DebugLevel = 2
+	DebugWarn    DebugLevel = 3
+	DebugVerbose DebugLevel = 4
+	DebugTrace   DebugLevel = 5
 )
 
+// DebugLevelValue maps strings to DebugLevel
 var DebugLevelValue = map[string]DebugLevel{
-	"NONE":    RIG_DEBUG_NONE,
-	"BUG":     RIG_DEBUG_BUG,
-	"ERROR":   RIG_DEBUG_ERR,
-	"WARN":    RIG_DEBUG_WARN,
-	"VERBOSE": RIG_DEBUG_VERBOSE,
-	"TRACE":   RIG_DEBUG_TRACE,
+	"NONE":    DebugNone,
+	"BUG":     DebugBug,
+	"ERROR":   DebugErr,
+	"WARN":    DebugWarn,
+	"VERBOSE": DebugVerbose,
+	"TRACE":   DebugTrace,
 }
 
+// DebugLevelName maps DebugLevel to a name string
 var DebugLevelName = map[DebugLevel]string{
-	RIG_DEBUG_NONE:    "NONE",
-	RIG_DEBUG_BUG:     "BUG",
-	RIG_DEBUG_ERR:     "ERROR",
-	RIG_DEBUG_WARN:    "WARN",
-	RIG_DEBUG_VERBOSE: "VERBOSE",
-	RIG_DEBUG_TRACE:   "TRACE",
+	DebugNone:    "NONE",
+	DebugBug:     "BUG",
+	DebugErr:     "ERROR",
+	DebugWarn:    "WARN",
+	DebugVerbose: "VERBOSE",
+	DebugTrace:   "TRACE",
 }
 
 //Hamlib VFOs
