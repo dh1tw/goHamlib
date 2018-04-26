@@ -670,9 +670,9 @@ func TestDummyRigTuningSteps(t *testing.T) {
 
 			// only execute if "UP" is supported
 			for _, val := range rig.Caps.Operations {
-				if val == "RIG_OP_UP" {
+				if val == "VFOOpUp" {
 
-					err = rig.VfoOp(VFOValue, RIG_OP_UP)
+					err = rig.VfoOp(VFOValue, VFOOpUp)
 					if err != nil {
 						t.Fatal(err)
 					}

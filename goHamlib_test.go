@@ -36,23 +36,23 @@ func TestVfoMaps(t *testing.T) {
 func TestOperationMaps(t *testing.T) {
 
 	// Test OperationValue map
-	for opName, opValue := range goHamlib.OperationValue {
-		_, ok := goHamlib.OperationName[opValue]
+	for opName, opValue := range goHamlib.VFOOperationValue {
+		_, ok := goHamlib.VFOOperationName[opValue]
 		if !ok {
 			t.Fatalf("Operation %d does not exist in OperationName map", opValue)
 		}
-		if opName != goHamlib.OperationName[opValue] {
+		if opName != goHamlib.VFOOperationName[opValue] {
 			t.Fatalf("Name of Operation inconsisted: %s", opName)
 		}
 	}
 
 	// Test OperationName map
-	for opValue, opName := range goHamlib.OperationName {
-		_, ok := goHamlib.OperationValue[opName]
+	for opValue, opName := range goHamlib.VFOOperationName {
+		_, ok := goHamlib.VFOOperationValue[opName]
 		if !ok {
 			t.Fatalf("Operation %s does not exist in OperationValue map", opName)
 		}
-		if opValue != goHamlib.OperationValue[opName] {
+		if opValue != goHamlib.VFOOperationValue[opName] {
 			t.Fatalf("Value of Operation inconsisted: %s", opName)
 		}
 	}

@@ -28,7 +28,7 @@ const (
 	HandshakeRTSCTS Handshake = 1
 )
 
-// HamlibError is an error code returned from libhamlib
+// HamlibErrorCode is an error code returned from libhamlib
 type HamlibErrorCode int
 
 //Hamlib Error Codes
@@ -136,57 +136,61 @@ var VFOValue = map[string]VFOType{
 	"TX":   VFOTX,
 }
 
-//Hamlib Rig Operations
+// VFOOp is a VFO operation
+type VFOOp int
+
+// VFO Operation constants
 const (
-	RIG_OP_NONE      = 0
-	RIG_OP_CPY       = 1 << 0
-	RIG_OP_XCHG      = 1 << 1
-	RIG_OP_FROM_VFO  = 1 << 2
-	RIG_OP_TO_VFO    = 1 << 3
-	RIG_OP_MCL       = 1 << 4
-	RIG_OP_UP        = 1 << 5
-	RIG_OP_DOWN      = 1 << 6
-	RIG_OP_BAND_UP   = 1 << 7
-	RIG_OP_BAND_DOWN = 1 << 8
-	RIG_OP_LEFT      = 1 << 9
-	RIG_OP_RIGHT     = 1 << 10
-	RIG_OP_TUNE      = 1 << 11
-	RIG_OP_TOGGLE    = 1 << 12
+	VFOOpNone        VFOOp = 0
+	VFOOpCopy        VFOOp = 1 << 0
+	VFOOpExchange    VFOOp = 1 << 1
+	VFOOpFromVFO     VFOOp = 1 << 2
+	VFOOpToVFO       VFOOp = 1 << 3
+	VFOOpMemoryClear VFOOp = 1 << 4
+	VFOOpUp          VFOOp = 1 << 5
+	VFOOpDown        VFOOp = 1 << 6
+	VFOOpBandUp      VFOOp = 1 << 7
+	VFOOpBandDown    VFOOp = 1 << 8
+	VFOOpLeft        VFOOp = 1 << 9
+	VFOOpRight       VFOOp = 1 << 10
+	VFOOpTune        VFOOp = 1 << 11
+	VFOOpToggle      VFOOp = 1 << 12
 )
 
-//Map containing Strings for VFO Operations
-var OperationName = map[int]string{
-	RIG_OP_NONE:      "",
-	RIG_OP_CPY:       "CPY",
-	RIG_OP_XCHG:      "XCHG",
-	RIG_OP_FROM_VFO:  "FROM_VFO",
-	RIG_OP_TO_VFO:    "TO_VFO",
-	RIG_OP_MCL:       "MCL",
-	RIG_OP_UP:        "UP",
-	RIG_OP_DOWN:      "DOWN",
-	RIG_OP_BAND_UP:   "BAND_UP",
-	RIG_OP_BAND_DOWN: "BAND_DOWN",
-	RIG_OP_LEFT:      "LEFT",
-	RIG_OP_RIGHT:     "RIGHT",
-	RIG_OP_TUNE:      "TUNE",
-	RIG_OP_TOGGLE:    "TOGGLE",
+// VFOOperationName is a map of VFO operation values to names
+var VFOOperationName = map[VFOOp]string{
+	VFOOpNone:        "",
+	VFOOpCopy:        "CPY",
+	VFOOpExchange:    "XCHG",
+	VFOOpFromVFO:     "FROM_VFO",
+	VFOOpToVFO:       "TO_VFO",
+	VFOOpMemoryClear: "MCL",
+	VFOOpUp:          "UP",
+	VFOOpDown:        "DOWN",
+	VFOOpBandUp:      "BAND_UP",
+	VFOOpBandDown:    "BAND_DOWN",
+	VFOOpLeft:        "LEFT",
+	VFOOpRight:       "RIGHT",
+	VFOOpTune:        "TUNE",
+	VFOOpToggle:      "TOGGLE",
 }
 
-var OperationValue = map[string]int{
-	"":          RIG_OP_NONE,
-	"CPY":       RIG_OP_CPY,
-	"XCHG":      RIG_OP_XCHG,
-	"FROM_VFO":  RIG_OP_FROM_VFO,
-	"TO_VFO":    RIG_OP_TO_VFO,
-	"MCL":       RIG_OP_MCL,
-	"UP":        RIG_OP_UP,
-	"DOWN":      RIG_OP_DOWN,
-	"BAND_UP":   RIG_OP_BAND_UP,
-	"BAND_DOWN": RIG_OP_BAND_DOWN,
-	"LEFT":      RIG_OP_LEFT,
-	"RIGHT":     RIG_OP_RIGHT,
-	"TUNE":      RIG_OP_TUNE,
-	"TOGGLE":    RIG_OP_TOGGLE,
+// VFOOperationValue is a map of VFO operation names to values
+var VFOOperationValue = map[string]VFOOp{
+	"":          VFOOpNone,
+	"CPY":       VFOOpCopy,
+	"XCHG":      VFOOpExchange,
+	"FROM_VFO":  VFOOpFromVFO,
+	"TO_VFO":    VFOOpToVFO,
+	"MCL":       VFOOpMemoryClear,
+	"UP":        VFOOpUp,
+	"DOWN":      VFOOpDown,
+	"BAND_UP":   VFOOpBandUp,
+	"BAND_DOWN": VFOOpBandDown,
+	"LEFT":      VFOOpLeft,
+	"RIGHT":     VFOOpRight,
+	"TUNE":      VFOOpTune,
+	"TOGGLE":    VFOOpToggle,
 }
 
 // Hamlib modes
@@ -730,6 +734,7 @@ const (
 	RigPortCM108      RigPort = 11
 )
 
+// RigPortValue is a map of RigPort to names
 var RigPortName = map[RigPort]string{
 	RigPortNone:       "RIG_PORT_NONE",
 	RigPortSerial:     "RIG_PORT_SERIAL",
@@ -745,6 +750,7 @@ var RigPortName = map[RigPort]string{
 	RigPortCM108:      "RIG_PORT_CM108",
 }
 
+// RigPortValue is a map of names to RigPort
 var RigPortValue = map[string]RigPort{
 	"RIG_PORT_NONE":        RigPortNone,
 	"RIG_PORT_SERIAL":      RigPortSerial,

@@ -569,7 +569,7 @@ func (rig *Rig) GetConf(token string) (val string, err error) {
 }
 
 //Execute VFO Operation
-func (rig *Rig) VfoOp(vfo VFOType, op int) error {
+func (rig *Rig) VfoOp(vfo VFOType, op VFOOp) error {
 	res, err := C.vfo_op(rig.handle, C.int(vfo), C.int(op))
 	return checkError(res, err, "vfo_op")
 }
@@ -782,8 +782,8 @@ func (rig *Rig) getOperations() error {
 		return checkError(res, err, "get_supported_vfo_operations")
 	}
 
-	for op, opStr := range OperationName {
-		if int(vfoOpClist)&op > 0 {
+	for op, opStr := range VFOOperationName {
+		if VFOOp(vfoOpClist)&op > 0 {
 			vfoOpList = append(vfoOpList, opStr)
 		}
 	}
