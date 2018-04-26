@@ -86,49 +86,54 @@ var DebugLevelName = map[DebugLevel]string{
 	DebugTrace:   "TRACE",
 }
 
+// VFOType is used to specify a particular VFO
+type VFOType int
+
+const vfoTXFlag VFOType = 1 << 30
+
 //Hamlib VFOs
 const (
-	RIG_VFO_NONE    = 0
-	RIG_VFO_TX_FLAG = 1 << 30
-	RIG_VFO_CURR    = 1 << 29
-	RIG_VFO_MEM     = 1 << 28
-	RIG_VFO_VFO     = 1 << 27
-	//	RIG_VFO_TX_VFO 			//TBD Macro
-	RIG_VFO_TX   = RIG_VFO_CURR | RIG_VFO_TX_FLAG
-	RIG_VFO_RX   = RIG_VFO_CURR
-	RIG_VFO_MAIN = 1 << 26
-	RIG_VFO_SUB  = 1 << 25
-	RIG_VFO_A    = 1 << 0
-	RIG_VFO_B    = 1 << 1
-	RIG_VFO_C    = 1 << 2
+	VFONone    VFOType = 0
+	VFOCurrent VFOType = 1 << 29
+	VFOMemory  VFOType = 1 << 28
+	VFOLastVFO VFOType = 1 << 27
+	//	VFOTX_VFO 			//TBD Macro
+	VFOTX   VFOType = VFOCurrent | vfoTXFlag
+	VFORX           = VFOCurrent
+	VFOMain VFOType = 1 << 26
+	VFOSub  VFOType = 1 << 25
+	VFOA    VFOType = 1 << 0
+	VFOB    VFOType = 1 << 1
+	VFOC    VFOType = 1 << 2
 )
 
-//Map containing Strings for VFOs
-var VfoName = map[int]string{
-	RIG_VFO_NONE: "NONE",
-	RIG_VFO_A:    "VFOA",
-	RIG_VFO_B:    "VFOB",
-	RIG_VFO_C:    "VFOC",
-	RIG_VFO_CURR: "CURR",
-	RIG_VFO_MEM:  "MEM",
-	RIG_VFO_VFO:  "VFO",
-	RIG_VFO_TX:   "TX",
-	//	RIG_VFO_RX: "RX",
-	RIG_VFO_MAIN: "MAIN",
-	RIG_VFO_SUB:  "SUB",
+// VFOName is a map containing Strings for VFOs
+var VFOName = map[VFOType]string{
+	VFONone:    "NONE",
+	VFOA:       "VFOA",
+	VFOB:       "VFOB",
+	VFOC:       "VFOC",
+	VFOCurrent: "CURR",
+	VFOMemory:  "MEM",
+	VFOLastVFO: "VFO",
+	VFOTX:      "TX",
+	// VFORX:      "RX", same as VFOCurrent
+	VFOMain: "MAIN",
+	VFOSub:  "SUB",
 }
 
-var VfoValue = map[string]int{
-	"NONE": RIG_VFO_NONE,
-	"VFOA": RIG_VFO_A,
-	"VFOB": RIG_VFO_B,
-	"VFOC": RIG_VFO_C,
-	"CURR": RIG_VFO_CURR,
-	"MAIN": RIG_VFO_MAIN,
-	"SUB":  RIG_VFO_SUB,
-	"MEM":  RIG_VFO_MEM,
-	"VFO":  RIG_VFO_VFO,
-	"TX":   RIG_VFO_TX,
+// VFOValue is a map from VFO names to values
+var VFOValue = map[string]VFOType{
+	"NONE": VFONone,
+	"VFOA": VFOA,
+	"VFOB": VFOB,
+	"VFOC": VFOC,
+	"CURR": VFOCurrent,
+	"MAIN": VFOMain,
+	"SUB":  VFOSub,
+	"MEM":  VFOMemory,
+	"VFO":  VFOLastVFO,
+	"TX":   VFOTX,
 }
 
 //Hamlib Rig Operations

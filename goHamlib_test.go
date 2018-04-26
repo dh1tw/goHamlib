@@ -9,24 +9,24 @@ import (
 // Test consistency of Vfo Value and Name maps
 func TestVfoMaps(t *testing.T) {
 
-	// Test VfoValue map
-	for vfoName, vfoValue := range goHamlib.VfoValue {
-		_, ok := goHamlib.VfoName[vfoValue]
+	// Test VFOValue map
+	for vfoName, VFOValue := range goHamlib.VFOValue {
+		_, ok := goHamlib.VFOName[VFOValue]
 		if !ok {
-			t.Fatalf("VFO %d does not exist in VfoName map", vfoValue)
+			t.Fatalf("VFO %d does not exist in VfoName map", VFOValue)
 		}
-		if vfoName != goHamlib.VfoName[vfoValue] {
+		if vfoName != goHamlib.VFOName[VFOValue] {
 			t.Fatalf("Name of VFO inconsisted: %s", vfoName)
 		}
 	}
 
 	// Test VfoName map
-	for vfoValue, vfoName := range goHamlib.VfoName {
-		_, ok := goHamlib.VfoValue[vfoName]
+	for VFOValue, vfoName := range goHamlib.VFOName {
+		_, ok := goHamlib.VFOValue[vfoName]
 		if !ok {
-			t.Fatalf("VFO %s does not exist in VfoValue map", vfoName)
+			t.Fatalf("VFO %s does not exist in VFOValue map", vfoName)
 		}
-		if vfoValue != goHamlib.VfoValue[vfoName] {
+		if VFOValue != goHamlib.VFOValue[vfoName] {
 			t.Fatalf("Value of VFO inconsisted: %s", vfoName)
 		}
 	}

@@ -181,28 +181,27 @@ func (rig *Rig) Open() error {
 	return checkError(res, err, "open_rig")
 }
 
-// Set default VFO
-func (rig *Rig) SetVfo(vfo int) error {
+// SetVfo sets the default VFO
+func (rig *Rig) SetVfo(vfo VFOType) error {
 	res, err := C.set_vfo(rig.handle, C.int(vfo))
 	return checkError(res, err, "set_vfo")
 }
 
-// Get default VFO
-func (rig *Rig) GetVfo() (vfo int, err error) {
+// GetVfo returns the default VFO
+func (rig *Rig) GetVfo() (VFOType, error) {
 	var v C.int
 	res, err := C.get_vfo(rig.handle, &v)
-	vfo = int(v)
-	return vfo, checkError(res, err, "get_vfo")
+	return VFOType(v), checkError(res, err, "get_vfo")
 }
 
 // Set Frequency for a VFO
-func (rig *Rig) SetFreq(vfo int, freq float64) error {
+func (rig *Rig) SetFreq(vfo VFOType, freq float64) error {
 	res, err := C.set_freq(rig.handle, C.int(vfo), C.double(freq))
 	return checkError(res, err, "set_freq")
 }
 
 // Set Mode for a VFO
-func (rig *Rig) SetMode(vfo int, mode int, pb_width int) error {
+func (rig *Rig) SetMode(vfo VFOType, mode int, pb_width int) error {
 	res, err := C.set_mode(rig.handle, C.int(vfo), C.int(mode), C.int(pb_width))
 	return checkError(res, err, "set_freq")
 }
@@ -232,7 +231,7 @@ func (rig *Rig) GetPbWide(mode int) (int, error) {
 }
 
 // Get Frequency from a VFO
-func (rig *Rig) GetFreq(vfo int) (freq float64, err error) {
+func (rig *Rig) GetFreq(vfo VFOType) (freq float64, err error) {
 	var f C.double
 	var res C.int
 	res, err = C.get_freq(rig.handle, C.int(vfo), &f)
@@ -241,7 +240,7 @@ func (rig *Rig) GetFreq(vfo int) (freq float64, err error) {
 }
 
 // Get Mode and Passband width for a VFO
-func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error) {
+func (rig *Rig) GetMode(vfo VFOType) (mode int, pb_width int, err error) {
 	var m C.int
 	var pb C.long
 	var res C.int
@@ -252,13 +251,13 @@ func (rig *Rig) GetMode(vfo int) (mode int, pb_width int, err error) {
 }
 
 // Set Ptt
-func (rig *Rig) SetPtt(vfo int, ptt int) error {
+func (rig *Rig) SetPtt(vfo VFOType, ptt int) error {
 	res, err := C.set_ptt(rig.handle, C.int(vfo), C.int(ptt))
 	return checkError(res, err, "set_ptt")
 }
 
 // Get Ptt state
-func (rig *Rig) GetPtt(vfo int) (ptt int, err error) {
+func (rig *Rig) GetPtt(vfo VFOType) (ptt int, err error) {
 	var p C.int
 	res, err := C.get_ptt(rig.handle, C.int(vfo), &p)
 	ptt = int(p)
@@ -266,13 +265,13 @@ func (rig *Rig) GetPtt(vfo int) (ptt int, err error) {
 }
 
 // Set Rit offset value
-func (rig *Rig) SetRit(vfo int, offset int) error {
+func (rig *Rig) SetRit(vfo VFOType, offset int) error {
 	res, err := C.set_rit(rig.handle, C.int(vfo), C.int(offset))
 	return checkError(res, err, "set_rit")
 }
 
 // Get Rit offset value
-func (rig *Rig) GetRit(vfo int) (offset int, err error) {
+func (rig *Rig) GetRit(vfo VFOType) (offset int, err error) {
 	var o C.long
 	res, err := C.get_rit(rig.handle, C.int(vfo), &o)
 	offset = int(o)
@@ -280,13 +279,13 @@ func (rig *Rig) GetRit(vfo int) (offset int, err error) {
 }
 
 // Set Xit offset value
-func (rig *Rig) SetXit(vfo int, offset int) error {
+func (rig *Rig) SetXit(vfo VFOType, offset int) error {
 	res, err := C.set_xit(rig.handle, C.int(vfo), C.int(offset))
 	return checkError(res, err, "set_xit")
 }
 
 // Get Xit offset value
-func (rig *Rig) GetXit(vfo int) (offset int, err error) {
+func (rig *Rig) GetXit(vfo VFOType) (offset int, err error) {
 	var o C.long
 	res, err := C.get_xit(rig.handle, C.int(vfo), &o)
 	offset = int(o)
@@ -294,13 +293,13 @@ func (rig *Rig) GetXit(vfo int) (offset int, err error) {
 }
 
 // Set Split Frequency
-func (rig *Rig) SetSplitFreq(vfo int, txFreq float64) error {
+func (rig *Rig) SetSplitFreq(vfo VFOType, txFreq float64) error {
 	res, err := C.set_split_freq(rig.handle, C.int(vfo), C.double(txFreq))
 	return checkError(res, err, "set_split_freq")
 }
 
 // Get Split Frequency
-func (rig *Rig) GetSplitFreq(vfo int) (txFreq float64, err error) {
+func (rig *Rig) GetSplitFreq(vfo VFOType) (txFreq float64, err error) {
 	var f C.double
 	res, err := C.get_split_freq(rig.handle, C.int(vfo), &f)
 	txFreq = float64(f)
@@ -308,13 +307,13 @@ func (rig *Rig) GetSplitFreq(vfo int) (txFreq float64, err error) {
 }
 
 // Set Split Mode
-func (rig *Rig) SetSplitMode(vfo int, txMode int, txWidth int) error {
+func (rig *Rig) SetSplitMode(vfo VFOType, txMode int, txWidth int) error {
 	res, err := C.set_split_mode(rig.handle, C.int(vfo), C.int(txMode), C.int(txWidth))
 	return checkError(res, err, "set_split_mode")
 }
 
 // Get Split Mode
-func (rig *Rig) GetSplitMode(vfo int) (txMode int, txWidth int, err error) {
+func (rig *Rig) GetSplitMode(vfo VFOType) (txMode int, txWidth int, err error) {
 	var m C.int
 	var w C.long
 	res, err := C.get_split_mode(rig.handle, C.int(vfo), &m, &w)
@@ -324,28 +323,28 @@ func (rig *Rig) GetSplitMode(vfo int) (txMode int, txWidth int, err error) {
 }
 
 // Set Split Vfo
-func (rig *Rig) SetSplitVfo(vfo int, split int, txVfo int) error {
+func (rig *Rig) SetSplitVfo(vfo VFOType, split int, txVfo VFOType) error {
 	res, err := C.set_split_vfo(rig.handle, C.int(vfo), C.int(split), C.int(txVfo))
 	return checkError(res, err, "set_split_vfo")
 }
 
 // Get Split Vfo
-func (rig *Rig) GetSplitVfo(vfo int) (split int, txVfo int, err error) {
+func (rig *Rig) GetSplitVfo(vfo VFOType) (split int, txVfo VFOType, err error) {
 	var s C.int
 	var v C.int
 	res, err := C.get_split_vfo(rig.handle, C.int(vfo), &s, &v)
 	split = int(s)
-	txVfo = int(v)
+	txVfo = VFOType(v)
 	return split, txVfo, checkError(res, err, "get_split_vfo")
 }
 
 // Get Split (shortcut for GetSplitVfo)
-func (rig *Rig) GetSplit(vfo int) (split int, txVfo int, err error) {
+func (rig *Rig) GetSplit(vfo VFOType) (split int, txVfo VFOType, err error) {
 	var s C.int
 	var t C.int
 	res, err := C.get_split_vfo(rig.handle, C.int(vfo), &s, &t)
 	split = int(s)
-	txVfo = int(t)
+	txVfo = VFOType(t)
 	return split, txVfo, checkError(res, err, "get_split")
 }
 
@@ -372,13 +371,13 @@ func (rig *Rig) GetInfo() (info string, err error) {
 }
 
 // Set Antenna
-func (rig *Rig) SetAnt(vfo int, ant int) error {
+func (rig *Rig) SetAnt(vfo VFOType, ant int) error {
 	res, err := C.set_ant(rig.handle, C.int(vfo), C.int(ant))
 	return checkError(res, err, "set_ant")
 }
 
 // Get Antenna
-func (rig *Rig) GetAnt(vfo int) (ant int, err error) {
+func (rig *Rig) GetAnt(vfo VFOType) (ant int, err error) {
 	var a C.int
 	res, err := C.get_ant(rig.handle, C.int(vfo), &a)
 	ant = int(a)
@@ -386,13 +385,13 @@ func (rig *Rig) GetAnt(vfo int) (ant int, err error) {
 }
 
 // Set Tuning step
-func (rig *Rig) SetTs(vfo int, ts int) error {
+func (rig *Rig) SetTs(vfo VFOType, ts int) error {
 	res, err := C.set_ts(rig.handle, C.int(vfo), C.int(ts))
 	return checkError(res, err, "set_ts")
 }
 
 // Get Tuning step
-func (rig *Rig) GetTs(vfo int) (ts int, err error) {
+func (rig *Rig) GetTs(vfo VFOType) (ts int, err error) {
 	var t C.long
 	res, err := C.get_ts(rig.handle, C.int(vfo), &t)
 	ts = int(t)
@@ -456,7 +455,7 @@ func (rig *Rig) HasSetParm(parm uint32) (res uint32, err error) {
 }
 
 //get Level
-func (rig *Rig) GetLevel(vfo int, level uint32) (value float32, err error) {
+func (rig *Rig) GetLevel(vfo VFOType, level uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_level(rig.handle, C.int(vfo), C.ulong(level), &v)
@@ -465,7 +464,7 @@ func (rig *Rig) GetLevel(vfo int, level uint32) (value float32, err error) {
 }
 
 //set Level
-func (rig *Rig) SetLevel(vfo int, level uint32, value float32) error {
+func (rig *Rig) SetLevel(vfo VFOType, level uint32, value float32) error {
 	res, err := C.set_level(rig.handle, C.int(vfo), C.ulong(level), C.float(value))
 	return checkError(res, err, "set_level")
 }
@@ -485,7 +484,7 @@ func (rig *Rig) GetLevelGran(level uint32) (step float32, min float32, max float
 }
 
 //get Function
-func (rig *Rig) GetFunc(vfo int, function uint32) (value bool, err error) {
+func (rig *Rig) GetFunc(vfo VFOType, function uint32) (value bool, err error) {
 	var v C.int
 	var res C.int
 	res, err = C.get_func(rig.handle, C.int(vfo), C.ulong(function), &v)
@@ -497,7 +496,7 @@ func (rig *Rig) GetFunc(vfo int, function uint32) (value bool, err error) {
 }
 
 //set Function
-func (rig *Rig) SetFunc(vfo int, function uint32, value bool) error {
+func (rig *Rig) SetFunc(vfo VFOType, function uint32, value bool) error {
 	var v C.int
 	v, err := BoolToCint(value)
 	if err != nil {
@@ -508,7 +507,7 @@ func (rig *Rig) SetFunc(vfo int, function uint32, value bool) error {
 }
 
 //get Parameter
-func (rig *Rig) GetParm(vfo int, parm uint32) (value float32, err error) {
+func (rig *Rig) GetParm(vfo VFOType, parm uint32) (value float32, err error) {
 	var v C.float
 	var res C.int
 	res, err = C.get_parm(rig.handle, C.ulong(parm), &v)
@@ -517,7 +516,7 @@ func (rig *Rig) GetParm(vfo int, parm uint32) (value float32, err error) {
 }
 
 //set Parameter
-func (rig *Rig) SetParm(vfo int, parm uint32, value float32) error {
+func (rig *Rig) SetParm(vfo VFOType, parm uint32, value float32) error {
 	res, err := C.set_parm(rig.handle, C.ulong(parm), C.float(value))
 	return checkError(res, err, "set_parm")
 }
@@ -570,7 +569,7 @@ func (rig *Rig) GetConf(token string) (val string, err error) {
 }
 
 //Execute VFO Operation
-func (rig *Rig) VfoOp(vfo int, op int) error {
+func (rig *Rig) VfoOp(vfo VFOType, op int) error {
 	res, err := C.vfo_op(rig.handle, C.int(vfo), C.int(op))
 	return checkError(res, err, "vfo_op")
 }
@@ -763,8 +762,8 @@ func (rig *Rig) getVfos() error {
 		return checkError(res, err, "get_supported_vfos")
 	}
 
-	for vfo, vfoStr := range VfoName {
-		if int(vfoClist)&vfo > 0 {
+	for vfo, vfoStr := range VFOName {
+		if VFOType(vfoClist)&vfo > 0 {
 			vfoList = append(vfoList, vfoStr)
 		}
 	}
