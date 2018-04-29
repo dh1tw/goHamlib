@@ -28,7 +28,7 @@ const (
 	HandshakeRTSCTS Handshake = 1
 )
 
-// HamlibError is an error code returned from libhamlib
+// HamlibErrorCode is an error code returned from libhamlib
 type HamlibErrorCode int
 
 //Hamlib Error Codes
@@ -58,128 +58,139 @@ type DebugLevel byte
 
 // Hamlib debug level constants
 const (
-	RIG_DEBUG_NONE    DebugLevel = 0
-	RIG_DEBUG_BUG     DebugLevel = 1
-	RIG_DEBUG_ERR     DebugLevel = 2
-	RIG_DEBUG_WARN    DebugLevel = 3
-	RIG_DEBUG_VERBOSE DebugLevel = 4
-	RIG_DEBUG_TRACE   DebugLevel = 5
+	DebugNone    DebugLevel = 0
+	DebugBug     DebugLevel = 1
+	DebugErr     DebugLevel = 2
+	DebugWarn    DebugLevel = 3
+	DebugVerbose DebugLevel = 4
+	DebugTrace   DebugLevel = 5
 )
 
+// DebugLevelValue maps strings to DebugLevel
 var DebugLevelValue = map[string]DebugLevel{
-	"NONE":    RIG_DEBUG_NONE,
-	"BUG":     RIG_DEBUG_BUG,
-	"ERROR":   RIG_DEBUG_ERR,
-	"WARN":    RIG_DEBUG_WARN,
-	"VERBOSE": RIG_DEBUG_VERBOSE,
-	"TRACE":   RIG_DEBUG_TRACE,
+	"NONE":    DebugNone,
+	"BUG":     DebugBug,
+	"ERROR":   DebugErr,
+	"WARN":    DebugWarn,
+	"VERBOSE": DebugVerbose,
+	"TRACE":   DebugTrace,
 }
 
+// DebugLevelName maps DebugLevel to a name string
 var DebugLevelName = map[DebugLevel]string{
-	RIG_DEBUG_NONE:    "NONE",
-	RIG_DEBUG_BUG:     "BUG",
-	RIG_DEBUG_ERR:     "ERROR",
-	RIG_DEBUG_WARN:    "WARN",
-	RIG_DEBUG_VERBOSE: "VERBOSE",
-	RIG_DEBUG_TRACE:   "TRACE",
+	DebugNone:    "NONE",
+	DebugBug:     "BUG",
+	DebugErr:     "ERROR",
+	DebugWarn:    "WARN",
+	DebugVerbose: "VERBOSE",
+	DebugTrace:   "TRACE",
 }
+
+// VFOType is used to specify a particular VFO
+type VFOType int
+
+const vfoTXFlag VFOType = 1 << 30
 
 //Hamlib VFOs
 const (
-	RIG_VFO_NONE    = 0
-	RIG_VFO_TX_FLAG = 1 << 30
-	RIG_VFO_CURR    = 1 << 29
-	RIG_VFO_MEM     = 1 << 28
-	RIG_VFO_VFO     = 1 << 27
-	//	RIG_VFO_TX_VFO 			//TBD Macro
-	RIG_VFO_TX   = RIG_VFO_CURR | RIG_VFO_TX_FLAG
-	RIG_VFO_RX   = RIG_VFO_CURR
-	RIG_VFO_MAIN = 1 << 26
-	RIG_VFO_SUB  = 1 << 25
-	RIG_VFO_A    = 1 << 0
-	RIG_VFO_B    = 1 << 1
-	RIG_VFO_C    = 1 << 2
+	VFONone    VFOType = 0
+	VFOCurrent VFOType = 1 << 29
+	VFOMemory  VFOType = 1 << 28
+	VFOLastVFO VFOType = 1 << 27
+	//	VFOTX_VFO 			//TBD Macro
+	VFOTX   VFOType = VFOCurrent | vfoTXFlag
+	VFORX           = VFOCurrent
+	VFOMain VFOType = 1 << 26
+	VFOSub  VFOType = 1 << 25
+	VFOA    VFOType = 1 << 0
+	VFOB    VFOType = 1 << 1
+	VFOC    VFOType = 1 << 2
 )
 
-//Map containing Strings for VFOs
-var VfoName = map[int]string{
-	RIG_VFO_NONE: "NONE",
-	RIG_VFO_A:    "VFOA",
-	RIG_VFO_B:    "VFOB",
-	RIG_VFO_C:    "VFOC",
-	RIG_VFO_CURR: "CURR",
-	RIG_VFO_MEM:  "MEM",
-	RIG_VFO_VFO:  "VFO",
-	RIG_VFO_TX:   "TX",
-	//	RIG_VFO_RX: "RX",
-	RIG_VFO_MAIN: "MAIN",
-	RIG_VFO_SUB:  "SUB",
+// VFOName is a map containing Strings for VFOs
+var VFOName = map[VFOType]string{
+	VFONone:    "NONE",
+	VFOA:       "VFOA",
+	VFOB:       "VFOB",
+	VFOC:       "VFOC",
+	VFOCurrent: "CURR",
+	VFOMemory:  "MEM",
+	VFOLastVFO: "VFO",
+	VFOTX:      "TX",
+	// VFORX:      "RX", same as VFOCurrent
+	VFOMain: "MAIN",
+	VFOSub:  "SUB",
 }
 
-var VfoValue = map[string]int{
-	"NONE": RIG_VFO_NONE,
-	"VFOA": RIG_VFO_A,
-	"VFOB": RIG_VFO_B,
-	"VFOC": RIG_VFO_C,
-	"CURR": RIG_VFO_CURR,
-	"MAIN": RIG_VFO_MAIN,
-	"SUB":  RIG_VFO_SUB,
-	"MEM":  RIG_VFO_MEM,
-	"VFO":  RIG_VFO_VFO,
-	"TX":   RIG_VFO_TX,
+// VFOValue is a map from VFO names to values
+var VFOValue = map[string]VFOType{
+	"NONE": VFONone,
+	"VFOA": VFOA,
+	"VFOB": VFOB,
+	"VFOC": VFOC,
+	"CURR": VFOCurrent,
+	"MAIN": VFOMain,
+	"SUB":  VFOSub,
+	"MEM":  VFOMemory,
+	"VFO":  VFOLastVFO,
+	"TX":   VFOTX,
 }
 
-//Hamlib Rig Operations
+// VFOOp is a VFO operation
+type VFOOp int
+
+// VFO Operation constants
 const (
-	RIG_OP_NONE      = 0
-	RIG_OP_CPY       = 1 << 0
-	RIG_OP_XCHG      = 1 << 1
-	RIG_OP_FROM_VFO  = 1 << 2
-	RIG_OP_TO_VFO    = 1 << 3
-	RIG_OP_MCL       = 1 << 4
-	RIG_OP_UP        = 1 << 5
-	RIG_OP_DOWN      = 1 << 6
-	RIG_OP_BAND_UP   = 1 << 7
-	RIG_OP_BAND_DOWN = 1 << 8
-	RIG_OP_LEFT      = 1 << 9
-	RIG_OP_RIGHT     = 1 << 10
-	RIG_OP_TUNE      = 1 << 11
-	RIG_OP_TOGGLE    = 1 << 12
+	VFOOpNone        VFOOp = 0
+	VFOOpCopy        VFOOp = 1 << 0
+	VFOOpExchange    VFOOp = 1 << 1
+	VFOOpFromVFO     VFOOp = 1 << 2
+	VFOOpToVFO       VFOOp = 1 << 3
+	VFOOpMemoryClear VFOOp = 1 << 4
+	VFOOpUp          VFOOp = 1 << 5
+	VFOOpDown        VFOOp = 1 << 6
+	VFOOpBandUp      VFOOp = 1 << 7
+	VFOOpBandDown    VFOOp = 1 << 8
+	VFOOpLeft        VFOOp = 1 << 9
+	VFOOpRight       VFOOp = 1 << 10
+	VFOOpTune        VFOOp = 1 << 11
+	VFOOpToggle      VFOOp = 1 << 12
 )
 
-//Map containing Strings for VFO Operations
-var OperationName = map[int]string{
-	RIG_OP_NONE:      "",
-	RIG_OP_CPY:       "CPY",
-	RIG_OP_XCHG:      "XCHG",
-	RIG_OP_FROM_VFO:  "FROM_VFO",
-	RIG_OP_TO_VFO:    "TO_VFO",
-	RIG_OP_MCL:       "MCL",
-	RIG_OP_UP:        "UP",
-	RIG_OP_DOWN:      "DOWN",
-	RIG_OP_BAND_UP:   "BAND_UP",
-	RIG_OP_BAND_DOWN: "BAND_DOWN",
-	RIG_OP_LEFT:      "LEFT",
-	RIG_OP_RIGHT:     "RIGHT",
-	RIG_OP_TUNE:      "TUNE",
-	RIG_OP_TOGGLE:    "TOGGLE",
+// VFOOperationName is a map of VFO operation values to names
+var VFOOperationName = map[VFOOp]string{
+	VFOOpNone:        "",
+	VFOOpCopy:        "CPY",
+	VFOOpExchange:    "XCHG",
+	VFOOpFromVFO:     "FROM_VFO",
+	VFOOpToVFO:       "TO_VFO",
+	VFOOpMemoryClear: "MCL",
+	VFOOpUp:          "UP",
+	VFOOpDown:        "DOWN",
+	VFOOpBandUp:      "BAND_UP",
+	VFOOpBandDown:    "BAND_DOWN",
+	VFOOpLeft:        "LEFT",
+	VFOOpRight:       "RIGHT",
+	VFOOpTune:        "TUNE",
+	VFOOpToggle:      "TOGGLE",
 }
 
-var OperationValue = map[string]int{
-	"":          RIG_OP_NONE,
-	"CPY":       RIG_OP_CPY,
-	"XCHG":      RIG_OP_XCHG,
-	"FROM_VFO":  RIG_OP_FROM_VFO,
-	"TO_VFO":    RIG_OP_TO_VFO,
-	"MCL":       RIG_OP_MCL,
-	"UP":        RIG_OP_UP,
-	"DOWN":      RIG_OP_DOWN,
-	"BAND_UP":   RIG_OP_BAND_UP,
-	"BAND_DOWN": RIG_OP_BAND_DOWN,
-	"LEFT":      RIG_OP_LEFT,
-	"RIGHT":     RIG_OP_RIGHT,
-	"TUNE":      RIG_OP_TUNE,
-	"TOGGLE":    RIG_OP_TOGGLE,
+// VFOOperationValue is a map of VFO operation names to values
+var VFOOperationValue = map[string]VFOOp{
+	"":          VFOOpNone,
+	"CPY":       VFOOpCopy,
+	"XCHG":      VFOOpExchange,
+	"FROM_VFO":  VFOOpFromVFO,
+	"TO_VFO":    VFOOpToVFO,
+	"MCL":       VFOOpMemoryClear,
+	"UP":        VFOOpUp,
+	"DOWN":      VFOOpDown,
+	"BAND_UP":   VFOOpBandUp,
+	"BAND_DOWN": VFOOpBandDown,
+	"LEFT":      VFOOpLeft,
+	"RIGHT":     VFOOpRight,
+	"TUNE":      VFOOpTune,
+	"TOGGLE":    VFOOpToggle,
 }
 
 // Hamlib modes
@@ -723,6 +734,7 @@ const (
 	RigPortCM108      RigPort = 11
 )
 
+// RigPortValue is a map of RigPort to names
 var RigPortName = map[RigPort]string{
 	RigPortNone:       "RIG_PORT_NONE",
 	RigPortSerial:     "RIG_PORT_SERIAL",
@@ -738,6 +750,7 @@ var RigPortName = map[RigPort]string{
 	RigPortCM108:      "RIG_PORT_CM108",
 }
 
+// RigPortValue is a map of names to RigPort
 var RigPortValue = map[string]RigPort{
 	"RIG_PORT_NONE":        RigPortNone,
 	"RIG_PORT_SERIAL":      RigPortSerial,

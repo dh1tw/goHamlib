@@ -7,8 +7,8 @@ import (
 
 func getDummyRig() (*Rig, error) {
 	rig := Rig{}
-	// rig.SetDebugLevel(RIG_DEBUG_VERBOSE)
-	SetDebugLevel(RIG_DEBUG_ERR)
+	// rig.SetDebugLevel(DebugVerbose)
+	SetDebugLevel(DebugErr)
 	if err := rig.Init(1); err != nil {
 		return nil, err
 	}
@@ -23,7 +23,7 @@ func getDummyRig() (*Rig, error) {
 // func TestInitializeRigWithInvalidData(t *testing.T) {
 
 // 	rig := Rig{}
-// 	rig.SetDebugLevel(RIG_DEBUG_NONE)
+// 	rig.SetDebugLevel(DebugNone)
 
 // 	//rig model must be > 0
 // 	if err := rig.Init(0); fmt.Sprint(err) != "init_rig: invalid rig model" {
@@ -254,7 +254,7 @@ func TestDummyRigSetGetFreq(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	freq, err := rig.GetFreq(RIG_VFO_A)
+	freq, err := rig.GetFreq(VFOA)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -268,12 +268,12 @@ func TestDummyRigSetGetFreq(t *testing.T) {
 
 	// Test Set & Get Frequency on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
-		if err := rig.SetFreq(vfoValue, testFreq); err != nil {
+		VFOValue := VFOValue[vfo]
+		if err := rig.SetFreq(VFOValue, testFreq); err != nil {
 			t.Fatal(err)
 		}
 
-		freq, err = rig.GetFreq(vfoValue)
+		freq, err = rig.GetFreq(VFOValue)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -297,8 +297,8 @@ func TestDummyRigSetGetVfo(t *testing.T) {
 
 	// Test Set & Get Frequency on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
-		if err := rig.SetVfo(vfoValue); err != nil {
+		VFOValue := VFOValue[vfo]
+		if err := rig.SetVfo(VFOValue); err != nil {
 			t.Fatal(err)
 		}
 
@@ -307,7 +307,7 @@ func TestDummyRigSetGetVfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if gvfo != vfoValue {
+		if gvfo != VFOValue {
 			t.Fatalf("Could not set/get Vfo: %s", vfo)
 		}
 	}
@@ -330,7 +330,7 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 
 	// interate over all VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		// iterate over all modes
 		for _, mode := range rig.Caps.Modes {
@@ -341,10 +341,10 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 				// iterate over all available filters
 				for _, filter := range rig.Caps.Filters[mode] {
 
-					if err := rig.SetMode(vfoValue, modeValue, filter); err != nil {
+					if err := rig.SetMode(VFOValue, modeValue, filter); err != nil {
 						t.Fatal(err)
 					}
-					m, pb, err := rig.GetMode(vfoValue)
+					m, pb, err := rig.GetMode(VFOValue)
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -359,8 +359,8 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 				// Not sure if this is the desired behaviour
 				// How should a real rig respond to a filter it does not have?
 				filter := 500 // Hz
-				rig.SetMode(vfoValue, modeValue, filter)
-				m, pb, err := rig.GetMode(vfoValue)
+				rig.SetMode(VFOValue, modeValue, filter)
+				m, pb, err := rig.GetMode(VFOValue)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -417,16 +417,16 @@ func TestDummyRigPTT(t *testing.T) {
 
 	// Test Set & Get PTT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		// iterate over all PTT possibilities
 		for pttValue, pttName := range PttName {
 
-			if err := rig.SetPtt(vfoValue, pttValue); err != nil {
+			if err := rig.SetPtt(VFOValue, pttValue); err != nil {
 				t.Fatal(err)
 			}
 
-			ptt, err := rig.GetPtt(vfoValue)
+			ptt, err := rig.GetPtt(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -457,17 +457,17 @@ func TestDummyRigRit(t *testing.T) {
 
 	// Test Set & Get RIT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		maxRit := rig.Caps.MaxRit
 
 		ritTestValues := []int{-maxRit, -5330, -1, 0, 1, 100, maxRit}
 		for _, ritTV := range ritTestValues {
-			if err := rig.SetRit(vfoValue, ritTV); err != nil {
+			if err := rig.SetRit(VFOValue, ritTV); err != nil {
 				t.Fatal(err)
 			}
 
-			rit, err := rig.GetRit(vfoValue)
+			rit, err := rig.GetRit(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -479,11 +479,11 @@ func TestDummyRigRit(t *testing.T) {
 
 		// // When rit > maxRit, then maxRit shall be set
 		// ritOutOfRangeNegative := -maxRit - 1
-		// if err := rig.SetRit(vfoValue, ritOutOfRangeNegative); err != nil {
+		// if err := rig.SetRit(VFOValue, ritOutOfRangeNegative); err != nil {
 		// 	t.Fatal(err)
 		// }
 
-		// rit, err := rig.GetRit(vfoValue)
+		// rit, err := rig.GetRit(VFOValue)
 		// if err != nil {
 		// 	t.Fatal(err)
 		// }
@@ -506,18 +506,18 @@ func TestDummyRigXit(t *testing.T) {
 
 	// Test Set & Get XIT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		maxXit := rig.Caps.MaxXit
 
 		xitTestValues := []int{-maxXit, -5330, -1, 0, 1, 100, maxXit}
 		for _, xitTV := range xitTestValues {
 
-			if err := rig.SetXit(vfoValue, xitTV); err != nil {
+			if err := rig.SetXit(VFOValue, xitTV); err != nil {
 				t.Fatal(err)
 			}
 
-			xit, err := rig.GetXit(vfoValue)
+			xit, err := rig.GetXit(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -597,16 +597,16 @@ func TestDummyRigAntennas(t *testing.T) {
 
 	// Test Set & Get Antenna on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		// iterate over all Antennas
 		for aValue, aName := range AntName {
 
-			if err := rig.SetAnt(vfoValue, aValue); err != nil {
+			if err := rig.SetAnt(VFOValue, aValue); err != nil {
 				t.Fatal(err)
 			}
 
-			ant, err := rig.GetAnt(vfoValue)
+			ant, err := rig.GetAnt(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -617,7 +617,7 @@ func TestDummyRigAntennas(t *testing.T) {
 		}
 	}
 
-	// if err := rig.SetAnt(RIG_VFO_A, 1<<5); err == nil {
+	// if err := rig.SetAnt(VFOA, 1<<5); err == nil {
 	// 	t.Fatal("An invalid Antenna (e.g. 32) should have thrown an error")
 	// }
 }
@@ -644,22 +644,22 @@ func TestDummyRigTuningSteps(t *testing.T) {
 
 	// Test Set & Get Tuning Steps on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		vfoValue := VfoValue[vfo]
+		VFOValue := VFOValue[vfo]
 
 		// iterate over all Tuning Steps
 		for _, ts := range cwTs {
 
-			freq, err := rig.GetFreq(vfoValue)
+			freq, err := rig.GetFreq(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			err = rig.SetTs(vfoValue, ts)
+			err = rig.SetTs(VFOValue, ts)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			tsRead, err := rig.GetTs(vfoValue)
+			tsRead, err := rig.GetTs(VFOValue)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -670,14 +670,14 @@ func TestDummyRigTuningSteps(t *testing.T) {
 
 			// only execute if "UP" is supported
 			for _, val := range rig.Caps.Operations {
-				if val == "RIG_OP_UP" {
+				if val == "VFOOpUp" {
 
-					err = rig.VfoOp(vfoValue, RIG_OP_UP)
+					err = rig.VfoOp(VFOValue, VFOOpUp)
 					if err != nil {
 						t.Fatal(err)
 					}
 
-					freqIncremented, err := rig.GetFreq(vfoValue)
+					freqIncremented, err := rig.GetFreq(VFOValue)
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -702,7 +702,7 @@ func TestDummyRigLevels(t *testing.T) {
 
 	// Test Has, Set, Get Level & GetLevelGran on all available VFOs
 	// for _, vfo := range rig.Caps.Vfos {
-	//	vfoValue := VfoValue[vfo]
+	//	VFOValue := VFOValue[vfo]
 
 	// }
 }

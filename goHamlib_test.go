@@ -9,24 +9,24 @@ import (
 // Test consistency of Vfo Value and Name maps
 func TestVfoMaps(t *testing.T) {
 
-	// Test VfoValue map
-	for vfoName, vfoValue := range goHamlib.VfoValue {
-		_, ok := goHamlib.VfoName[vfoValue]
+	// Test VFOValue map
+	for vfoName, VFOValue := range goHamlib.VFOValue {
+		_, ok := goHamlib.VFOName[VFOValue]
 		if !ok {
-			t.Fatalf("VFO %d does not exist in VfoName map", vfoValue)
+			t.Fatalf("VFO %d does not exist in VfoName map", VFOValue)
 		}
-		if vfoName != goHamlib.VfoName[vfoValue] {
+		if vfoName != goHamlib.VFOName[VFOValue] {
 			t.Fatalf("Name of VFO inconsisted: %s", vfoName)
 		}
 	}
 
 	// Test VfoName map
-	for vfoValue, vfoName := range goHamlib.VfoName {
-		_, ok := goHamlib.VfoValue[vfoName]
+	for VFOValue, vfoName := range goHamlib.VFOName {
+		_, ok := goHamlib.VFOValue[vfoName]
 		if !ok {
-			t.Fatalf("VFO %s does not exist in VfoValue map", vfoName)
+			t.Fatalf("VFO %s does not exist in VFOValue map", vfoName)
 		}
-		if vfoValue != goHamlib.VfoValue[vfoName] {
+		if VFOValue != goHamlib.VFOValue[vfoName] {
 			t.Fatalf("Value of VFO inconsisted: %s", vfoName)
 		}
 	}
@@ -36,23 +36,23 @@ func TestVfoMaps(t *testing.T) {
 func TestOperationMaps(t *testing.T) {
 
 	// Test OperationValue map
-	for opName, opValue := range goHamlib.OperationValue {
-		_, ok := goHamlib.OperationName[opValue]
+	for opName, opValue := range goHamlib.VFOOperationValue {
+		_, ok := goHamlib.VFOOperationName[opValue]
 		if !ok {
 			t.Fatalf("Operation %d does not exist in OperationName map", opValue)
 		}
-		if opName != goHamlib.OperationName[opValue] {
+		if opName != goHamlib.VFOOperationName[opValue] {
 			t.Fatalf("Name of Operation inconsisted: %s", opName)
 		}
 	}
 
 	// Test OperationName map
-	for opValue, opName := range goHamlib.OperationName {
-		_, ok := goHamlib.OperationValue[opName]
+	for opValue, opName := range goHamlib.VFOOperationName {
+		_, ok := goHamlib.VFOOperationValue[opName]
 		if !ok {
 			t.Fatalf("Operation %s does not exist in OperationValue map", opName)
 		}
-		if opValue != goHamlib.OperationValue[opName] {
+		if opValue != goHamlib.VFOOperationValue[opName] {
 			t.Fatalf("Value of Operation inconsisted: %s", opName)
 		}
 	}
