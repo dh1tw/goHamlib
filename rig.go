@@ -348,18 +348,18 @@ func (rig *Rig) GetSplit(vfo VFOType) (split int, txVfo VFOType, err error) {
 	return split, txVfo, checkError(res, err, "get_split")
 }
 
-// Set Rig Power On/Off/Standby
-func (rig *Rig) SetPowerStat(status int) error {
+// SetPowerState sets the Rig Power On/Off/Standby state
+func (rig *Rig) SetPowerState(status Power) error {
 	res, err := C.set_powerstat(rig.handle, C.int(status))
 	return checkError(res, err, "set_powerstat")
 }
 
-// Get Rig Power On/Off/Standby
-func (rig *Rig) GetPowerStat() (status int, err error) {
+// GetPowerStat gets the Rig Power On/Off/Standby state
+func (rig *Rig) GetPowerState() (status Power, err error) {
 	var s C.int
 	var res C.int
 	res, err = C.get_powerstat(rig.handle, &s)
-	status = int(s)
+	status = Power(s)
 	return status, checkError(res, err, "get_powerstat")
 }
 

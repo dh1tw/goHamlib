@@ -571,11 +571,11 @@ func TestDummyRigPowerStatus(t *testing.T) {
 	defer rig.Cleanup()
 
 	for pValue, pName := range RigPowerName {
-		if err := rig.SetPowerStat(pValue); err != nil {
+		if err := rig.SetPowerState(pValue); err != nil {
 			t.Fatal(err)
 		}
 
-		pwrStatus, err := rig.GetPowerStat()
+		pwrStatus, err := rig.GetPowerState()
 		if err != nil {
 			t.Fatal(err)
 		}
