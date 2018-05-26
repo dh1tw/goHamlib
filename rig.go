@@ -194,20 +194,20 @@ func (rig *Rig) GetVfo() (VFOType, error) {
 	return VFOType(v), checkError(res, err, "get_vfo")
 }
 
-// Set Frequency for a VFO
+// SetFreq sets the Frequency for a VFO
 func (rig *Rig) SetFreq(vfo VFOType, freq float64) error {
 	res, err := C.set_freq(rig.handle, C.int(vfo), C.double(freq))
 	return checkError(res, err, "set_freq")
 }
 
-// Set Mode for a VFO
-func (rig *Rig) SetMode(vfo VFOType, mode int, pb_width int) error {
-	res, err := C.set_mode(rig.handle, C.int(vfo), C.int(mode), C.int(pb_width))
-	return checkError(res, err, "set_freq")
+// SetMode sets the Mode for a VFO
+func (rig *Rig) SetMode(vfo VFOType, mode Mode, pbWidth int) error {
+	res, err := C.set_mode(rig.handle, C.int(vfo), C.int(mode), C.int(pbWidth))
+	return checkError(res, err, "set_mode")
 }
 
 // Find the next suitable narrow available filter
-func (rig *Rig) GetPbNarrow(mode int) (int, error) {
+func (rig *Rig) GetPbNarrow(mode Mode) (int, error) {
 	pb, err := C.get_passband_narrow(rig.handle, C.int(mode))
 	pb_width := int(pb)
 
@@ -215,7 +215,7 @@ func (rig *Rig) GetPbNarrow(mode int) (int, error) {
 }
 
 // Find the next suitable normal available filter
-func (rig *Rig) GetPbNormal(mode int) (int, error) {
+func (rig *Rig) GetPbNormal(mode Mode) (int, error) {
 	pb, err := C.get_passband_normal(rig.handle, C.int(mode))
 	pb_width := int(pb)
 
@@ -223,7 +223,7 @@ func (rig *Rig) GetPbNormal(mode int) (int, error) {
 }
 
 // Find the next suitable wide available filter
-func (rig *Rig) GetPbWide(mode int) (int, error) {
+func (rig *Rig) GetPbWide(mode Mode) (int, error) {
 	pb, err := C.get_passband_wide(rig.handle, C.int(mode))
 	pb_width := int(pb)
 
@@ -239,14 +239,14 @@ func (rig *Rig) GetFreq(vfo VFOType) (freq float64, err error) {
 	return freq, checkError(res, err, "get_freq")
 }
 
-// Get Mode and Passband width for a VFO
-func (rig *Rig) GetMode(vfo VFOType) (mode int, pb_width int, err error) {
+// GetMode gets the Mode and Passband width for a VFO
+func (rig *Rig) GetMode(vfo VFOType) (mode Mode, pb_width int, err error) {
 	var m C.int
 	var pb C.long
 	var res C.int
 	res, err = C.get_mode(rig.handle, C.int(vfo), &m, &pb)
 	pb_width = int(pb)
-	mode = int(m)
+	mode = Mode(m)
 	return mode, pb_width, checkError(res, err, "get_mode")
 }
 
@@ -407,7 +407,7 @@ func (rig *Rig) HasGetLevel(level uint32) (res uint32, err error) {
 }
 
 // get the best frequency resolution for this rig (minimum step size)
-func (rig *Rig) GetRigResolution(mode int) (resolution int, err error) {
+func (rig *Rig) GetRigResolution(mode Mode) (resolution int, err error) {
 	var r C.long
 	r, err = C.get_rig_resolution(rig.handle, C.int(mode))
 	resolution = int(r)
@@ -803,7 +803,7 @@ func (rig *Rig) getModes() error {
 	}
 
 	for mode, modeStr := range ModeName {
-		if int(modesClist)&mode > 0 {
+		if int(modesClist)&int(mode) > 0 {
 			modesList = append(modesList, modeStr)
 		}
 	}
@@ -1000,7 +1000,7 @@ func (rig *Rig) getFilters() error {
 			return checkError(res, err, "get_filter_mode_width")
 		}
 		for mode, modeStr := range ModeName {
-			if int(cMode)&mode > 0 {
+			if int(cMode)&int(mode) > 0 {
 				filterMap[modeStr] = append(filterMap[modeStr], int(cWidth))
 			}
 		}
@@ -1030,7 +1030,7 @@ func (rig *Rig) getTuningSteps() error {
 			return checkError(res, err, "get_tuning_steps")
 		}
 		for mode, modeStr := range ModeName {
-			if int(cMode)&mode > 0 {
+			if int(cMode)&int(mode) > 0 {
 				tsMap[modeStr] = append(tsMap[modeStr], int(cTs))
 			}
 		}
