@@ -193,102 +193,107 @@ var VFOOperationValue = map[string]VFOOp{
 	"TOGGLE":    VFOOpToggle,
 }
 
+// Mode is the rig operation mode
+type Mode uint32
+
 // Hamlib modes
 const (
-	RIG_MODE_NONE    = 0
-	RIG_MODE_AM      = 1 << 0
-	RIG_MODE_CW      = 1 << 1
-	RIG_MODE_USB     = 1 << 2
-	RIG_MODE_LSB     = 1 << 3
-	RIG_MODE_RTTY    = 1 << 4
-	RIG_MODE_FM      = 1 << 5
-	RIG_MODE_WFM     = 1 << 6
-	RIG_MODE_CWR     = 1 << 7
-	RIG_MODE_RTTYR   = 1 << 8
-	RIG_MODE_AMS     = 1 << 9
-	RIG_MODE_PKTLSB  = 1 << 10
-	RIG_MODE_PKTUSB  = 1 << 11
-	RIG_MODE_PKTFM   = 1 << 12
-	RIG_MODE_ECSSUSB = 1 << 13
-	RIG_MODE_ECSSLSB = 1 << 14
-	RIG_MODE_FAX     = 1 << 15
-	RIG_MODE_SAM     = 1 << 16
-	RIG_MODE_SAL     = 1 << 17
-	RIG_MODE_SAH     = 1 << 18
-	RIG_MODE_DSB     = 1 << 19
-	RIG_MODE_FMN     = 1 << 21
-	RIG_MODE_TESTS_MAX
+	ModeNONE    Mode = 0
+	ModeAM      Mode = 1 << 0
+	ModeCW      Mode = 1 << 1
+	ModeUSB     Mode = 1 << 2
+	ModeLSB     Mode = 1 << 3
+	ModeRTTY    Mode = 1 << 4
+	ModeFM      Mode = 1 << 5
+	ModeWFM     Mode = 1 << 6
+	ModeCWR     Mode = 1 << 7
+	ModeRTTYR   Mode = 1 << 8
+	ModeAMS     Mode = 1 << 9
+	ModePKTLSB  Mode = 1 << 10
+	ModePKTUSB  Mode = 1 << 11
+	ModePKTFM   Mode = 1 << 12
+	ModeECSSUSB Mode = 1 << 13
+	ModeECSSLSB Mode = 1 << 14
+	ModeFAX     Mode = 1 << 15
+	ModeSAM     Mode = 1 << 16
+	ModeSAL     Mode = 1 << 17
+	ModeSAH     Mode = 1 << 18
+	ModeDSB     Mode = 1 << 19
+	ModeFMN     Mode = 1 << 21
+	ModeTESTS_MAX
 )
 
-//Map containing Strings for Modes
-var ModeName = map[int]string{
-	RIG_MODE_NONE:    "",
-	RIG_MODE_AM:      "AM",
-	RIG_MODE_CW:      "CW",
-	RIG_MODE_USB:     "USB",
-	RIG_MODE_LSB:     "LSB",
-	RIG_MODE_RTTY:    "RTTY",
-	RIG_MODE_FM:      "FM",
-	RIG_MODE_WFM:     "WFM",
-	RIG_MODE_CWR:     "CWR",
-	RIG_MODE_RTTYR:   "RTTYR",
-	RIG_MODE_AMS:     "AMS",
-	RIG_MODE_PKTLSB:  "PKTLSB",
-	RIG_MODE_PKTUSB:  "PKTUSB",
-	RIG_MODE_PKTFM:   "PKTFM",
-	RIG_MODE_ECSSUSB: "ECSSUSB",
-	RIG_MODE_ECSSLSB: "ECSSLSB",
-	RIG_MODE_FAX:     "FAX",
-	RIG_MODE_SAM:     "SAM",
-	RIG_MODE_SAL:     "SAL",
-	RIG_MODE_SAH:     "SAH",
-	RIG_MODE_DSB:     "DSB",
-	RIG_MODE_FMN:     "FMN",
+// ModeName is a map containing Strings for Modes
+var ModeName = map[Mode]string{
+	ModeNONE:    "",
+	ModeAM:      "AM",
+	ModeCW:      "CW",
+	ModeUSB:     "USB",
+	ModeLSB:     "LSB",
+	ModeRTTY:    "RTTY",
+	ModeFM:      "FM",
+	ModeWFM:     "WFM",
+	ModeCWR:     "CWR",
+	ModeRTTYR:   "RTTYR",
+	ModeAMS:     "AMS",
+	ModePKTLSB:  "PKTLSB",
+	ModePKTUSB:  "PKTUSB",
+	ModePKTFM:   "PKTFM",
+	ModeECSSUSB: "ECSSUSB",
+	ModeECSSLSB: "ECSSLSB",
+	ModeFAX:     "FAX",
+	ModeSAM:     "SAM",
+	ModeSAL:     "SAL",
+	ModeSAH:     "SAH",
+	ModeDSB:     "DSB",
+	ModeFMN:     "FMN",
 }
 
-//Map containing Values for Modes
-var ModeValue = map[string]int{
-	"":        RIG_MODE_NONE,
-	"AM":      RIG_MODE_AM,
-	"CW":      RIG_MODE_CW,
-	"USB":     RIG_MODE_USB,
-	"LSB":     RIG_MODE_LSB,
-	"RTTY":    RIG_MODE_RTTY,
-	"FM":      RIG_MODE_FM,
-	"WFM":     RIG_MODE_WFM,
-	"CWR":     RIG_MODE_CWR,
-	"RTTYR":   RIG_MODE_RTTYR,
-	"AMS":     RIG_MODE_AMS,
-	"PKTLSB":  RIG_MODE_PKTLSB,
-	"PKTUSB":  RIG_MODE_PKTUSB,
-	"PKTFM":   RIG_MODE_PKTFM,
-	"ECSSUSB": RIG_MODE_ECSSUSB,
-	"ECSSLSB": RIG_MODE_ECSSLSB,
-	"FAX":     RIG_MODE_FAX,
-	"SAM":     RIG_MODE_SAM,
-	"SAL":     RIG_MODE_SAL,
-	"SAH":     RIG_MODE_SAH,
-	"DSB":     RIG_MODE_DSB,
-	"FMN":     RIG_MODE_FMN,
+// ModeValue is a map containing Values for Modes
+var ModeValue = map[string]Mode{
+	"":        ModeNONE,
+	"AM":      ModeAM,
+	"CW":      ModeCW,
+	"USB":     ModeUSB,
+	"LSB":     ModeLSB,
+	"RTTY":    ModeRTTY,
+	"FM":      ModeFM,
+	"WFM":     ModeWFM,
+	"CWR":     ModeCWR,
+	"RTTYR":   ModeRTTYR,
+	"AMS":     ModeAMS,
+	"PKTLSB":  ModePKTLSB,
+	"PKTUSB":  ModePKTUSB,
+	"PKTFM":   ModePKTFM,
+	"ECSSUSB": ModeECSSUSB,
+	"ECSSLSB": ModeECSSLSB,
+	"FAX":     ModeFAX,
+	"SAM":     ModeSAM,
+	"SAL":     ModeSAL,
+	"SAH":     ModeSAH,
+	"DSB":     ModeDSB,
+	"FMN":     ModeFMN,
 }
 
-// Hamlib Powerstats
+// Power is the hamlib power state
+type Power byte
+
 const (
-	RIG_POWER_OFF     = 0
-	RIG_POWER_ON      = 1
-	RIG_POWER_STANDBY = 2
+	PowerOff     Power = 0
+	PowerOn      Power = 1
+	PowerStandby Power = 2
 )
 
-var RigPowerName = map[int]string{
-	RIG_POWER_OFF:     "OFF",
-	RIG_POWER_ON:      "ON",
-	RIG_POWER_STANDBY: "STANDBY",
+var RigPowerName = map[Power]string{
+	PowerOff:     "OFF",
+	PowerOn:      "ON",
+	PowerStandby: "STANDBY",
 }
 
-var RigPowerValue = map[string]int{
-	"OFF":     RIG_POWER_OFF,
-	"ON":      RIG_POWER_ON,
-	"STANDBY": RIG_POWER_STANDBY,
+var RigPowerValue = map[string]Power{
+	"OFF":     PowerOff,
+	"ON":      PowerOn,
+	"STANDBY": PowerStandby,
 }
 
 // Hamlib PTT

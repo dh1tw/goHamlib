@@ -374,7 +374,7 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 		}
 	}
 
-	modeValue := RIG_MODE_CW
+	modeValue := ModeCW
 	modeName := ModeName[modeValue]
 
 	// Get Narrow Filter for CW
@@ -571,11 +571,11 @@ func TestDummyRigPowerStatus(t *testing.T) {
 	defer rig.Cleanup()
 
 	for pValue, pName := range RigPowerName {
-		if err := rig.SetPowerStat(pValue); err != nil {
+		if err := rig.SetPowerState(pValue); err != nil {
 			t.Fatal(err)
 		}
 
-		pwrStatus, err := rig.GetPowerStat()
+		pwrStatus, err := rig.GetPowerState()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -632,7 +632,7 @@ func TestDummyRigTuningSteps(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	cwRes, err := rig.GetRigResolution(RIG_MODE_CW)
+	cwRes, err := rig.GetRigResolution(ModeCW)
 	if err != nil {
 		t.Fatal(err)
 	}
