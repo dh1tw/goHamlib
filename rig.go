@@ -106,11 +106,14 @@ extern int cleanup_rig(RIG *myrig);
 
 typedef struct rig_caps rig_caps_t;
 extern int rig_list_foreach_wrap(void *list);
+extern void set_debug_callback();
+extern int internal_debug_cb(enum rig_debug_level_e debug_level, rig_ptr_t user_data, const char *fmt, va_list ap);
 */
 import "C"
 
 import (
 	"errors"
+	"log"
 	"sort"
 	"strings"
 	"unsafe"
@@ -149,6 +152,24 @@ func go_rig_list_callback(p unsafe.Pointer, d unsafe.Pointer) C.int {
 // Set Debug level
 func SetDebugLevel(dbgLevel DebugLevel) {
 	C.set_debug_level(C.int(dbgLevel))
+}
+
+//export go_debug_print
+func go_debug_print(lvl DebugLevel, msg *C.char) {
+	if debug_cb_fn != nil {
+		debug_cb_fn(lvl, C.GoString(msg))
+	} else {
+		log.Println(lvl, C.GoString(msg))
+	}
+}
+
+var debug_cb_fn func(level DebugLevel, msg string)
+
+// SetDebugCallback replaces the function that handles debug messages, preventing
+// them from being written to STDOUT
+func SetDebugCallback(fn func(level DebugLevel, msg string)) {
+	debug_cb_fn = fn
+	C.set_debug_callback()
 }
 
 // Initialize Rig
