@@ -322,3 +322,16 @@ func TestListModels(t *testing.T) {
 		t.Errorf("did not find the hamlib standard dummy driver")
 	}
 }
+
+func TestDebugCallback(t *testing.T) {
+	called := 0
+	goHamlib.SetDebugCallback(func(lvl goHamlib.DebugLevel, msg string) {
+		called++
+	})
+	goHamlib.SetDebugLevel(goHamlib.DebugTrace)
+	goHamlib.ListModels()
+	goHamlib.SetDebugLevel(goHamlib.DebugWarn)
+	if called == 0 {
+		t.Errorf("expected a debug message, got none")
+	}
+}

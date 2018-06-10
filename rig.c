@@ -936,3 +936,15 @@ int cleanup_rig(RIG *myrig)
 	return res;
 }
 
+extern void go_debug_print(enum rig_debug_level_e debug_level, char *msg);
+int internal_debug_cb(enum rig_debug_level_e debug_level, rig_ptr_t user_data, const char *fmt, va_list ap)
+{
+	char buf[1024];
+	vsprintf (buf, fmt, ap);
+	go_debug_print(debug_level, buf);
+	return RIG_OK;
+}
+
+void set_debug_callback() {
+	rig_set_debug_callback(internal_debug_cb, NULL);
+}
