@@ -328,17 +328,17 @@ func (rig *Rig) GetSplitFreq(vfo VFOType) (txFreq float64, err error) {
 }
 
 // Set Split Mode
-func (rig *Rig) SetSplitMode(vfo VFOType, txMode int, txWidth int) error {
+func (rig *Rig) SetSplitMode(vfo VFOType, txMode Mode, txWidth int) error {
 	res, err := C.set_split_mode(rig.handle, C.int(vfo), C.int(txMode), C.int(txWidth))
 	return checkError(res, err, "set_split_mode")
 }
 
 // Get Split Mode
-func (rig *Rig) GetSplitMode(vfo VFOType) (txMode int, txWidth int, err error) {
+func (rig *Rig) GetSplitMode(vfo VFOType) (txMode Mode, txWidth int, err error) {
 	var m C.int
 	var w C.long
 	res, err := C.get_split_mode(rig.handle, C.int(vfo), &m, &w)
-	txMode = int(m)
+	txMode = Mode(m)
 	txWidth = int(w)
 	return txMode, txWidth, checkError(res, err, "get_split_mode")
 }
