@@ -84,7 +84,7 @@ $ go test
 
 ## Documentation
 
-goHamlib's API is documented at [goDoc](https://godoc.org/github.com/dh1tw/goHamlib)
+goHamlib's API is documented at [go.dev](https://pkg.go.dev/github.com/dh1tw/goHamlib)
 
 ## Example
 
