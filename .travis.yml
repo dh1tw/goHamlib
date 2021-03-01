@@ -4,8 +4,8 @@ env:
     - GOARCH=amd64
     
 go:
-    - 1.7
-    - 1.8
+    - 1.11
+    - 1.15
     - tip
 
 addons:
