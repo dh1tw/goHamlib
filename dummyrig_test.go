@@ -1,14 +1,15 @@
-package goHamlib
+package goHamlib_test
 
 import (
+	"github.com/dh1tw/goHamlib"
 	"reflect"
 	"testing"
 )
 
-func getDummyRig() (*Rig, error) {
-	rig := Rig{}
+func getDummyRig() (*goHamlib.Rig, error) {
+	rig := goHamlib.Rig{}
 	// rig.SetDebugLevel(DebugVerbose)
-	SetDebugLevel(DebugErr)
+	goHamlib.SetDebugLevel(goHamlib.DebugErr)
 	if err := rig.Init(1); err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.MaxIfShift contains unexpected data; expected:", maxIfShift, "got:", rig.Caps.MaxIfShift)
 	}
 
-	vfosHamlib1_2_15_3_3 := []string{}
+	var vfosHamlib1_2_15_3_3 []string
 	vfosHamlib3 := []string{"MEM", "VFOA", "VFOB"}
 	if !reflect.DeepEqual(vfosHamlib3, rig.Caps.Vfos) {
 		if !reflect.DeepEqual(vfosHamlib1_2_15_3_3, rig.Caps.Vfos) {
@@ -98,7 +99,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.Operations contains unexpected data; expected:", ops, "got:", rig.Caps.Operations)
 	}
 
-	modesHamlib1_2_15_3_3 := []string{}
+	var modesHamlib1_2_15_3_3 []string
 	modesHamlib3 := []string{"AM", "CW", "CWR", "FM", "LSB", "RTTY", "RTTYR", "USB", "WFM"}
 	if !reflect.DeepEqual(modesHamlib3, rig.Caps.Modes) {
 		if !reflect.DeepEqual(modesHamlib1_2_15_3_3, rig.Caps.Modes) {
@@ -127,7 +128,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		}
 	}
 
-	getlvs := Values{
+	getlvs := goHamlib.Values{
 		{"AF", 0, 0, 0},
 		{"AGC", 0, 0, 0},
 		{"ALC", 0, 0, 0},
@@ -163,7 +164,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.GetLevels contains unexpected data; expected:", getlvs, "got:", rig.Caps.GetLevels)
 	}
 
-	setlvs := Values{
+	setlvs := goHamlib.Values{
 		{"AF", 0, 0, 0},
 		{"AGC", 0, 0, 0},
 		{"ANTIVOX", 0, 0, 0},
@@ -195,7 +196,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.SetLevels contains unexpected data; expected:", setlvs, "got:", rig.Caps.SetLevels)
 	}
 
-	getparms := Values{
+	getparms := goHamlib.Values{
 		{"ANN", 0, 0, 0},
 		{"APO", 0, 0, 0},
 		{"BACKLIGHT", 0, 0, 0},
@@ -208,7 +209,7 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 		t.Fatal("Caps.GetParameters contains unexpected data; expected:", getparms, "got:", rig.Caps.GetParameters)
 	}
 
-	setparms := Values{
+	setparms := goHamlib.Values{
 		{"ANN", 0, 0, 0},
 		{"APO", 0, 0, 0},
 		{"BACKLIGHT", 0, 0, 0},
@@ -229,13 +230,13 @@ func TestDummyRigCapsPopulation(t *testing.T) {
 	}
 
 	filters := map[string][]int{
-		"WFM":  []int{230000},
-		"RTTY": []int{2400},
-		"USB":  []int{2400},
-		"CW":   []int{2400, 500},
-		"LSB":  []int{2400},
-		"AM":   []int{8000, 2400},
-		"FM":   []int{15000, 8000},
+		"WFM":  {230000},
+		"RTTY": {2400},
+		"USB":  {2400},
+		"CW":   {2400, 500},
+		"LSB":  {2400},
+		"AM":   {8000, 2400},
+		"FM":   {15000, 8000},
 	}
 	if !reflect.DeepEqual(filters, rig.Caps.Filters) {
 		t.Fatal("Caps.Filters contains unexpected data; expected:", filters, "got:", rig.Caps.Filters)
@@ -254,7 +255,7 @@ func TestDummyRigSetGetFreq(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	freq, err := rig.GetFreq(VFOA)
+	freq, err := rig.GetFreq(goHamlib.VFOA)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -263,12 +264,11 @@ func TestDummyRigSetGetFreq(t *testing.T) {
 		t.Fatal("frequency of Dummyrig should be 145.000.000 Hz")
 	}
 
-	var testFreq float64
-	testFreq = 7005000
+	var testFreq float64 = 7005000
 
 	// Test Set & Get Frequency on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 		if err := rig.SetFreq(VFOValue, testFreq); err != nil {
 			t.Fatal(err)
 		}
@@ -297,7 +297,7 @@ func TestDummyRigSetGetVfo(t *testing.T) {
 
 	// Test Set & Get Frequency on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 		if err := rig.SetVfo(VFOValue); err != nil {
 			t.Fatal(err)
 		}
@@ -330,11 +330,11 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 
 	// interate over all VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		// iterate over all modes
 		for _, mode := range rig.Caps.Modes {
-			modeValue := ModeValue[mode]
+			modeValue := goHamlib.ModeValue[mode]
 
 			filterAmount := len(rig.Caps.Filters[mode])
 			if filterAmount > 0 {
@@ -349,7 +349,7 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 						t.Fatal(err)
 					}
 					if m != modeValue {
-						t.Fatalf("got mode %s which is inconsistent with set mode %s on vfo %s\n", ModeName[m], mode, vfo)
+						t.Fatalf("got mode %s which is inconsistent with set mode %s on vfo %s\n", goHamlib.ModeName[m], mode, vfo)
 					}
 					if pb != filter {
 						t.Fatalf("got filter %dHz which is inconsistent with set filter %dHz for mode %s on vfo %s\n", pb, filter, mode, vfo)
@@ -365,7 +365,7 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 					t.Fatal(err)
 				}
 				if m != modeValue {
-					t.Fatalf("got mode %s which is inconsistent with set mode %s on vfo %s\n", ModeName[m], mode, vfo)
+					t.Fatalf("got mode %s which is inconsistent with set mode %s on vfo %s\n", goHamlib.ModeName[m], mode, vfo)
 				}
 				if pb != filter {
 					t.Fatalf("got filter %dHz which is inconsistent with set filter %dHz for mode %s on vfo %s\n", pb, filter, mode, vfo)
@@ -374,8 +374,8 @@ func TestDummyRigModeAndFilters(t *testing.T) {
 		}
 	}
 
-	modeValue := ModeCW
-	modeName := ModeName[modeValue]
+	modeValue := goHamlib.ModeCW
+	modeName := goHamlib.ModeName[modeValue]
 
 	// Get Narrow Filter for CW
 	filter, err := rig.GetPbNarrow(modeValue)
@@ -417,10 +417,10 @@ func TestDummyRigPTT(t *testing.T) {
 
 	// Test Set & Get PTT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		// iterate over all PTT possibilities
-		for pttValue, pttName := range PttName {
+		for pttValue, pttName := range goHamlib.PttName {
 
 			if err := rig.SetPtt(VFOValue, pttValue); err != nil {
 				t.Fatal(err)
@@ -431,14 +431,14 @@ func TestDummyRigPTT(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if pttValue == RIG_PTT_OFF {
-				if ptt != RIG_PTT_OFF {
-					t.Fatalf("inconsisted values! Set: %s, Should be: %s", pttName, PttName[RIG_PTT_OFF])
+			if pttValue == goHamlib.RIG_PTT_OFF {
+				if ptt != goHamlib.RIG_PTT_OFF {
+					t.Fatalf("inconsisted values! Set: %s, Should be: %s", pttName, goHamlib.PttName[goHamlib.RIG_PTT_OFF])
 				}
 			} else {
 				// Dummy Rig returns just "ON" also for "ON_DATA" and "ON_MIC"
-				if ptt != RIG_PTT_ON {
-					t.Fatalf("inconsisted values! Set: %s, Got: %s", pttName, PttName[RIG_PTT_ON])
+				if ptt != goHamlib.RIG_PTT_ON {
+					t.Fatalf("inconsisted values! Set: %s, Got: %s", pttName, goHamlib.PttName[goHamlib.RIG_PTT_ON])
 				}
 			}
 		}
@@ -457,7 +457,7 @@ func TestDummyRigRit(t *testing.T) {
 
 	// Test Set & Get RIT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		maxRit := rig.Caps.MaxRit
 
@@ -506,7 +506,7 @@ func TestDummyRigXit(t *testing.T) {
 
 	// Test Set & Get XIT on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		maxXit := rig.Caps.MaxXit
 
@@ -552,11 +552,11 @@ func TestDummyRigInfo(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	info, err := rig.GetInfo()
+	info, _ := rig.GetInfo()
 
-	info_expected := "Nothing much (dummy)"
-	if info != info_expected {
-		t.Fatalf("info string does not match! got: %s; but expected: %s", info, info_expected)
+	infoExpected := "Nothing much (dummy)"
+	if info != infoExpected {
+		t.Fatalf("info string does not match! got: %s; but expected: %s", info, infoExpected)
 	}
 }
 
@@ -570,7 +570,7 @@ func TestDummyRigPowerStatus(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	for pValue, pName := range RigPowerName {
+	for pValue, pName := range goHamlib.RigPowerName {
 		if err := rig.SetPowerState(pValue); err != nil {
 			t.Fatal(err)
 		}
@@ -581,7 +581,7 @@ func TestDummyRigPowerStatus(t *testing.T) {
 		}
 
 		if pwrStatus != pValue {
-			t.Fatalf("inconsistent values! Set %s; Got: %s", pName, RigPowerName[pwrStatus])
+			t.Fatalf("inconsistent values! Set %s; Got: %s", pName, goHamlib.RigPowerName[pwrStatus])
 		}
 	}
 }
@@ -597,10 +597,10 @@ func TestDummyRigAntennas(t *testing.T) {
 
 	// Test Set & Get Antenna on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		// iterate over all Antennas
-		for aValue, aName := range AntName {
+		for aValue, aName := range goHamlib.AntName {
 
 			if err := rig.SetAnt(VFOValue, aValue); err != nil {
 				t.Fatal(err)
@@ -612,7 +612,7 @@ func TestDummyRigAntennas(t *testing.T) {
 			}
 
 			if ant != aValue {
-				t.Fatalf("inconsisted values! Set: %s, Should be: %s", aName, AntName[ant])
+				t.Fatalf("inconsisted values! Set: %s, Should be: %s", aName, goHamlib.AntName[ant])
 			}
 		}
 	}
@@ -632,7 +632,7 @@ func TestDummyRigTuningSteps(t *testing.T) {
 	defer rig.Close()
 	defer rig.Cleanup()
 
-	cwRes, err := rig.GetRigResolution(ModeCW)
+	cwRes, err := rig.GetRigResolution(goHamlib.ModeCW)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -644,7 +644,7 @@ func TestDummyRigTuningSteps(t *testing.T) {
 
 	// Test Set & Get Tuning Steps on all available VFOs
 	for _, vfo := range rig.Caps.Vfos {
-		VFOValue := VFOValue[vfo]
+		VFOValue := goHamlib.VFOValue[vfo]
 
 		// iterate over all Tuning Steps
 		for _, ts := range cwTs {
@@ -672,7 +672,7 @@ func TestDummyRigTuningSteps(t *testing.T) {
 			for _, val := range rig.Caps.Operations {
 				if val == "VFOOpUp" {
 
-					err = rig.VfoOp(VFOValue, VFOOpUp)
+					err = rig.VfoOp(VFOValue, goHamlib.VFOOpUp)
 					if err != nil {
 						t.Fatal(err)
 					}
