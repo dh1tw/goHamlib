@@ -1,7 +1,7 @@
 package goHamlib_test
 
 import (
-	"github.com/dh1tw/goHamlib"
+	"github.com/xylo04/goHamlib"
 	"reflect"
 	"testing"
 )
