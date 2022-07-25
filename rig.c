@@ -883,7 +883,7 @@ int get_supported_modes(RIG *myrig, int *modes)
 int get_filter_count(RIG *myrig, int *filter_count)
 {
 	int i;
-	for (i=0; i<FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
+	for (i=0; i<HAMLIB_FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
 	{
 		*filter_count += 1;
 	}
