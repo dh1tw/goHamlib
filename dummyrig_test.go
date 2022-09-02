@@ -1,9 +1,10 @@
 package goHamlib_test
 
 import (
-	"github.com/xylo04/goHamlib"
 	"reflect"
 	"testing"
+
+	"github.com/dl1igc/goHamlib"
 )
 
 func getDummyRig() (*goHamlib.Rig, error) {

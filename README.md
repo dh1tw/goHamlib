@@ -71,7 +71,7 @@ $ brew install hamlib
 ### Compilation
 
 ```bash
-$ go get github.com/xylo04/goHamlib
+$ go get github.com/dl1igc/goHamlib
 ```
 
 ## Tests
@@ -80,7 +80,7 @@ Most of goHamlib's API is unit tested. In order to execute the unit tests,
 run: 
 
 ```bash
-$ cd $GOPATH/src/github.com/xylo04/goHamlib
+$ cd $GOPATH/src/github.com/dl1igc/goHamlib
 $ go test
 ```
 
