@@ -1,7 +1,9 @@
+**This (hopefully temporary) fork supports Hamlib v4.**
+
 # Hamlib binding for Golang
-[![Go Report Card](https://goreportcard.com/badge/github.com/dh1tw/goHamlib)](https://goreportcard.com/report/github.com/dh1tw/goHamlib)
-[![Build Status](https://travis-ci.org/dh1tw/goHamlib.svg?branch=master)](https://travis-ci.org/dh1tw/goHamlib)
-[![Coverage Status](https://coveralls.io/repos/github/dh1tw/goHamlib/badge.svg?branch=master)](https://coveralls.io/github/dh1tw/goHamlib?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xylo04/goHamlib)](https://goreportcard.com/report/github.com/xylo04/goHamlib)
+[![Build Status](https://travis-ci.org/xylo04/goHamlib.svg?branch=master)](https://travis-ci.org/xylo04/goHamlib)
+[![Coverage Status](https://coveralls.io/repos/github/xylo04/goHamlib/badge.svg?branch=master)](https://coveralls.io/github/xylo04/goHamlib?branch=master)
 
 This is a [golang](https://golang.org) binding for
 [Hamlib](http://hamlib.org). The binding has been hand written in order
@@ -9,7 +11,7 @@ to provide a golang idiomatic API but staying also close as possible to
 [hamlib's C API](http://hamlib.sourceforge.net/manuals/3.0.1/index.html).
 Except of Hamlib (C), goHamlib has no other external dependencies.
 
-goHamlib is compatible with both, Hamlib 1.2.x and 3.x.
+goHamlib is compatible with both, Hamlib 4.x.
 
 You might also want to checkout [gorigctl](https://github.com/dh1tw/gorigctl)
 which is a drop-in replacement for hamlib's rigctl, although it comes with a
@@ -69,7 +71,7 @@ $ brew install hamlib
 ### Compilation
 
 ```bash
-$ go get github.com/dh1tw/goHamlib
+$ go get github.com/dl1igc/goHamlib
 ```
 
 ## Tests
@@ -78,15 +80,15 @@ Most of goHamlib's API is unit tested. In order to execute the unit tests,
 run: 
 
 ```bash
-$ cd $GOPATH/src/github.com/dh1tw/goHamlib
+$ cd $GOPATH/src/github.com/dl1igc/goHamlib
 $ go test
 ```
 
 ## Documentation
 
-goHamlib's API is documented at [go.dev](https://pkg.go.dev/github.com/dh1tw/goHamlib)
+goHamlib's API is documented at [go.dev](https://pkg.go.dev/github.com/xylo04/goHamlib)
 
 ## Example
 
-Checkout the [dummyrig_test.go](https://github.com/dh1tw/goHamlib/blob/master/dummyrig_test.go) in this
+Checkout the [dummyrig_test.go](https://github.com/xylo04/goHamlib/blob/master/dummyrig_test.go) in this
 repository to see how to use goHamlib.

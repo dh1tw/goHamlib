@@ -403,9 +403,9 @@ int has_set_ant(RIG *myrig)
 	return RIG_ENIMPL;
 }
 
-int set_ant(RIG *myrig, int vfo, int ant)
+int set_ant(RIG *myrig, vfo_t vfo, ant_t ant, value_t option)
 {
-	int res = rig_set_ant(myrig, vfo, ant);
+	int res = rig_set_ant(myrig, vfo, ant, option);
 	return res;
 }
 
@@ -418,9 +418,9 @@ int has_get_ant(RIG *myrig)
 	return RIG_ENIMPL;
 }
 
-int get_ant(RIG *myrig, int vfo, int *ant)
+int get_ant(RIG *myrig, vfo_t vfo, ant_t ant, value_t *option, ant_t *ant_curr, ant_t *ant_tx, ant_t *ant_rx)
 {
-	int res = rig_get_ant(myrig, vfo, ant);
+	int res = rig_get_ant(myrig, vfo, ant, option, ant_curr,ant_tx, ant_rx);
 	return res;
 }
 
@@ -580,7 +580,7 @@ int get_level(RIG *myrig, int vfo, unsigned long level, float *value)
 		case RIG_LEVEL_CWPITCH:
 		case RIG_LEVEL_KEYSPD:
 		case RIG_LEVEL_NOTCHF:
-		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_VOXDELAY:
 		case RIG_LEVEL_BKINDL:
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_STRENGTH:
@@ -649,7 +649,7 @@ int get_level_gran(RIG *myrig, unsigned long level, float *step, float *min, flo
 		case RIG_LEVEL_CWPITCH:
 		case RIG_LEVEL_KEYSPD:
 		case RIG_LEVEL_NOTCHF:
-		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_VOXDELAY:
 		case RIG_LEVEL_BKINDL:
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_STRENGTH:
@@ -699,7 +699,7 @@ int set_level(RIG *myrig, int vfo, unsigned long level, float value)
 		case RIG_LEVEL_CWPITCH:
 		case RIG_LEVEL_KEYSPD:
 		case RIG_LEVEL_NOTCHF:
-		case RIG_LEVEL_VOX:
+		case RIG_LEVEL_VOXDELAY:
 		case RIG_LEVEL_BKINDL:
 		case RIG_LEVEL_METER:
 		case RIG_LEVEL_SLOPE_LOW:
@@ -883,7 +883,7 @@ int get_supported_modes(RIG *myrig, int *modes)
 int get_filter_count(RIG *myrig, int *filter_count)
 {
 	int i;
-	for (i=0; i<FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
+	for (i=0; i<HAMLIB_FLTLSTSIZ && !RIG_IS_FLT_END(myrig->caps->filters[i]); i++)
 	{
 		*filter_count += 1;
 	}
